@@ -20,13 +20,9 @@ class Links extends BaseController
             return redirect()->route('staff_dashboard');
         }
         $links = Services::links();
+        $link_categories = Services::linkCategories();
         if ($this->request->getMethod() == 'get') {
             if (is_numeric($this->request->getGet('link_id'))) {
-                if ($this->request->getGet('action') == 'move_down') {
-                    $links->move_down($this->request->getGet('link_id'));
-                } elseif ($this->request->getGet('action') == 'move_up') {
-                    $links->move_up($this->request->getGet('link_id'));
-                }
                 return redirect()->to(current_url());
             }
         } elseif ($this->request->getMethod() == 'post') {
@@ -41,9 +37,8 @@ class Links extends BaseController
         return view('staff/links', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
-            'first_position' => $links->getFirstPosition(),
-            'last_position' => $links->getLastPosition(),
-            'list_departments' => $links->getAll()
+            'list_links' => $links->getAll(),
+            'list_link_categories' => $link_categories->getAll()
         ]);
     }
 
@@ -54,25 +49,22 @@ class Links extends BaseController
         }
 
         $links = Services::links();
+        $linkCategories = Services::linkCategories();
         if (!$link = $links->getByID($link_id)) {
-            return redirect()->route('staff_departments');
+            return redirect()->route('staff_links');
         }
         if ($this->request->getPost('do') == 'submit') {
             $validation = Services::validation();
             $validation->setRules([
                 'name' => 'required',
                 'url' => 'required|valid_url',
-                'category_id' => 'required'
             ], [
                 'name' => [
                     'required' => lang('Admin.error.enterLinkName')
                 ],
                 'url' => [
                     'required' => lang('Admin.error.enterLinkUrl'),
-                    'in_list' => lang('Admin.error.validUrl')
-                ],
-                'category_id' => [
-                    'required' => lang('Admin.error.selectCategory')
+                    'valid_url' => lang('Admin.error.validUrl')
                 ]
             ]);
 
@@ -81,40 +73,22 @@ class Links extends BaseController
             } elseif (defined('HDZDEMO')) {
                 $error_msg = 'This is not possible in demo version.';
             } else {
-                $linkModel = new \App\Models\Link();
-                if ($this->request->getPost('position') == 'start') {
-                    $firstPosition = $links->getFirstPosition();
-                    $linkModel->increment('link_order', 1);
-                    $position = $firstPosition->link_order;
-                } elseif ($this->request->getPost('position') == 'last') {
-                    $lastPosition = $links->getLastPosition();
-                    $position = $lastPosition->link_order + 1;
-                } elseif (is_numeric($this->request->getPost('position'))) {
-                    if ($link = $links->getByID($this->request->getPost('position'))) {
-                        $position = $link->link_order + 1;
-                        $linkModel->where('link_order>', $link->link_order)
-                            ->increment('link_order', 1);
-                    } else {
-                        $position = $link->dep_order;
-                    }
-                } else {
-                    $position = $link->dep_order;
-                }
                 $links->update(
                     $link->id,
                     $this->request->getPost('name'),
-                    $this->request->getPost('private'),
-                    $position
+                    $this->request->getPost('url'),
+                    $this->request->getPost('link_category_id'),
                 );
                 $this->session->setFlashdata('form_success', lang('Admin.links.linkUpdated'));
                 return redirect()->to(current_url());
             }
         }
-        return view('staff/departments_form', [
+        return view('staff/links_form', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
-            'department' => $link,
-            'list_departments' => $links->getAll()
+            'link' => $link,
+            'list_link' => $links->getAll(),
+            'list_link_categories' => $linkCategories->getAll()
         ]);
     }
 
@@ -124,35 +98,37 @@ class Links extends BaseController
             return redirect()->route('staff_dashboard');
         }
 
-        $departments = Services::departments();
+        $links = Services::links();
+        $linkCategories = Services::linkCategories();
         if ($this->request->getPost('do') == 'submit') {
             $validation = Services::validation();
             $validation->setRules([
                 'name' => 'required',
-                'private' => 'required|in_list[0,1]'
+                'url' => 'required|valid_url',
             ], [
                 'name' => [
-                    'required' => lang('Admin.error.enterDepartmentName')
+                    'required' => lang('Admin.error.enterLinkName')
                 ],
-                'private' => [
-                    'required' => lang('Admin.error.selectDepartmentType'),
-                    'in_list' => lang('Admin.error.selectDepartmentType')
-                ],
+                'url' => [
+                    'required' => lang('Admin.error.enterLinkUrl'),
+                    'valid_url' => lang('Admin.error.validUrl')
+                ]
             ]);
             if ($validation->withRequest($this->request)->run() == false) {
                 $error_msg = $validation->listErrors();
             } elseif (defined('HDZDEMO')) {
                 $error_msg = 'This is not possible in demo version.';
             } else {
-                $departments->create($this->request->getPost('name'), $this->request->getPost('private'), $this->request->getPost('position'));
-                $this->session->setFlashdata('form_success', lang('Admin.tickets.departmentCreated'));
+                $links->create($this->request->getPost('name'), $this->request->getPost('url'), $this->request->getPost('link_category_id'));
+                $this->session->setFlashdata('form_success', lang('Admin.links.linkCreated'));
                 return redirect()->to(current_url());
             }
         }
-        return view('staff/departments_form', [
+        return view('staff/links_form', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
-            'list_departments' => $departments->getAll()
+            'list_links' => $links->getAll(),
+            'list_link_categories' => $linkCategories->getAll()
         ]);
     }
 

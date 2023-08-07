@@ -113,6 +113,24 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link <?php echo (uri_page() == 'link-categories' ? 'active' : ''); ?>"
+                                    href="<?php echo site_url(route_to('staff_link_categories')); ?>">
+                                    <i class="fas fa-list"></i>
+                                    <span>
+                                        <?php echo lang('Admin.links.linkCategoriesMenu'); ?>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <?php echo (uri_page() == 'links' ? 'active' : ''); ?>"
+                                    href="<?php echo site_url(route_to('staff_links')); ?>">
+                                    <i class="fas fa-link"></i>
+                                    <span>
+                                        <?php echo lang('Admin.links.links'); ?>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link <?php echo (uri_page() == 'agents' ? 'active' : ''); ?>"
                                     href="<?php echo site_url(route_to('staff_agents')); ?>">
                                     <i class="fas fa-chalkboard-teacher"></i>
@@ -168,8 +186,6 @@
                                         href="<?php echo site_url(route_to('staff_email_templates')); ?>"><?php echo lang('Admin.settings.emailTemplates'); ?></a>
                                     <a class="dropdown-item <?php echo strpos(uri_string(), 'setup/email-addresses') !== false ? 'active' : ''; ?>"
                                         href="<?php echo site_url(route_to('staff_emails')); ?>"><?php echo lang('Admin.settings.emailAddresses'); ?></a>
-                                    <a class="dropdown-item <?php echo strpos(uri_string(), 'setup/links') !== false ? 'active' : ''; ?>"
-                                        href="<?php echo site_url(route_to('staff_links')); ?>"><?php echo lang('Admin.settings.links'); ?></a>
                                     <a class="dropdown-item <?php echo strpos(uri_string(), 'setup/api') !== false ? 'active' : ''; ?>"
                                         href="<?php echo site_url(route_to('staff_api')); ?>"><?php echo lang('Api.configuration'); ?></a>
                                 </div>
@@ -275,6 +291,7 @@
         var langKbCatConfirmation = '<?php echo addcslashes(lang('Admin.kb.removeConfirmation'), "'"); ?>';
         var langKbArticleConfirmation = '<?php echo addcslashes(lang('Admin.kb.removeArticleConfirmation'), "'"); ?>';
         var langDepartmentConfirmation = '<?php echo addcslashes(lang('Admin.tickets.departmentsRemoveConfirmation'), "'"); ?>';
+        var langLinkCategoryConfirmation = '<?php echo addcslashes(lang('Admin.links.categoryRemoveConfirmation'), "'"); ?>';
         var langAgentsConfirmation = '<?php echo addcslashes(lang('Admin.agents.removeConfirmation'), "'"); ?>';
         var langEmailConfirmation = '<?php echo addcslashes(lang('Admin.settings.emailDeletionConfirm'), "'"); ?>';
         var langCustomFieldConfirmation = '<?php echo addcslashes(lang('Admin.tools.customFieldConfirm'), "'"); ?>';

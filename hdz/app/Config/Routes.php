@@ -35,35 +35,35 @@ $routes->add('maintenance-mode', 'Pages::maintenance', [
 ]);
 $routes->add('/', 'Kb::home', [
     'as' => 'home',
-    'filter' => 'userAuth'
+    'filter' => 'userAuth:user'
 ]);
 $routes->add('category/(:num)-(:any)', 'Kb::category/$1', [
     'as' => 'category',
-    'filter' => 'userAuth'
+    'filter' => 'userAuth:user'
 ]);
 $routes->add('article/(:num)-(:any)', 'Kb::article/$1', [
     'as' => 'article',
-    'filter' => 'userAuth'
+    'filter' => 'userAuth:user'
 ]);
 $routes->add('search', 'Kb::search', [
     'as' => 'search',
-    'filter' => 'userAuth'
+    'filter' => 'userAuth:user'
 ]);
 $routes->add('download/article-(:num)-(:num)', 'Kb::download/$1/$2', [
     'as' => 'download_article',
-    'filter' => 'userAuth'
+    'filter' => 'userAuth:user'
 ]);
 $routes->add('submit-ticket', 'Ticket::selectDepartment', [
     'as' => 'submit_ticket',
-    'filter' => 'userAuth'
+    'filter' => 'userAuth:user'
 ]);
 $routes->add('submit-ticket/(:num)-(:any)', 'Ticket::create/$1', [
     'as' => 'submit_ticket_department',
-    'filter' => 'userAuth'
+    'filter' => 'userAuth:user'
 ]);
 $routes->add('submit-ticket/confirmation/(:num)/(:any)', 'Ticket::confirmedTicket/$1/$2', [
     'as' => 'ticket_preview',
-    'filter' => 'userAuth'
+    'filter' => 'userAuth:user'
 ]);
 #Guest
 $routes->add('login', 'UserAuth::login', [
@@ -184,6 +184,24 @@ $routes->group(Helpdesk::STAFF_URI, [
     $routes->add('departments', 'Staff\Departments::manage', [
         'as' => 'staff_departments'
     ]);
+    $routes->add('link-categories', 'Staff\LinkCategories::manage', [
+        'as' => 'staff_link_categories'
+    ]);
+    $routes->add('link-categories/edit/(:num)', 'Staff\LinkCategories::edit/$1', [
+        'as' => 'staff_link_category_id'
+    ]);
+    $routes->add('link-categories/new', 'Staff\LinkCategories::create', [
+        'as' => 'staff_link_category_new'
+    ]);
+    $routes->add('links', 'Staff\Links::manage', [
+        'as' => 'staff_links'
+    ]);
+    $routes->add('links/new', 'Staff\Links::create', [
+        'as' => 'staff_links_new'
+    ]);
+    $routes->add('links/edit/(:num)', 'Staff\Links::edit/$1', [
+        'as' => 'staff_links_id'
+    ]);
     $routes->add('departments/edit/(:num)', 'Staff\Departments::edit/$1', [
         'as' => 'staff_department_id'
     ]);
@@ -234,9 +252,6 @@ $routes->group(Helpdesk::STAFF_URI, [
     ]);
     $routes->add('setup/email-addresses/edit/(:num)', 'Staff\Settings::emailsEdit/$1', [
         'as' => 'staff_emails_edit'
-    ]);
-    $routes->add('setup/links', 'Staff\Settings::links', [
-        'as' => 'links'
     ]);
     $routes->add('setup/api', 'Staff\Settings::api', [
         'as' => 'staff_api'

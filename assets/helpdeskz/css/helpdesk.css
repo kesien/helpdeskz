@@ -23,6 +23,7 @@ body {
     background-color: #EFEFEF;
     color: #88837F;
     font-size: 13px;
+    z-index: 10000;
 }
 #footer a{
     color: #88837F;
@@ -113,4 +114,7 @@ a.kb_category:hover{
 }
 .bg-staff{
     background-color: #FFF5E5;
+}
+#custom-content {
+    max-height: calc(100vh - 3.5rem) !important;
 }

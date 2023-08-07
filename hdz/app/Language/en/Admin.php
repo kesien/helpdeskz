@@ -13,7 +13,18 @@ return [
         'menu' => 'Dashboard'
     ],
     'links' => [
-        'linkUpdated' => 'Link was updated.'
+        'links' => 'Links',
+        'linkCategories' => 'Link categories',
+        'linkUpdated' => 'Link was updated.',
+        'newLink' => 'New link',
+        'editLink' => 'Edit link',
+        'newCategory' => 'New category',
+        'editCategory' => 'Edit category',
+        'linkCategoriesMenu' => 'Link categories',
+        'linkCategoryRemoved' => 'Category removed',
+        'categoryUpdated' => 'Category updated',
+        'categoryCreated' => 'New category has been created.',
+        'categoryRemoveConfirmation' => 'Do you really want to remove this category and its links?'
     ],
     'tickets' => [
         'menu' => 'Tickets',
@@ -302,6 +313,14 @@ return [
         'avatar' => 'Avatar',
         'deleteAvatar' => 'Delete avatar',
         'user' => 'User',
+        'linkName' => 'Name',
+        'linkCategory' => 'Category',
+        'linkUrl' => 'Url',
+        'linkUncategorized' => 'Uncategorized',
+        'linkCategoryName' => 'Name',
+        'linkCategoryDescription' => 'Description',
+        'link' => 'Link',
+        'linkUrl' => 'Url'
     ],
     'error' => [
         'recordsNotFound' => 'Records not found.',

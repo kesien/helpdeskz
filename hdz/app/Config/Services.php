@@ -10,6 +10,7 @@ use App\Libraries\Settings;
 use App\Libraries\Staff;
 use App\Libraries\Tickets;
 use App\Libraries\Links;
+use App\Libraries\LinkCategories;
 use CodeIgniter\Config\BaseService;
 
 /**
@@ -89,6 +90,14 @@ class Services extends \CodeIgniter\Config\Services
             return static::getSharedInstance('links');
         }
         return new Links();
+    }
+
+    public static function linkCategories($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('linkCategories');
+        }
+        return new LinkCategories();
     }
 
     public static function api($getShared = true)

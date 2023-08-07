@@ -416,30 +416,6 @@ class Settings extends BaseController
         ]);
     }
 
-    public function links()
-    {
-        if ($this->staff->getData('admin') != 1) {
-            return redirect()->route('staff_dashboard');
-        }
-
-        $linksLib = new Links();
-        if ($this->request->getMethod() == 'post') {
-            $error_msg = 'This is not possible in demo version.';
-        } else {
-            if ($this->request->getPost('action') == 'remove') {
-                $linksLib->remove_link($this->request->getPost('link_id'));
-                $this->session->setFlashdata('form_success', lang('Admin.settings.linkRemoved'));
-                return redirect()->to(current_url());
-            }
-        }
-
-        return view('staff/links', [
-            'error_msg' => isset($error_msg) ? $error_msg : null,
-            'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
-            'linkList' => $linksLib->getAll()
-        ]);
-    }
-
     public function emailsEdit($email_id)
     {
         if ($this->staff->getData('admin') != 1) {

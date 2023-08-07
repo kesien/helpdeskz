@@ -21,8 +21,7 @@ class Links
     }
     public function getAll()
     {
-        $q = $this->linkModel->orderBy('default', 'desc')
-            ->orderBy('created', 'desc')
+        $q = $this->linkModel->orderBy('name', 'desc')
             ->get();
         if ($q->resultID->num_rows == 0) {
             return null;
@@ -30,24 +29,6 @@ class Links
         $r = $q->getResult();
         $q->freeResult();
         return $r;
-    }
-
-    public function getFetcher()
-    {
-        $q = $this->linkModel->where('incoming_type', 'imap')
-            ->orWhere('incoming_type', 'pop')
-            ->get();
-        if ($q->resultID->num_rows == 0) {
-            return null;
-        }
-        $r = $q->getResult();
-        $q->freeResult();
-        return $r;
-    }
-
-    public function getDefault()
-    {
-        return $this->getRow(['default' => 1]);
     }
 
     public function getByID($id)
@@ -69,24 +50,7 @@ class Links
 
     public function getByCategoryId($id)
     {
-        return $this->getRow(['category_id' => $id]);
-    }
-
-    public function set_default($id)
-    {
-        $count = $this->linkModel->where('id', $id)
-            ->countAllResults();
-        if ($count == 0) {
-            return false;
-        }
-        $this->linkModel->protect(false);
-        $this->linkModel->where('default', '1')
-            ->set('default', 0)
-            ->update();
-        $this->linkModel->update($id, [
-            'default' => '1'
-        ]);
-        $this->linkModel->protect(true);
+        return $this->getRow(['link_category_id' => $id]);
     }
 
     public function remove_link($id)
@@ -94,31 +58,26 @@ class Links
         $this->linkModel->delete($id);
     }
 
-    public function addLink()
+    public function create($name, $url, $link_category_id = null)
     {
-        $request = Services::request();
         $this->linkModel->protect(false);
         $this->linkModel->insert([
-            'name' => $request->getPost('name'),
-            'url' => $request->getPost('url'),
-            'category_id' => $request->getPost('category_id'),
-            'created' => time(),
+            'name' => esc($name),
+            'url' => esc($url),
+            'link_category_id' => $link_category_id
         ]);
         $this->linkModel->protect(true);
         return $this->linkModel->getInsertID();
     }
 
-    public function updateLink($id)
+    public function update($id, $name, $url, $link_category_id)
     {
-        $request = Services::request();
         $this->linkModel->protect(false);
         $this->linkModel->update($id, [
-            'name' => $request->getPost('name'),
-            'email' => $request->getPost('url'),
-            'category_id' => $request->getPost('category_id'),
-            'last_update' => time(),
+            'name' => esc($name),
+            'url' => esc($url),
+            'link_category_id' => $link_category_id
         ]);
         $this->linkModel->protect(true);
-        return true;
     }
 }

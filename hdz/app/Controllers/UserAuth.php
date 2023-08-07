@@ -16,8 +16,7 @@ class UserAuth extends BaseController
 {
     public function login()
     {
-        if($this->request->getPost('do') == 'submit')
-        {
+        if ($this->request->getPost('do') == 'submit') {
             $validation = Services::validation();
             $validation->setRules(
                 [
@@ -26,24 +25,26 @@ class UserAuth extends BaseController
                 ]
             );
 
-            if($validation->withRequest($this->request)->run() == false){
+            if ($validation->withRequest($this->request)->run() == false) {
                 $error_msg = lang('Client.error.invalidEmailPassword');
-            }elseif(!$client_data = $this->client->getRow([
-                'email' => $this->request->getPost('email'),
-                'status'=>1
-            ])){
+            } elseif (
+                !$client_data = $this->client->getRow([
+                    'email' => $this->request->getPost('email'),
+                    'status' => 1
+                ])
+            ) {
                 $error_msg = lang('Client.error.invalidEmailPassword');
-            }else{
-                if(!password_verify($this->request->getPost('password'), $client_data->password)){
+            } else {
+                if (!password_verify($this->request->getPost('password'), $client_data->password)) {
                     $error_msg = lang('Client.error.invalidEmailPassword');
-                }else{
+                } else {
                     $this->client->login($client_data->id, $client_data->password);
                     return redirect()->route('view_tickets');
                 }
             }
 
         }
-        return view('client/login',[
+        return view('client/login', [
             'error_msg' => isset($error_msg) ? $error_msg : null
         ]);
     }
@@ -51,17 +52,16 @@ class UserAuth extends BaseController
     public function forgot()
     {
         $reCAPTCHA = new reCAPTCHA();
-        if($this->request->getPost('do') == 'submit')
-        {
+        if ($this->request->getPost('do') == 'submit') {
             $validation = Services::validation();
-            $validation->setRule('email','email','required|valid_email');
-            if(!$reCAPTCHA->validate()){
+            $validation->setRule('email', 'email', 'required|valid_email');
+            if (!$reCAPTCHA->validate()) {
                 $error_msg = lang('Client.error.invalidCaptcha');
-            }elseif($validation->withRequest($this->request)->run() == false) {
+            } elseif ($validation->withRequest($this->request)->run() == false) {
                 $error_msg = lang('Client.error.enterValidEmail');
-            }elseif(!$client_data = $this->client->getRow(['email' => $this->request->getPost('email')])){
+            } elseif (!$client_data = $this->client->getRow(['email' => $this->request->getPost('email')])) {
                 $error_msg = lang('Client.error.emailNotFound');
-            }else{
+            } else {
                 $this->client->recoverPassword($client_data);
                 $this->session->setFlashdata('form_success', lang('Client.login.passwordSent'));
                 return redirect()->route('forgot_password');
@@ -76,35 +76,35 @@ class UserAuth extends BaseController
     public function profile()
     {
         $validation = Services::validation();
-        if($this->request->getPost('do') == 'general'){
-            $validation->setRule('fullname','fullname','required',[
+        if ($this->request->getPost('do') == 'general') {
+            $validation->setRule('fullname', 'fullname', 'required', [
                 'required' => lang('Client.error.enterFullName')
             ]);
-            if($this->request->getPost('email') != $this->client->getData('email')){
-                $validation->setRule('email','email','required|valid_email|is_unique[users.email]',[
+            if ($this->request->getPost('email') != $this->client->getData('email')) {
+                $validation->setRule('email', 'email', 'required|valid_email|is_unique[users.email]', [
                     'required' => lang('Client.error.enterValidEmail'),
                     'valid_email' => lang('Client.error.enterValidEmail'),
                     'is_unique' => lang('Client.error.emailUsed')
                 ]);
             }
-            if($validation->withRequest($this->request)->run() == false){
+            if ($validation->withRequest($this->request)->run() == false) {
                 $error_msg = $validation->listErrors();
-            }else{
+            } else {
                 $timezone_user = in_array($this->request->getPost('timezone'), timezone_identifiers_list()) ? $this->request->getPost('timezone') : '';
                 $this->client->update([
                     'email' => $this->request->getPost('email'),
                     'fullname' => esc($this->request->getPost('fullname')),
                     'timezone' => $timezone_user
                 ]);
-                $this->session->setFlashdata('form_success',lang('Client.account.profileUpdated'));
+                $this->session->setFlashdata('form_success', lang('Client.account.profileUpdated'));
                 return redirect()->route('profile');
             }
-        }elseif ($this->request->getPost('do') == 'password'){
+        } elseif ($this->request->getPost('do') == 'password') {
             $validation->setRules([
                 'current_password' => 'required',
                 'new_password' => 'required',
                 'new_password2' => 'matches[new_password]'
-            ],[
+            ], [
                 'current_password' => [
                     'required' => lang('Client.error.enterExistingPassword')
                 ],
@@ -115,27 +115,55 @@ class UserAuth extends BaseController
                     'matches' => lang('Client.error.passwordsNotMatches')
                 ]
             ]);
-            if($validation->withRequest($this->request)->run() == FALSE){
+            if ($validation->withRequest($this->request)->run() == FALSE) {
                 $error_msg = $validation->listErrors();
-            }elseif(!password_verify($this->request->getPost('current_password'), $this->client->getData('password'))) {
+            } elseif (!password_verify($this->request->getPost('current_password'), $this->client->getData('password'))) {
                 $error_msg = lang('Client.error.wrongExistingPassword');
-            }else{
+            } else {
                 $password = password_hash($this->request->getPost('new_password'), PASSWORD_BCRYPT);
                 $this->client->update([
                     'password' => $password
                 ]);
                 $this->client->createSession($this->client->getData('id'), $password);
-                $this->session->setFlashdata('form_success',lang('Client.account.passwordUpdated'));
+                $this->session->setFlashdata('form_success', lang('Client.account.passwordUpdated'));
                 return redirect()->route('profile');
             }
         }
-        return view('client/profile',[
-            'error_msg' => isset($error_msg) ? $error_msg : null
+        return view('client/profile', [
+            'error_msg' => isset($error_msg) ? $error_msg : null,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
     public function logout()
     {
         return $this->client->logout();
+    }
+
+    private function findLinksForCategory($links, $categoryId)
+    {
+        $categoryLinks = [];
+        foreach ($links as $link) {
+            if ($link->link_category_id === $categoryId) {
+                $categoryLinks[] = $link;
+            }
+        }
+        return $categoryLinks;
+    }
+
+    private function getLinkCategoryMap()
+    {
+        $links = Services::links();
+        $link_categories = Services::linkCategories();
+        $categoryLinksMap = [];
+        $l = $links->getAll();
+
+        foreach ($link_categories->getAll() as $category) {
+            $categoryLinks = $this->findLinksForCategory($l, $category->id);
+            $categoryName = $category->name;
+            $categoryLinksMap[$categoryName] = $categoryLinks;
+        }
+
+        return $categoryLinksMap;
     }
 }
