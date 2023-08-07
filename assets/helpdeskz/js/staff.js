@@ -211,6 +211,26 @@ function removeLinkCategory(msgID)
     });
 }
 
+function removeLink(msgID)
+{
+    Swal.fire({
+        text: langLinkConfirmation,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: langDelete,
+        cancelButtonText: langCancel,
+        cancelButtonColor: '#d33',
+    }).then((result) => {
+        if (result.value) {
+            $("#link_id").val(msgID);
+            $('#manageForm').submit();
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            $('#link_id').val('');
+            return false;
+        }
+    });
+}
+
 function removeAgent(msgID)
 {
     Swal.fire({
