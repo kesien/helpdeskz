@@ -29,7 +29,7 @@ class Links extends BaseController
             if (defined('HDZDEMO')) {
                 $error_msg = 'This is not possible in demo version.';
             } elseif ($this->request->getPost('do') == 'remove') {
-                $links->remove($this->request->getPost('link_id'));
+                $links->remove_link($this->request->getPost('link_id'));
                 $this->session->setFlashdata('form_success', lang('Admin.settings.linkRemoved'));
                 return redirect()->to(current_url());
             }

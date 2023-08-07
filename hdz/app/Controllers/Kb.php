@@ -106,6 +106,9 @@ class Kb extends BaseController
         $link_categories = Services::linkCategories();
         $categoryLinksMap = [];
         $l = $links->getAll();
+        if (!isset($l) || count($l) < 1) {
+            return $categoryLinksMap;
+        }
 
         foreach ($link_categories->getAll() as $category) {
             $categoryLinks = $this->findLinksForCategory($l, $category->id);

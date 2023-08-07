@@ -24,6 +24,7 @@ return [
         'linkCategoryRemoved' => 'Category removed',
         'categoryUpdated' => 'Category updated',
         'categoryCreated' => 'New category has been created.',
+        'linkCreated' => 'New link has been created.',
         'categoryRemoveConfirmation' => 'Do you really want to remove this category and its links?',
         'removeConfirmation' => 'Do you really want to remove this link?'
     ],
