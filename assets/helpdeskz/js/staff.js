@@ -191,6 +191,25 @@ function removeDepartment(msgID)
     });
 }
 
+function removeLinkCategory(msgID)
+{
+    Swal.fire({
+        text: langLinkCategoryConfirmation,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: langDelete,
+        cancelButtonText: langCancel,
+        cancelButtonColor: '#d33',
+    }).then((result) => {
+        if (result.value) {
+            $("#link_category_id").val(msgID);
+            $('#manageForm').submit();
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            $('#link_category_id').val('');
+            return false;
+        }
+    });
+}
 
 function removeAgent(msgID)
 {

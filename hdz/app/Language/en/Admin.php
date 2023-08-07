@@ -24,7 +24,8 @@ return [
         'linkCategoryRemoved' => 'Category removed',
         'categoryUpdated' => 'Category updated',
         'categoryCreated' => 'New category has been created.',
-        'categoryRemoveConfirmation' => 'Do you really want to remove this category and its links?'
+        'categoryRemoveConfirmation' => 'Do you really want to remove this category and its links?',
+        'removeConfirmation' => 'Do you really want to remove this link?'
     ],
     'tickets' => [
         'menu' => 'Tickets',

@@ -150,7 +150,7 @@ class LinkCategories
             ->get();
         if ($q->resultID->num_rows > 0) {
             foreach ($q->getResult() as $item) {
-                $links->deleteLink($item->id);
+                $links->remove_link($item->id);
             }
             $q->freeResult();
         }

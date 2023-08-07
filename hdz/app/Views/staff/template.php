@@ -292,6 +292,7 @@
         var langKbArticleConfirmation = '<?php echo addcslashes(lang('Admin.kb.removeArticleConfirmation'), "'"); ?>';
         var langDepartmentConfirmation = '<?php echo addcslashes(lang('Admin.tickets.departmentsRemoveConfirmation'), "'"); ?>';
         var langLinkCategoryConfirmation = '<?php echo addcslashes(lang('Admin.links.categoryRemoveConfirmation'), "'"); ?>';
+        var langLinkConfirmation = '<?php echo addcslashes(lang('Admin.links.removeConfirmation'), "'"); ?>';
         var langAgentsConfirmation = '<?php echo addcslashes(lang('Admin.agents.removeConfirmation'), "'"); ?>';
         var langEmailConfirmation = '<?php echo addcslashes(lang('Admin.settings.emailDeletionConfirm'), "'"); ?>';
         var langCustomFieldConfirmation = '<?php echo addcslashes(lang('Admin.tools.customFieldConfirm'), "'"); ?>';
