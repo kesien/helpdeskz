@@ -116,5 +116,5 @@ a.kb_category:hover{
     background-color: #FFF5E5;
 }
 #custom-content {
-    max-height: calc(100vh - 3.5rem) !important;
+    min-height: calc(100vh - 8.5rem) !important;
 }

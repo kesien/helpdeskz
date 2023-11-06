@@ -16,10 +16,10 @@ $page_controller = isset($page_controller) ? $page_controller : '';
     echo link_tag('favicon.ico', 'icon', 'image/x-icon') .
         link_tag('https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,400i,600') .
         link_tag('assets/components/font-awesome/css/font-awesome.min.css') .
-        link_tag('assets/admin/styles/shards-dashboards.1.1.0.css') .
         link_tag('assets/components/bootstrap/css/bootstrap.min.css') .
         link_tag('assets/components/select2/css/select2.min.css') .
         link_tag('assets/components/select2/css/select2-bootstrap.min.css') .
+        link_tag('assets/admin/styles/shards-dashboards.1.1.0.css') .
         link_tag('assets/helpdeskz/css/helpdesk.css');
     $this->renderSection('css_block');
     ?>
@@ -106,24 +106,35 @@ $page_controller = isset($page_controller) ? $page_controller : '';
                     </ul>
                 </div>
             </aside>
-            <main class="main-content col-lg-10 col-md-9 col-sm-12 p-0">
-                <div class="main-content-container container-fluid px-4 overflow-auto" id="custom-content">
-                    <?php
-                    $this->renderSection('content');
-                    ?>
+            <main class="main-content col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
+                <div class="main-navbar sticky-top bg-white">
+                    <!-- Main Navbar -->
+                    <nav class="navbar align-items-stretch navbar-light flex-md-nowrap p-0">
+                        <nav class="nav">
+                            <a href="#"
+                                class="nav-link nav-link-icon toggle-sidebar d-md-inline d-lg-none text-center border-left"
+                                data-toggle="collapse" data-target=".header-navbar" aria-expanded="false"
+                                aria-controls="header-navbar">
+                                <i class="fa fa-bars"></i>
+                            </a>
+                        </nav>
+                    </nav>
                 </div>
-                <div id="footer">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-6">Copyright &copy;
-                                <?php echo site_config('site_name'); ?>
-                            </div>
-                            <div class="col-md-6 text-md-right">
-                                Powered by <a href="http://www.helpdeskz.com">HelpDeskZ</a>
-                            </div>
-                        </div>
+                <div class="main-content-container container-fluid px-4">
+                    <div class="main-content-container container-fluid px-4">
+                        <?php
+                        $this->renderSection('content');
+                        ?>
                     </div>
                 </div>
+                <footer class="main-footer d-flex mt-3 p-2 px-3 bg-white border-top">
+                    <span class="copyright ml-auto my-auto mr-2">Copyright © 2015 -
+                        <?php echo date('Y'); ?>
+                        <a href="https://helpdeskz.com" rel="nofollow">HelpDeskZ v
+                            <?php echo HDZ_VERSION; ?>
+                        </a>
+                    </span>
+                </footer>
             </main>
         </div>
     </div>
@@ -134,8 +145,12 @@ $page_controller = isset($page_controller) ? $page_controller : '';
     <?php
     echo script_tag('assets/components/jquery/jquery.min.js') .
         script_tag('assets/components/bootstrap/js/bootstrap.bundle.min.js') .
+        script_tag('assets/admin/scripts/shards.min.js') .
+        script_tag('assets/admin/scripts/shards-dashboards.1.1.0.js') .
         script_tag('assets/components/select2/js/select2.min.js') .
-        script_tag('assets/helpdeskz/js/helpdesk.js');
+        script_tag('assets/components/blockui/jquery.blockUI.js') .
+        script_tag('assets/helpdeskz/js/helpdesk.js') .
+        script_tag('assets/helpdeskz/js/staff.js');
     $this->renderSection('script_block');
     ?>
 </body>

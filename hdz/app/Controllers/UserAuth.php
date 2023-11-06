@@ -140,11 +140,11 @@ class UserAuth extends BaseController
         return $this->client->logout();
     }
 
-    private function findLinksForCategory($links, $categoryId)
+    private function findUncategorizedLinks($links)
     {
         $categoryLinks = [];
         foreach ($links as $link) {
-            if ($link->link_category_id === $categoryId) {
+            if (empty($link->link_category_id)) {
                 $categoryLinks[] = $link;
             }
         }
@@ -156,17 +156,45 @@ class UserAuth extends BaseController
         $links = Services::links();
         $link_categories = Services::linkCategories();
         $categoryLinksMap = [];
-        $l = $links->getAll();
-        if (!isset($l) || count($l) < 1) {
+        $allLinks = $links->getAll();
+        $allCategories = $link_categories->getAll();
+
+        if (!isset($allLinks) || count($allLinks) == 0) {
             return $categoryLinksMap;
         }
 
-        foreach ($link_categories->getAll() as $category) {
-            $categoryLinks = $this->findLinksForCategory($l, $category->id);
-            $categoryName = $category->name;
-            $categoryLinksMap[$categoryName] = $categoryLinks;
+        // Categorize links based on their link_category_id if there are categories
+        if (!empty($allCategories)) {
+            foreach ($allLinks as $link) {
+                $categoryId = $link->link_category_id;
+                if (!isset($categoryLinksMap[$categoryId])) {
+                    $categoryLinksMap[$categoryId] = [];
+                }
+                $categoryLinksMap[$categoryId][] = $link;
+            }
         }
 
-        return $categoryLinksMap;
+        // Retrieve uncategorized links
+        $uncategorizedLinks = $this->findUncategorizedLinks($allLinks);
+        if (!empty($uncategorizedLinks)) {
+            $categoryLinksMap["Uncategorized"] = $uncategorizedLinks;
+        }
+
+        // Retrieve category names if there are categories
+        $categoryNames = [];
+        if (!empty($allCategories)) {
+            foreach ($allCategories as $category) {
+                $categoryNames[$category->id] = $category->name;
+            }
+        }
+
+        // Transform the category IDs into category names
+        $transformedCategoryLinksMap = [];
+        foreach ($categoryLinksMap as $categoryId => $links) {
+            $categoryName = isset($categoryNames[$categoryId]) ? $categoryNames[$categoryId] : "Uncategorized";
+            $transformedCategoryLinksMap[$categoryName] = $links;
+        }
+
+        return $transformedCategoryLinksMap;
     }
 }

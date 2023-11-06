@@ -19,7 +19,7 @@ $page_controller = isset($page_controller) ? $page_controller : '';
             </h1>
             <div class="row justify-content-center">
                 <div class="col-lg-7">
-                    <div class="input-group input-group-lg">
+                    <div class="input-group">
                         <input type="text" name="keyword" value="<?php echo set_value('keyword'); ?>"
                             placeholder="<?php echo lang('Client.kb.search'); ?>" class="form-control">
                         <div class="input-group-append">

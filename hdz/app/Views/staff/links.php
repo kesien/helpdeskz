@@ -72,15 +72,17 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                         </td>
                         <td>
                             <?php
-                            if (isset($item->link_category_id)) {
-                                $index = array_search($item->link_category_id, array_column($list_link_categories, 'id'));
-                                if ($index !== false) {
-                                    echo $list_link_categories[$index]->name;
+                            if (isset($item->link_category_id) && $item->link_category_id != '') {
+                                if (isset($list_link_categories) && count($list_link_categories) > 0) {
+                                    $index = array_search($item->link_category_id, array_column($list_link_categories, 'id'));
+                                    if ($index !== false) {
+                                        echo $list_link_categories[$index]->name;
+                                    } else {
+                                        echo lang('Admin.form.linkUncategorized');
+                                    }
                                 } else {
                                     echo lang('Admin.form.linkUncategorized');
                                 }
-                            } else {
-                                echo lang('Admin.form.linkUncategorized');
                             }
                             ?>
                         </td>
