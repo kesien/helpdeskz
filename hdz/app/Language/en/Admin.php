@@ -1,5 +1,7 @@
 <?php
 return [
+    'next-ticket' => 'Next ticket',
+    'previous-ticket' => 'Previous ticket',
     'login' => [
         'title' => 'Login into your account',
         'invalidUsernamePassword' => 'Invalid username or password.',
@@ -104,6 +106,7 @@ return [
         'lastLogin' => 'Last login',
         'administrator' => 'Administrator',
         'agent' => 'Agent',
+        'user' => 'User',
         'edit' => 'Edit agent',
         'new' => 'New agent',
         'informationUpdated' => 'Agent information has been updated.',
@@ -214,14 +217,14 @@ return [
         'customFieldRemoved' => 'Custom field has been removed.'
     ],
     'users' => [
-        'menu' => 'Users',
-        'newUser' => 'New user',
-        'editUser' => 'Edit user',
-        'removeUserConfirmation' => 'Do you really want to remove this user and his/her tickets?',
-        'userRemoved' => 'User has been removed.',
-        'notifyNewAccount' => 'Send email to user with account information',
-        'accountCreated' => 'User account has been created.',
-        'accountUpdated' => 'User account has been updated.'
+        'menu' => 'Teachers',
+        'newUser' => 'New teacher',
+        'editUser' => 'Edit teacher',
+        'removeUserConfirmation' => 'Do you really want to remove this teacher and his/her tickets?',
+        'userRemoved' => 'Teacher has been removed.',
+        'notifyNewAccount' => 'Send email to teacher with account information',
+        'accountCreated' => 'Teacher account has been created.',
+        'accountUpdated' => 'Teacher account has been updated.'
     ],
     'form' => [
         'username' => 'Username',
