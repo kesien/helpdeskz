@@ -18,22 +18,9 @@ class UserAuth implements FilterInterface
     {
         helper('cookie');
         helper('helpdesk');
-        $staff = Services::staff();
-        if (!$staff->isOnline() || $client->isOnline()) {
-            if (!isset($arguments)) {
-                return redirect()->route('staff_login');
-            } elseif ($arguments[0] != 'login') {
-                return redirect()->route('staff_login');
-            }
-        } else {
-            if (isset($arguments) && $arguments[0] == 'login') {
-                return redirect()->route('staff_dashboard');
-            }
-            set_timezone(($staff->getData('timezone') == '' ? Services::settings()->config('timezone') : $staff->getData('timezone')));
-            Services::tickets()->autoCloseTickets();
-        }
-        $client = Services::client();
         $settings = Services::settings();
+        $client = Services::client();
+        $staff = Services::staff();
         if ($settings->config('maintenance') == '1') {
             return redirect()->route('maintenance');
         }
@@ -48,7 +35,7 @@ class UserAuth implements FilterInterface
                     return redirect()->route('view_tickets');
                 }
             } elseif ($arguments[0] == 'user') {
-                if (!$client->isOnline()) {
+                if (!$client->isOnline() && !$staff->isOnline()) {
                     return redirect()->route('login');
                 }
             }
