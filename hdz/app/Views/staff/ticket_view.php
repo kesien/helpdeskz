@@ -18,11 +18,15 @@ $this->section('content');
     </div>
 </div>
 <!-- End Page Header -->
-<div class="row">
-    <div class="col-12 col-sm-4 mb-0">
-        <?php echo '<a href=' . isset($next_ticket) ? current_url() . 'view/' . $next_ticket->id : "" . ' class="btn btn-primary" disabled=' . isset($next_ticket) . '>' . lang('Admin.next-ticket') . '</a>' ?>
-        <?php echo '<a href=' . isset($previous_ticket) ? current_url() . 'view/' . $previous_ticket->id : "" . ' class="btn btn-primary" disabled=' . isset($previous_ticket) . '>' . lang('Admin.previous-ticket') . '</a>' ?>
-    </div>
+<div class="row justify-content-end mb-3">
+    <?php
+    if (isset($previous_ticket)) {
+        echo '<div class="col-2"><a href="' . site_url(route_to('staff_ticket_view', $previous_ticket->id)) . '" class="btn btn-primary d-inline-block w-100">' . lang('Admin.previous-ticket') . '</a></div>';
+    }
+    if (isset($next_ticket)) {
+        echo '<div class="col-2"><a href="' . site_url(route_to('staff_ticket_view', $next_ticket->id)) . '" class="btn btn-primary d-inline-block w-100">' . lang('Admin.next-ticket') . '</a></div>';
+    }
+    ?>
 </div>
 <div class="card mb-3">
     <div class="card-header">

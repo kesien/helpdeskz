@@ -818,7 +818,8 @@ class Tickets
     public function getNextTicket($ticket_id, $department_id)
     {
         $q = $this->ticketsModel->where('department_id', $department_id)
-            ->where('ticket_id>', $ticket_id)
+            ->where('id >', $ticket_id)
+            ->orderBy('id', 'asc')
             ->get(1);
         if ($q->resultID->num_rows == 0) {
             return null;
@@ -829,7 +830,8 @@ class Tickets
     public function getPreviousTicket($ticket_id, $department_id)
     {
         $q = $this->ticketsModel->where('department_id', $department_id)
-            ->where('ticket_id<', $ticket_id)
+            ->where('id <', $ticket_id)
+            ->orderBy('id', 'desc')
             ->get(1);
         if ($q->resultID->num_rows == 0) {
             return null;

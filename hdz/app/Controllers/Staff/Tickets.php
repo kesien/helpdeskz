@@ -233,6 +233,8 @@ class Tickets extends BaseController
         if (defined('HDZDEMO')) {
             $ticket->email = '[Hidden in demo]';
         }
+        $next_ticket = $tickets->getNextTicket($ticket->id, $ticket->department_id);
+        $prev_ticket = $tickets->getPreviousTicket($ticket->id, $ticket->department_id);
         return view('staff/ticket_view', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => isset($success_msg) ? $success_msg : null,
@@ -245,8 +247,8 @@ class Tickets extends BaseController
             'ticket_priorities' => $tickets->getPriorities(),
             'kb_selector' => Services::kb()->kb_article_selector(),
             'notes' => $tickets->getNotes($ticket->id),
-            'next_ticket' => $tickets->getNextTicket($ticket->id, $ticket->department_id),
-            'previous_ticket' => $tickets->getPreviousTicket($ticket->id, $ticket->department_id)
+            'next_ticket' => isset($next_ticket) ? $next_ticket : null,
+            'previous_ticket' => isset($prev_ticket) ? $prev_ticket : null
         ]);
     }
 
@@ -268,10 +270,10 @@ class Tickets extends BaseController
                     'valid_email' => lang('Admin.error.enterValidEmail')
                 ],
                 'department' => [
-                        'required' => lang('Admin.error.invalidDepartment'),
-                        'is_natural_no_zero' => lang('Admin.error.invalidDepartment'),
-                        'is_not_unique' => lang('Admin.error.invalidDepartment'),
-                    ],
+                    'required' => lang('Admin.error.invalidDepartment'),
+                    'is_natural_no_zero' => lang('Admin.error.invalidDepartment'),
+                    'is_not_unique' => lang('Admin.error.invalidDepartment'),
+                ],
                 'priority' => [
                     'required' => lang('Admin.error.invalidPriority'),
                     'is_natural_no_zero' => lang('Admin.error.invalidPriority'),
