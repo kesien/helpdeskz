@@ -68,7 +68,8 @@ class Tickets extends BaseController
             'priorities' => $tickets->getPriorities(),
             'pager' => $result['pager'],
             'page_type' => $page,
-            'error_msg' => isset($error_msg) ? $error_msg : null
+            'error_msg' => isset($error_msg) ? $error_msg : null,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -79,10 +80,13 @@ class Tickets extends BaseController
             $this->session->setFlashdata('ticket_error', lang('Admin.error.ticketNotFound'));
             return redirect()->route('staff_tickets');
         }
-        $key = array_search($ticket->department_id, array_column($this->staff->getDepartments(), 'id'));
-        if (!is_numeric($key)) {
-            $this->session->setFlashdata('ticket_error', lang('Admin.error.ticketNotPermission'));
-            return redirect()->route('staff_tickets');
+        $departmentData = $this->staff->getDepartments();
+        if (!is_null($departmentData)) {
+            $key = array_search($ticket->department_id, array_column($this->staff->getDepartments(), 'id'));
+            if (!is_numeric($key)) {
+                $this->session->setFlashdata('ticket_error', lang('Admin.error.ticketNotPermission'));
+                return redirect()->route('staff_tickets');
+            }
         }
         $attachments = Services::attachments();
         #Download
@@ -248,7 +252,8 @@ class Tickets extends BaseController
             'kb_selector' => Services::kb()->kb_article_selector(),
             'notes' => $tickets->getNotes($ticket->id),
             'next_ticket' => isset($next_ticket) ? $next_ticket : null,
-            'previous_ticket' => isset($prev_ticket) ? $prev_ticket : null
+            'previous_ticket' => isset($prev_ticket) ? $prev_ticket : null,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -342,6 +347,7 @@ class Tickets extends BaseController
             'ticket_statuses' => $tickets->statusList(),
             'ticket_priorities' => $tickets->getPriorities(),
             'kb_selector' => Services::kb()->kb_article_selector(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -401,7 +407,8 @@ class Tickets extends BaseController
             'cannedList' => $tickets->getCannedList(),
             'lastCannedPosition' => $tickets->lastCannedPosition(),
             'error_msg' => isset($error_msg) ? $error_msg : null,
-            'success_msg' => isset($success_msg) ? $success_msg : null
+            'success_msg' => isset($success_msg) ? $success_msg : null,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -446,7 +453,8 @@ class Tickets extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => isset($success_msg) ? $success_msg : null,
             'canned' => $canned,
-            'staff_canned' => ($canned->staff_id > 0 ? $this->staff->getRow(['id' => $canned->staff_id], 'fullname') : null)
+            'staff_canned' => ($canned->staff_id > 0 ? $this->staff->getRow(['id' => $canned->staff_id], 'fullname') : null),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -480,6 +488,7 @@ class Tickets extends BaseController
         return view('staff/canned_form', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('canned_update') ? $this->session->getFlashdata('canned_update') : null,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 }

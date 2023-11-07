@@ -677,11 +677,13 @@ class Tickets
         }
 
         if (!$search_department) {
-            $this->ticketsModel->groupStart();
-            foreach ($staff_departments as $item) {
-                $this->ticketsModel->orWhere('tickets.department_id', $item->id);
+            if (!is_null($staff_departments)) {
+                $this->ticketsModel->groupStart();
+                foreach ($staff_departments as $item) {
+                    $this->ticketsModel->orWhere('tickets.department_id', $item->id);
+                }
+                $this->ticketsModel->groupEnd();
             }
-            $this->ticketsModel->groupEnd();
         }
 
         if ($request->getGet('sort')) {

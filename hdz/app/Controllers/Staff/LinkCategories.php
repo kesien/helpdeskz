@@ -43,7 +43,8 @@ class LinkCategories extends BaseController
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'first_position' => $link_categories->getFirstPosition(),
             'last_position' => $link_categories->getLastPosition(),
-            'list_link_categories' => $link_categories->getAll()
+            'list_link_categories' => $link_categories->getAll(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -105,7 +106,8 @@ class LinkCategories extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'link_category' => $link_category,
-            'list_link_categories' => $link_categories->getAll()
+            'list_link_categories' => $link_categories->getAll(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -138,7 +140,8 @@ class LinkCategories extends BaseController
         return view('staff/link_category_form', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
-            'list_link_categories' => $link_categories->getAll()
+            'list_link_categories' => $link_categories->getAll(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 

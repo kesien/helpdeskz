@@ -15,6 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <?php
     echo link_tag('assets/helpdeskz/images/favicon.ico', 'icon', 'image/x-icon') .
+        link_tag('assets/components/font-awesome/css/font-awesome.min.css') .
         link_tag('assets/components/fontawesome/css/all.min.css') .
         link_tag('assets/components/bootstrap/css/bootstrap.min.css') .
         link_tag('assets/admin/styles/shards-dashboards.1.1.0.css') .
@@ -83,23 +84,51 @@
                                 </span>
                             </a>
                         </li>
-
-                        <li class="nav-item dropdown <?php echo (uri_page() == 'kb' ? 'show' : ''); ?>">
-                            <a class="nav-link dropdown-toggle <?php echo (uri_page() == 'kb' ? 'active' : ''); ?>"
-                                data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">
-                                <i class="fa fa-book"></i>
-                                <span>
-                                    <?php echo lang('Admin.kb.menu'); ?>
-                                </span>
-                            </a>
-                            <div
-                                class="dropdown-menu dropdown-menu-small <?php echo (uri_page() == 'kb' ? 'show' : ''); ?>">
-                                <a class="dropdown-item <?php echo strpos(uri_string(), 'kb/categories') !== false ? 'active' : ''; ?>"
-                                    href="<?php echo site_url(route_to('staff_kb_categories')); ?>"><?php echo lang('Admin.kb.categories'); ?></a>
-                                <a class="dropdown-item <?php echo strpos(uri_string(), 'kb/articles') !== false ? 'active' : ''; ?>"
-                                    href="<?php echo site_url(route_to('staff_kb_articles')); ?>"><?php echo lang('Admin.kb.articles'); ?></a>
-                            </div>
-                        </li>
+                        <?php if (isset($category_links_map)): ?>
+                            <?php foreach ($category_links_map as $category_name => $links): ?>
+                                <?php if (count($links) > 0): ?>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-folder"></i>
+                                            <span>
+                                                <?php echo $category_name; ?>
+                                            </span>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-small">
+                                            <?php
+                                            foreach ($links as $link) {
+                                                echo '<a class="dropdown-item"
+                                                    href="' . $link->url . '" target="_blank">' . $link->name . "</a>";
+                                            }
+                                            ?>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                        <?php if (staff_data('admin') != 2): ?>
+                            <li class="nav-item dropdown <?php echo (uri_page() == 'kb' ? 'show' : ''); ?>">
+                                <a class="nav-link dropdown-toggle <?php echo (uri_page() == 'kb' ? 'active' : ''); ?>"
+                                    data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">
+                                    <i class="fa fa-book"></i>
+                                    <span>
+                                        <?php echo lang('Admin.kb.menu'); ?>
+                                    </span>
+                                </a>
+                                <div
+                                    class="dropdown-menu dropdown-menu-small <?php echo (uri_page() == 'kb' ? 'show' : ''); ?>">
+                                    <a class="dropdown-item <?php echo strpos(uri_string(), 'kb/categories') !== false ? 'active' : ''; ?>"
+                                        href="<?php echo site_url(route_to('staff_kb_categories')); ?>">
+                                        <?php echo lang('Admin.kb.categories'); ?>
+                                    </a>
+                                    <a class="dropdown-item <?php echo strpos(uri_string(), 'kb/articles') !== false ? 'active' : ''; ?>"
+                                        href="<?php echo site_url(route_to('staff_kb_articles')); ?>">
+                                        <?php echo lang('Admin.kb.articles'); ?>
+                                    </a>
+                                </div>
+                            </li>
+                        <?php endif; ?>
                         <?php
                         if (staff_data('admin') == 1) {
                             ?>
@@ -161,7 +190,9 @@
                                 <div
                                     class="dropdown-menu dropdown-menu-small <?php echo (uri_page() == 'tools' ? 'show' : ''); ?>">
                                     <a class="dropdown-item <?php echo strpos(uri_string(), 'tools/custom-fields') !== false ? 'active' : ''; ?>"
-                                        href="<?php echo site_url(route_to('staff_custom_fields')); ?>"><?php echo lang('Admin.tools.customFields'); ?></a>
+                                        href="<?php echo site_url(route_to('staff_custom_fields')); ?>">
+                                        <?php echo lang('Admin.tools.customFields'); ?>
+                                    </a>
                                 </div>
                             </li>
                             <li class="nav-item dropdown <?php echo (uri_page() == 'setup' ? 'show' : ''); ?>">
@@ -175,21 +206,36 @@
                                 <div
                                     class="dropdown-menu dropdown-menu-small <?php echo (uri_page() == 'setup' ? 'show' : ''); ?>">
                                     <a class="dropdown-item <?php echo strpos(uri_string(), 'setup/general') !== false ? 'active' : ''; ?>"
-                                        href="<?php echo site_url(route_to('staff_general_settings')); ?>"><?php echo lang('Admin.settings.general'); ?></a>
+                                        href="<?php echo site_url(route_to('staff_general_settings')); ?>">
+                                        <?php echo lang('Admin.settings.general'); ?>
+                                    </a>
                                     <a class="dropdown-item <?php echo strpos(uri_string(), 'setup/security') !== false ? 'active' : ''; ?>"
-                                        href="<?php echo site_url(route_to('staff_security_settings')); ?>"><?php echo lang('Admin.settings.security'); ?></a>
+                                        href="<?php echo site_url(route_to('staff_security_settings')); ?>">
+                                        <?php echo lang('Admin.settings.security'); ?>
+                                    </a>
                                     <a class="dropdown-item <?php echo strpos(uri_string(), 'setup/tickets') !== false ? 'active' : ''; ?>"
-                                        href="<?php echo site_url(route_to('staff_tickets_settings')); ?>"><?php echo lang('Admin.settings.tickets'); ?></a>
+                                        href="<?php echo site_url(route_to('staff_tickets_settings')); ?>">
+                                        <?php echo lang('Admin.settings.tickets'); ?>
+                                    </a>
                                     <a class="dropdown-item <?php echo strpos(uri_string(), 'setup/kb') !== false ? 'active' : ''; ?>"
-                                        href="<?php echo site_url(route_to('staff_kb_settings')); ?>"><?php echo lang('Admin.settings.kb'); ?></a>
+                                        href="<?php echo site_url(route_to('staff_kb_settings')); ?>">
+                                        <?php echo lang('Admin.settings.kb'); ?>
+                                    </a>
                                     <a class="dropdown-item <?php echo strpos(uri_string(), 'setup/email-templates') !== false ? 'active' : ''; ?>"
-                                        href="<?php echo site_url(route_to('staff_email_templates')); ?>"><?php echo lang('Admin.settings.emailTemplates'); ?></a>
+                                        href="<?php echo site_url(route_to('staff_email_templates')); ?>">
+                                        <?php echo lang('Admin.settings.emailTemplates'); ?>
+                                    </a>
                                     <a class="dropdown-item <?php echo strpos(uri_string(), 'setup/email-addresses') !== false ? 'active' : ''; ?>"
-                                        href="<?php echo site_url(route_to('staff_emails')); ?>"><?php echo lang('Admin.settings.emailAddresses'); ?></a>
+                                        href="<?php echo site_url(route_to('staff_emails')); ?>">
+                                        <?php echo lang('Admin.settings.emailAddresses'); ?>
+                                    </a>
                                     <a class="dropdown-item <?php echo strpos(uri_string(), 'setup/api') !== false ? 'active' : ''; ?>"
-                                        href="<?php echo site_url(route_to('staff_api')); ?>"><?php echo lang('Api.configuration'); ?></a>
+                                        href="<?php echo site_url(route_to('staff_api')); ?>">
+                                        <?php echo lang('Api.configuration'); ?>
+                                    </a>
                                 </div>
                             </li>
+
                             <?php
                         }
                         ?>

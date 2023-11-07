@@ -31,13 +31,17 @@ $this->section('content');
 <div class="card mb-3">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs border-bottom" id="myTab" role="tablist">
+            <?php if (staff_data('admin') != 2): ?>
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-selected="true">
+                        <?php echo lang('Admin.form.general'); ?>
+                    </a>
+                </li>
+            <?php endif; ?>
             <li class="nav-item">
-                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-selected="true">
-                    <?php echo lang('Admin.form.general'); ?>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="reply-tab" data-toggle="tab" href="#replyBox" role="tab" aria-selected="false">
+                <a class="nav-link <?php if (staff_data('admin') == 2) {
+                    echo 'active';
+                } ?>" id="reply-tab" data-toggle="tab" href="#replyBox" role="tab" aria-selected="false">
                     <?php echo lang('Admin.form.reply'); ?>
                 </a>
             </li>
@@ -50,107 +54,111 @@ $this->section('content');
     </div>
     <div class="card-body">
         <div class="tab-content mb-3" id="myTabContent">
-            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                <div class="pb-3">
-                    <div class="text-muted">
-                        <i class="far fa-calendar"></i>
-                        <?php echo lang_replace('Admin.form.createdOn', ['%date%' => dateFormat($ticket->date)]); ?>
-                        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                        <i class="far fa-calendar"></i>
-                        <?php echo lang_replace('Admin.form.updatedOn', ['%date%' => dateFormat($ticket->last_update)]); ?>
+            <?php if (staff_data('admin') != 2): ?>
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="pb-3">
+                        <div class="text-muted">
+                            <i class="far fa-calendar"></i>
+                            <?php echo lang_replace('Admin.form.createdOn', ['%date%' => dateFormat($ticket->date)]); ?>
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                            <i class="far fa-calendar"></i>
+                            <?php echo lang_replace('Admin.form.updatedOn', ['%date%' => dateFormat($ticket->last_update)]); ?>
+                        </div>
                     </div>
-                </div>
-                <?php echo form_open('', [], ['do' => 'update_information']); ?>
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>
-                                <?php echo lang('Admin.form.department'); ?>
-                            </label>
-                            <select name="department" class="form-control custom-select">
-                                <?php
-                                if (isset($departments_list)) {
-                                    foreach ($departments_list as $item) {
-                                        if ($item->id == $ticket->department_id) {
-                                            echo '<option value="' . $item->id . '" selected>' . $item->name . '</option>';
-                                        } else {
-                                            echo '<option value="' . $item->id . '">' . $item->name . '</option>';
+                    <?php echo form_open('', [], ['do' => 'update_information']); ?>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>
+                                    <?php echo lang('Admin.form.department'); ?>
+                                </label>
+                                <select name="department" class="form-control custom-select">
+                                    <?php
+                                    if (isset($departments_list)) {
+                                        foreach ($departments_list as $item) {
+                                            if ($item->id == $ticket->department_id) {
+                                                echo '<option value="' . $item->id . '" selected>' . $item->name . '</option>';
+                                            } else {
+                                                echo '<option value="' . $item->id . '">' . $item->name . '</option>';
+                                            }
                                         }
                                     }
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>
-                                <?php echo lang('Admin.form.status'); ?>
-                            </label>
-                            <select name="status" class="form-control custom-select">
-                                <?php
-                                foreach ($ticket_statuses as $k => $v) {
-                                    if ($k == $ticket->status) {
-                                        echo '<option value="' . $k . '" selected>' . lang('Admin.form.' . $v) . '</option>';
-                                    } else {
-                                        echo '<option value="' . $k . '">' . lang('Admin.form.' . $v) . '</option>';
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>
-                                <?php echo lang('Admin.form.priority'); ?>
-                            </label>
-                            <select name="priority" class="form-control custom-select">
-                                <?php
-                                if (isset($ticket_priorities)) {
-                                    foreach ($ticket_priorities as $item) {
-                                        if ($item->id == $ticket->priority_id) {
-                                            echo '<option value="' . $item->id . '" selected>' . $item->name . '</option>';
-                                        } else {
-                                            echo '<option value="' . $item->id . '">' . $item->name . '</option>';
-                                        }
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <?php
-                if ($ticket->custom_vars != '') {
-                    $custom_vars = unserialize($ticket->custom_vars);
-                    if (is_array($custom_vars)) {
-                        echo '<div class="row">';
-                        foreach ($custom_vars as $item) {
-                            ?>
-                            <div class="col-md-6 col-lg-4">
-                                <div class="form-group">
-                                    <label>
-                                        <?php echo $item['title']; ?>
-                                    </label>
-                                    <input type="text" value="<?php echo esc($item['value']); ?>" class="form-control" readonly>
-                                </div>
+                                    ?>
+                                </select>
                             </div>
-                            <?php
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>
+                                    <?php echo lang('Admin.form.status'); ?>
+                                </label>
+                                <select name="status" class="form-control custom-select">
+                                    <?php
+                                    foreach ($ticket_statuses as $k => $v) {
+                                        if ($k == $ticket->status) {
+                                            echo '<option value="' . $k . '" selected>' . lang('Admin.form.' . $v) . '</option>';
+                                        } else {
+                                            echo '<option value="' . $k . '">' . lang('Admin.form.' . $v) . '</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>
+                                    <?php echo lang('Admin.form.priority'); ?>
+                                </label>
+                                <select name="priority" class="form-control custom-select">
+                                    <?php
+                                    if (isset($ticket_priorities)) {
+                                        foreach ($ticket_priorities as $item) {
+                                            if ($item->id == $ticket->priority_id) {
+                                                echo '<option value="' . $item->id . '" selected>' . $item->name . '</option>';
+                                            } else {
+                                                echo '<option value="' . $item->id . '">' . $item->name . '</option>';
+                                            }
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+                    if ($ticket->custom_vars != '') {
+                        $custom_vars = unserialize($ticket->custom_vars);
+                        if (is_array($custom_vars)) {
+                            echo '<div class="row">';
+                            foreach ($custom_vars as $item) {
+                                ?>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <label>
+                                            <?php echo $item['title']; ?>
+                                        </label>
+                                        <input type="text" value="<?php echo esc($item['value']); ?>" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                            echo '</div>';
                         }
-                        echo '</div>';
                     }
-                }
-                ?>
-                <div class="form-group">
-                    <button class="btn btn-primary">
-                        <?php echo lang('Admin.form.save'); ?>
-                    </button>
-                </div>
+                    ?>
+                    <div class="form-group">
+                        <button class="btn btn-primary">
+                            <?php echo lang('Admin.form.save'); ?>
+                        </button>
+                    </div>
 
-                <?php echo form_close(); ?>
-            </div>
-            <div class="tab-pane fade" id="replyBox" role="tabpanel" aria-labelledby="reply-tab">
+                    <?php echo form_close(); ?>
+                </div>
+            <?php endif; ?>
+            <div class="tab-pane fade <?php if (staff_data('admin') == 2) {
+                echo 'show active';
+            } ?>" id="replyBox" role="tabpanel" aria-labelledby="reply-tab">
                 <?php
                 echo form_open_multipart('', [], ['do' => 'reply']);
                 ?>
@@ -258,11 +266,11 @@ $this->section('content');
                                 if (staff_data('admin') == 1 || staff_data('id') == $note->staff_id) {
                                     ?>
                                     <div class="float-right">
-                                        <?php echo form_open('', ['id' => 'noteForm' . $item->id], ['do' => 'delete_note', 'note_id' => $note->id]); ?>
+                                        <?php echo form_open('', ['id' => 'noteForm' . $note->id], ['do' => 'delete_note', 'note_id' => $note->id]); ?>
                                         <button type="button" onclick="editNoteToggle('<?php echo $note->id; ?>');"
                                             class="btn btn-link" title="Edit note" data-toggle="tooltip"><i
                                                 class="fa fa-edit"></i></button>
-                                        <button type="button" onclick="deleteNote('noteForm<?php echo $item->id; ?>');"
+                                        <button type="button" onclick="deleteNote('noteForm<?php echo $note->id; ?>');"
                                             class="btn btn-link" title="Delete note" data-toggle="tooltip"><i
                                                 class="fa fa-trash-alt"></i></button>
                                         <?php echo form_close(); ?>
@@ -278,7 +286,7 @@ $this->section('content');
                                 </p>
                             </div>
                             <div id="inputNote<?php echo $note->id; ?>" style="display: none">
-                                <?php echo form_open('', ['id' => 'editNoteForm' . $item->id], ['do' => 'edit_note', 'note_id' => $note->id]); ?>
+                                <?php echo form_open('', ['id' => 'editNoteForm' . $note->id], ['do' => 'edit_note', 'note_id' => $note->id]); ?>
                                 <div class="form-group">
                                     <textarea class="form-control"
                                         name="new_note"><?php echo set_value('new_note', $note->message, false); ?></textarea>

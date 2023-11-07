@@ -50,17 +50,23 @@ $page_controller = isset($page_controller) ? $page_controller : '';
                 <div class="nav-wrapper">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo site_url(route_to('home')); ?>"><?php echo lang('Client.kb.menu'); ?></a>
+                            <a class="nav-link" href="<?php echo site_url(route_to('home')); ?>">
+                                <?php echo lang('Client.kb.menu'); ?>
+                            </a>
                         </li>
                         <?php if (client_online()): ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="<?php echo site_url(route_to('view_tickets')); ?>"><?php echo lang('Client.viewTickets.menu'); ?></a>
+                                <a class="nav-link" href="<?php echo site_url(route_to('view_tickets')); ?>">
+                                    <?php echo lang('Client.viewTickets.menu'); ?>
+                                </a>
                             </li>
                         <?php endif; ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo site_url(route_to('submit_ticket')); ?>"><?php echo lang('Client.submitTicket.menu'); ?></a>
+                            <a class="nav-link" href="<?php echo site_url(route_to('submit_ticket')); ?>">
+                                <?php echo lang('Client.submitTicket.menu'); ?>
+                            </a>
                         </li>
-                        <?php if (client_online()): ?>
+                        <?php if (client_online() && !staff_online()): ?>
                             <li class="nav-item dropdown <?php if ($page_controller == 'account') {
                                 echo 'active';
                             } ?>">
@@ -69,15 +75,28 @@ $page_controller = isset($page_controller) ? $page_controller : '';
                                     <?php echo lang('Client.account.menu'); ?>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="<?php echo site_url(route_to('profile')); ?>"><?php echo lang('Client.account.editProfile'); ?></a>
-                                    <a class="dropdown-item" href="<?php echo site_url(route_to('logout')); ?>"><?php echo lang('Client.account.logout'); ?></a>
+                                    <a class="dropdown-item" href="<?php echo site_url(route_to('profile')); ?>">
+                                        <?php echo lang('Client.account.editProfile'); ?>
+                                    </a>
+                                    <a class="dropdown-item" href="<?php echo site_url(route_to('logout')); ?>">
+                                        <?php echo lang('Client.account.logout'); ?>
+                                    </a>
                                 </div>
                             </li>
-                        <?php else: ?>
+                        <?php elseif (!client_online() && !staff_online()): ?>
                             <li class="nav-item <?php if ($page_controller == 'login') {
                                 echo 'active';
                             } ?>">
-                                <a class="nav-link" href="<?php echo site_url(route_to('login')); ?>"><?php echo lang('Client.login.menu'); ?></a>
+                                <a class="nav-link" href="<?php echo site_url(route_to('login')); ?>">
+                                    <?php echo lang('Client.login.menu'); ?>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                        <?php if (staff_online()): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo site_url(route_to('staff_dashboard')); ?>">
+                                    <?php echo lang('Client.staff_dashboard'); ?>
+                                </a>
                             </li>
                         <?php endif; ?>
                         <?php if (isset($category_links_map)): ?>

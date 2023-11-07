@@ -4,3 +4,10 @@
 .bg-staff{
     background-color: #FFF5E5;
 }
+.kb_article_icon {
+    color: #C7C7C7;
+}
+.kb_article_icon_lg{
+    color: #E5E5E5;
+    font-size: 40px;
+}

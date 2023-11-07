@@ -38,7 +38,8 @@ class Links extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'list_links' => $links->getAll(),
-            'list_link_categories' => $link_categories->getAll()
+            'list_link_categories' => $link_categories->getAll(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -88,7 +89,8 @@ class Links extends BaseController
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'link' => $link,
             'list_link' => $links->getAll(),
-            'list_link_categories' => $linkCategories->getAll()
+            'list_link_categories' => $linkCategories->getAll(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -128,7 +130,8 @@ class Links extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'list_links' => $links->getAll(),
-            'list_link_categories' => $linkCategories->getAll()
+            'list_link_categories' => $linkCategories->getAll(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 

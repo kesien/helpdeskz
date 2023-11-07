@@ -165,6 +165,16 @@ $routes->group(Helpdesk::STAFF_URI, [
     $routes->add('kb/categories', 'Staff\Kb::categories', [
         'as' => 'staff_kb_categories'
     ]);
+    $routes->add('kb/categories/view/(:num)', 'Staff\Kb::viewCategory/$1', [
+        'as' => 'staff_kb_view_category'
+    ]);
+    $routes->add('kb/articles/view/(:num)', 'Staff\Kb::viewArticle/$1', [
+        'as' => 'staff_kb_view_article'
+    ]);
+    $routes->add('kb/articles/view/(:num)', 'Staff\Kb::download/$1/$2', [
+        'as' => 'download_article',
+        'filter' => 'userAuth:user'
+    ]);
     $routes->add('kb/category/new', 'Staff\Kb::newCategory', [
         'as' => 'staff_kb_new_category'
     ]);

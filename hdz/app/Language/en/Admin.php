@@ -89,6 +89,7 @@ return [
         'editCategory' => 'Edit category',
         'addSubcategory' => 'Add subcategory',
         'newArticle' => 'New article',
+        'noArticle' => 'There are no articles for this category',
         'removeCategory' => 'Remove category',
         'removeConfirmation' => 'Do you really want to remove this category and its sub categories and articles?',
         'categoryRemoved' => 'Category has been removed.',

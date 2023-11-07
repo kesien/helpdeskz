@@ -24,14 +24,14 @@ use Config\Services;
 class BaseController extends Controller
 {
 
-	/**
-	 * An array of helpers to be loaded automatically upon
-	 * class instantiation. These helpers will be available
-	 * to all other controllers that extend BaseController.
-	 *
-	 * @var array
-	 */
-	protected $helpers = ['cookie','form','html','helpdesk','number','filesystem','text'];
+    /**
+     * An array of helpers to be loaded automatically upon
+     * class instantiation. These helpers will be available
+     * to all other controllers that extend BaseController.
+     *
+     * @var array
+     */
+    protected $helpers = ['cookie', 'form', 'html', 'helpdesk', 'number', 'filesystem', 'text'];
     /**
      * @var $session Session
      */
@@ -50,31 +50,100 @@ class BaseController extends Controller
     protected $client;
 
 
-	/**
-	 * Constructor.
-	 */
-	public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
-	{
+    /**
+     * Constructor.
+     */
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
+    {
 
-		// Do Not Edit This Line
-		parent::initController($request, $response, $logger);
-		//--------------------------------------------------------------------
-		// Preload any models, libraries, etc, here.
-		//--------------------------------------------------------------------
-		// E.g.:
-		// $this->session = \Config\Services::session();
-        if(!defined('INSTALL_ENVIRONMENT')){
+        // Do Not Edit This Line
+        parent::initController($request, $response, $logger);
+        //--------------------------------------------------------------------
+        // Preload any models, libraries, etc, here.
+        //--------------------------------------------------------------------
+        // E.g.:
+        // $this->session = \Config\Services::session();
+        if (!defined('INSTALL_ENVIRONMENT')) {
             $this->client = Services::client();
             $this->settings = Services::settings();
             $this->session = Services::session();
             $this->staff = Services::staff();
-            if($this->settings->config('maintenance') == 1){
-                if(!$this->staff->isOnline()){
+            if ($this->settings->config('maintenance') == 1) {
+                if (!$this->staff->isOnline()) {
                     die();
                 }
             }
 
         }
-	}
+    }
+
+    private function findLinksForCategory($links, $categoryId)
+    {
+        $categoryLinks = [];
+        foreach ($links as $link) {
+            if ($link->link_category_id === $categoryId) {
+                $categoryLinks[] = $link;
+            }
+        }
+        return $categoryLinks;
+    }
+
+    private function findUncategorizedLinks($links)
+    {
+        $categoryLinks = [];
+        foreach ($links as $link) {
+            if (empty($link->link_category_id)) {
+                $categoryLinks[] = $link;
+            }
+        }
+        return $categoryLinks;
+    }
+
+    public function getLinkCategoryMap()
+    {
+        $links = Services::links();
+        $link_categories = Services::linkCategories();
+        $categoryLinksMap = [];
+        $allLinks = $links->getAll();
+        $allCategories = $link_categories->getAll();
+
+        if (!isset($allLinks) || count($allLinks) == 0) {
+            return $categoryLinksMap;
+        }
+
+        // Categorize links based on their link_category_id if there are categories
+        if (!empty($allCategories)) {
+            foreach ($allLinks as $link) {
+                $categoryId = $link->link_category_id;
+                if (!isset($categoryLinksMap[$categoryId])) {
+                    $categoryLinksMap[$categoryId] = [];
+                }
+                $categoryLinksMap[$categoryId][] = $link;
+            }
+        }
+
+        // Retrieve uncategorized links
+        $uncategorizedLinks = $this->findUncategorizedLinks($allLinks);
+        if (!empty($uncategorizedLinks)) {
+            $categoryLinksMap["Uncategorized"] = $uncategorizedLinks;
+        }
+
+        // Retrieve category names if there are categories
+        $categoryNames = [];
+        if (!empty($allCategories)) {
+            foreach ($allCategories as $category) {
+                $categoryNames[$category->id] = $category->name;
+            }
+        }
+
+        // Transform the category IDs into category names
+        $transformedCategoryLinksMap = [];
+        foreach ($categoryLinksMap as $categoryId => $links) {
+            $categoryName = isset($categoryNames[$categoryId]) ? $categoryNames[$categoryId] : "Uncategorized";
+            $transformedCategoryLinksMap[$categoryName] = $links;
+        }
+
+        return $transformedCategoryLinksMap;
+    }
 
 }

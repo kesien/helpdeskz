@@ -119,6 +119,7 @@ class Settings extends BaseController
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'maintenance_error' => isset($maintenance_error) ? $maintenance_error : null,
             'maintenance_success' => $this->session->has('maintenance_success') ? $this->session->getFlashdata('maintenance_success') : null,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -171,6 +172,7 @@ class Settings extends BaseController
         return view('staff/settings_security', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -234,6 +236,7 @@ class Settings extends BaseController
         return view('staff/settings_tickets', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -269,6 +272,7 @@ class Settings extends BaseController
         return view('staff/settings_kb', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -295,7 +299,8 @@ class Settings extends BaseController
         }
         return view('staff/email_template', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
-            'emailsList' => $emailsLib->getAllTemplates()
+            'emailsList' => $emailsLib->getAllTemplates(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -330,7 +335,8 @@ class Settings extends BaseController
         return view('staff/email_template_form', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
-            'template' => $template
+            'template' => $template,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -358,7 +364,8 @@ class Settings extends BaseController
         return view('staff/email_addresses', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
-            'emailsList' => $emailsLib->getAll()
+            'emailsList' => $emailsLib->getAll(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -412,7 +419,8 @@ class Settings extends BaseController
         return view('staff/email_addresses_form', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
-            'departments' => Services::departments()->getAll()
+            'departments' => Services::departments()->getAll(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -473,7 +481,8 @@ class Settings extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'departments' => Services::departments()->getAll(),
-            'email' => $email
+            'email' => $email,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -506,6 +515,7 @@ class Settings extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'api_list' => $api->getList(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -549,6 +559,7 @@ class Settings extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'api_permissions' => $api->permissionList(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -599,7 +610,8 @@ class Settings extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'api_permissions' => $api->permissionList(),
-            'api_info' => $api_info
+            'api_info' => $api_info,
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 }

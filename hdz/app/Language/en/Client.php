@@ -2,6 +2,7 @@
 
 // override core en language system validation or define your own en language validation message
 return [
+    'staff_dashboard' => 'Go to staff dashboard',
     'kb' => [
         'title' => 'Knowledge Base',
         'menu' => 'Knowledge base',
@@ -26,7 +27,7 @@ return [
         'title' => 'Submit a support request',
         'menu' => 'Submit ticket',
         'selectDepartment' => 'If you can\'t find a solution to your problem, you can submit a ticket by selecting the appropriate department below.',
-'generalInformation' => 'General information',
+        'generalInformation' => 'General information',
         'requestReceived' => 'Your request has been received',
         'requestReceivedDescription' => 'We have received your request and our team will get back to you shortly. You can log in to the helpdesk to review the status of your request, or check your email for further updates.',
     ],

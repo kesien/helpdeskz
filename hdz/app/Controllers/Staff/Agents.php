@@ -32,7 +32,8 @@ class Agents extends BaseController
         return view('staff/agents', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
-            'agents_list' => $this->staff->getAgents()
+            'agents_list' => $this->staff->getAgents(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -104,7 +105,8 @@ class Agents extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'agent' => $agent,
-            'departments' => Services::departments()->getAll()
+            'departments' => Services::departments()->getAll(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 
@@ -173,7 +175,8 @@ class Agents extends BaseController
         return view('staff/agents_form', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
-            'departments' => Services::departments()->getAll()
+            'departments' => Services::departments()->getAll(),
+            'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
 }
