@@ -75,15 +75,17 @@
                                 </span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo (uri_page() == 'canned-responses' ? 'active' : ''); ?>"
-                                href="<?php echo site_url(route_to('staff_canned')); ?>">
-                                <i class="far fa-comment-dots"></i>
-                                <span>
-                                    <?php echo lang('Admin.cannedResponses.menu'); ?>
-                                </span>
-                            </a>
-                        </li>
+                        <?php if (staff_data('admin') != 2): ?>
+                            <li class="nav-item">
+                                <a class="nav-link <?php echo (uri_page() == 'canned-responses' ? 'active' : ''); ?>"
+                                    href="<?php echo site_url(route_to('staff_canned')); ?>">
+                                    <i class="far fa-comment-dots"></i>
+                                    <span>
+                                        <?php echo lang('Admin.cannedResponses.menu'); ?>
+                                    </span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
                         <?php if (isset($category_links_map)): ?>
                             <?php foreach ($category_links_map as $category_name => $links): ?>
                                 <?php if (count($links) > 0): ?>
@@ -107,28 +109,26 @@
                                 <?php endif; ?>
                             <?php endforeach; ?>
                         <?php endif; ?>
-                        <?php if (staff_data('admin') != 2): ?>
-                            <li class="nav-item dropdown <?php echo (uri_page() == 'kb' ? 'show' : ''); ?>">
-                                <a class="nav-link dropdown-toggle <?php echo (uri_page() == 'kb' ? 'active' : ''); ?>"
-                                    data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">
-                                    <i class="fa fa-book"></i>
-                                    <span>
-                                        <?php echo lang('Admin.kb.menu'); ?>
-                                    </span>
+                        <li class="nav-item dropdown <?php echo (uri_page() == 'kb' ? 'show' : ''); ?>">
+                            <a class="nav-link dropdown-toggle <?php echo (uri_page() == 'kb' ? 'active' : ''); ?>"
+                                data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">
+                                <i class="fa fa-book"></i>
+                                <span>
+                                    <?php echo lang('Admin.kb.menu'); ?>
+                                </span>
+                            </a>
+                            <div
+                                class="dropdown-menu dropdown-menu-small <?php echo (uri_page() == 'kb' ? 'show' : ''); ?>">
+                                <a class="dropdown-item <?php echo strpos(uri_string(), 'kb/categories') !== false ? 'active' : ''; ?>"
+                                    href="<?php echo site_url(route_to('staff_kb_categories')); ?>">
+                                    <?php echo lang('Admin.kb.categories'); ?>
                                 </a>
-                                <div
-                                    class="dropdown-menu dropdown-menu-small <?php echo (uri_page() == 'kb' ? 'show' : ''); ?>">
-                                    <a class="dropdown-item <?php echo strpos(uri_string(), 'kb/categories') !== false ? 'active' : ''; ?>"
-                                        href="<?php echo site_url(route_to('staff_kb_categories')); ?>">
-                                        <?php echo lang('Admin.kb.categories'); ?>
-                                    </a>
-                                    <a class="dropdown-item <?php echo strpos(uri_string(), 'kb/articles') !== false ? 'active' : ''; ?>"
-                                        href="<?php echo site_url(route_to('staff_kb_articles')); ?>">
-                                        <?php echo lang('Admin.kb.articles'); ?>
-                                    </a>
-                                </div>
-                            </li>
-                        <?php endif; ?>
+                                <a class="dropdown-item <?php echo strpos(uri_string(), 'kb/articles') !== false ? 'active' : ''; ?>"
+                                    href="<?php echo site_url(route_to('staff_kb_articles')); ?>">
+                                    <?php echo lang('Admin.kb.articles'); ?>
+                                </a>
+                            </div>
+                        </li>
                         <?php
                         if (staff_data('admin') == 1) {
                             ?>

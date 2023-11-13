@@ -38,12 +38,14 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                     <?php echo lang('Admin.form.manage'); ?>
                 </h6>
             </div>
-            <div class="col-sm-7">
-                <a href="<?php echo site_url(route_to('staff_kb_new_category')); ?>"
-                    class="btn btn-primary btn-sm float-right"><i class="fa fa-plus"></i>
-                    <?php echo lang('Admin.kb.newCategory'); ?>
-                </a>
-            </div>
+            <?php if (staff_data('admin') != 2): ?>
+                <div class="col-sm-7">
+                    <a href="<?php echo site_url(route_to('staff_kb_new_category')); ?>"
+                        class="btn btn-primary btn-sm float-right"><i class="fa fa-plus"></i>
+                        <?php echo lang('Admin.kb.newCategory'); ?>
+                    </a>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
     <table class="table table-hover table-striped">
@@ -58,7 +60,9 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                 <th>
                     <?php echo lang('Admin.form.type'); ?>
                 </th>
-                <th></th>
+                <?php if (staff_data('admin') != 2): ?>
+                    <th></th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody>
@@ -78,40 +82,42 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                         <td>
                             <?php echo ($category->public ? lang('Admin.form.public') : lang('Admin.form.private')); ?>
                         </td>
-                        <td class="text-right">
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <?php echo lang('Admin.form.action'); ?>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item"
-                                        href="<?php echo site_url(route_to('staff_kb_edit_category', $category->id)); ?>"><i
-                                            class="far fa-edit"></i>
-                                        <?php echo lang('Admin.kb.editCategory'); ?>
-                                    </a>
-                                    <a class="dropdown-item"
-                                        href="<?php echo site_url(route_to('staff_kb_new_category')) . '?parent=' . $category->id; ?>"><i
-                                            class="far fa-folder-open"></i>
-                                        <?php echo lang('Admin.kb.addSubcategory'); ?>
-                                    </a>
-                                    <a class="dropdown-item"
-                                        href="<?php echo site_url(route_to('staff_kb_new_article')) . '?category=' . $category->id; ?>"><i
-                                            class="far fa-file-alt"></i>
-                                        <?php echo lang('Admin.kb.newArticle'); ?>
-                                    </a>
-                                    <button class="dropdown-item" onclick="removeCategory(<?php echo $category->id; ?>);"><i
-                                            class="far fa-trash-alt"></i>
-                                        <?php echo lang('Admin.kb.removeCategory'); ?>
+                        <?php if (staff_data('admin') != 2): ?>
+                            <td class="text-right">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <?php echo lang('Admin.form.action'); ?>
                                     </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item"
+                                            href="<?php echo site_url(route_to('staff_kb_edit_category', $category->id)); ?>"><i
+                                                class="far fa-edit"></i>
+                                            <?php echo lang('Admin.kb.editCategory'); ?>
+                                        </a>
+                                        <a class="dropdown-item"
+                                            href="<?php echo site_url(route_to('staff_kb_new_category')) . '?parent=' . $category->id; ?>"><i
+                                                class="far fa-folder-open"></i>
+                                            <?php echo lang('Admin.kb.addSubcategory'); ?>
+                                        </a>
+                                        <a class="dropdown-item"
+                                            href="<?php echo site_url(route_to('staff_kb_new_article')) . '?category=' . $category->id; ?>"><i
+                                                class="far fa-file-alt"></i>
+                                            <?php echo lang('Admin.kb.newArticle'); ?>
+                                        </a>
+                                        <button class="dropdown-item" onclick="removeCategory(<?php echo $category->id; ?>);"><i
+                                                class="far fa-trash-alt"></i>
+                                            <?php echo lang('Admin.kb.removeCategory'); ?>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                            <?php
-                            if ($move_button = kb_cat_move_link($category->id, $category->parent)) {
-                                echo '<div class="btn-group float-left ml-2">' . $move_button . '</div>';
-                            }
-                            ?>
-                        </td>
+                                <?php
+                                if ($move_button = kb_cat_move_link($category->id, $category->parent)) {
+                                    echo '<div class="btn-group float-left ml-2">' . $move_button . '</div>';
+                                }
+                                ?>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                     <?php
                 }

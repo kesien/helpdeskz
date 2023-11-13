@@ -40,12 +40,14 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                     <?php echo lang('Admin.form.manage'); ?>
                 </h6>
             </div>
-            <div class="col-sm-7">
-                <a href="<?php echo site_url(route_to('staff_kb_new_article')); ?>"
-                    class="btn btn-primary btn-sm float-right"><i class="fa fa-plus"></i>
-                    <?php echo lang('Admin.kb.newArticle'); ?>
-                </a>
-            </div>
+            <?php if (staff_data('admin') != 2): ?>
+                <div class="col-sm-7">
+                    <a href="<?php echo site_url(route_to('staff_kb_new_article')); ?>"
+                        class="btn btn-primary btn-sm float-right"><i class="fa fa-plus"></i>
+                        <?php echo lang('Admin.kb.newArticle'); ?>
+                    </a>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
     <div class="card-body">
@@ -92,7 +94,9 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                 <th>
                     <?php echo lang('Admin.form.views'); ?>
                 </th>
-                <th></th>
+                <?php if (staff_data('admin') != 2): ?>
+                    <th></th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody>
@@ -127,25 +131,27 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                         <td>
                             <?php echo $item->views; ?>
                         </td>
-                        <td class="text-right">
-                            <div class="dropdown ">
-                                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <?php echo lang('Admin.form.action'); ?>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item"
-                                        href="<?php echo site_url(route_to('staff_kb_edit_article', $item->id)); ?>"><i
-                                            class="far fa-edit"></i>
-                                        <?php echo lang('Admin.kb.editArticle'); ?>
-                                    </a>
-                                    <button class="dropdown-item" onclick="removeArticle(<?php echo $item->id; ?>);"><i
-                                            class="far fa-trash-alt"></i>
-                                        <?php echo lang('Admin.form.delete'); ?>
+                        <?php if (staff_data('admin') != 2): ?>
+                            <td class="text-right">
+                                <div class="dropdown ">
+                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <?php echo lang('Admin.form.action'); ?>
                                     </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item"
+                                            href="<?php echo site_url(route_to('staff_kb_edit_article', $item->id)); ?>"><i
+                                                class="far fa-edit"></i>
+                                            <?php echo lang('Admin.kb.editArticle'); ?>
+                                        </a>
+                                        <button class="dropdown-item" onclick="removeArticle(<?php echo $item->id; ?>);"><i
+                                                class="far fa-trash-alt"></i>
+                                            <?php echo lang('Admin.form.delete'); ?>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                     <?php
                 }
