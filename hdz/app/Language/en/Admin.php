@@ -1,6 +1,7 @@
 <?php
 return [
     'next-ticket' => 'Next ticket',
+    'client_dashboard' => 'Go to client dashboard',
     'previous-ticket' => 'Previous ticket',
     'login' => [
         'title' => 'Login into your account',

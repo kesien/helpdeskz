@@ -75,6 +75,11 @@
                                 </span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo site_url(route_to('/')); ?>">
+                                <?php echo lang('Admin.client_dashboard'); ?>
+                            </a>
+                        </li>
                         <?php if (staff_data('admin') != 2): ?>
                             <li class="nav-item">
                                 <a class="nav-link <?php echo (uri_page() == 'canned-responses' ? 'active' : ''); ?>"
