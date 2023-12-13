@@ -618,6 +618,7 @@ class Tickets
                     $this->ticketsModel->groupStart()
                         ->where('tickets.id', $request->getGet('keyword'))
                         ->orLike('tickets.subject', $request->getGet('keyword'))
+                        ->orLike('t.message', $request->getGet('keyword'))
                         ->orLike('u.fullname', $request->getGet('keyword'))
                         ->orWhere('u.email', $request->getGet('keyword'))
                         ->groupEnd();
@@ -703,10 +704,11 @@ class Tickets
         }
 
         $db = Database::connect();
-        $result = $this->ticketsModel->select('tickets.*, u.fullname, d.name as department_name,
+        $result = $this->ticketsModel->select('tickets.*, t.message, u.fullname, d.name as department_name,
         p.name as priority_name, p.color as priority_color, 
         IF(last_replier=0, "", (SELECT username FROM ' . $db->prefixTable('staff') . ' WHERE id=last_replier)) as staff_username')
             ->join('users as u', 'u.id=tickets.user_id')
+            ->join('tickets_messages as t', 't.ticket_id=tickets.id')
             ->join('departments as d', 'd.id=tickets.department_id')
             ->join('priority as p', 'p.id=tickets.priority_id')
             ->paginate($this->settings->config('tickets_page'));
