@@ -21,39 +21,63 @@ class MailFetcher
     private $attachment_dir;
     public function __construct()
     {
-        $this->attachment_dir = WRITEPATH.'attachments';
+        $this->attachment_dir = WRITEPATH . 'attachments';
     }
     public function parse_imap()
     {
         $emails = new Emails();
-        if($email_list = $emails->getFetcher()){
-            foreach ($email_list as $email)
-            {
+        if ($email_list = $emails->getFetcher()) {
+            foreach ($email_list as $email) {
                 $mailbox = new Mailbox(
-                    '{'.$email->imap_host.':'.$email->imap_port.'/'.$email->incoming_type.'/ssl/novalidate-cert}INBOX', // IMAP server and mailbox folder
+                    '{' . $email->imap_host . ':' . $email->imap_port . '/' . $email->incoming_type . '/ssl/novalidate-cert}INBOX', // IMAP server and mailbox folder
                     $email->imap_username, // Username for the before configured mailbox
                     $email->imap_password // Password for the before configured username
                 );
-                try{
+                try {
                     $mailsIds = $mailbox->searchMailbox('ALL');
-                }catch (ConnectionException $ex){
-                    log_message('error','IMAP connection failed: '.$ex);
+                } catch (ConnectionException $ex) {
+                    log_message('error', 'IMAP connection failed: ' . $ex);
                     return false;
                 }
-                if(!$mailsIds){
+                if (!$mailsIds) {
                     return false;
                 }
                 $mailbox->setAttachmentsDir($this->attachment_dir);
-                foreach ($mailsIds as $k => $v){
+                foreach ($mailsIds as $k => $v) {
                     $mail = $mailbox->getMail($mailsIds[$k]);
                     $message = ($mail->textHtml) ? $this->cleanMessage($mail->textHtml) : $mail->textPlain;
-                    $toTicket = $this->parseToTicket($mail->fromName, $mail->fromAddress, $mail->subject, $message, $email->department_id);
+                    preg_match('/Auftrag von:\s*([^\s]+)/', $message, $matches);
+                    $fromEmailAddress = isset($matches[1]) ? $matches[1] : $mail->fromAddress;
+                    preg_match('/Attachments:\s*([^\s]+)/', $message, $matches);
+                    $link = isset($matches[1]) ? $matches[1] : '';
+                    $toTicket = $this->parseToTicket($mail->fromName, $fromEmailAddress, $mail->subject, $message, $email->department_id);
                     list($ticket_id, $message_id) = $toTicket;
                     //Attachments
                     $attachments = new Attachments();
-                    if(!empty($mail->getAttachments())){
-                        foreach ($mail->getAttachments() as $file){
-                            if(file_exists($file->filePath)){
+                    if (!empty($link)) {
+                        $fileContents = file_get_contents($link);
+                        $fileName = basename($link);
+                        $filePath = realpath(rtrim($this->attachment_dir, '\/ ')) . DIRECTORY_SEPARATOR . $fileName;
+                        if (file_exists($filePath)) {
+                            file_put_contents($filePath, $fileContents);
+                            $fileInfo = new File($filePath);
+                            $size = $fileInfo->getSize();
+                            $file_type = $fileInfo->getMimeType();
+                            $filename = $fileInfo->getRandomName();
+                            $original_name = $file->name;
+                            $attachments->addFromTicket(
+                                $ticket_id,
+                                $message_id,
+                                $original_name,
+                                $filename,
+                                $size,
+                                $file_type
+                            );
+                        }
+                    }
+                    if (!empty($mail->getAttachments())) {
+                        foreach ($mail->getAttachments() as $file) {
+                            if (file_exists($file->filePath)) {
                                 $fileInfo = new File($file->filePath);
                                 $size = $fileInfo->getSize();
                                 $file_type = $fileInfo->getMimeType();
@@ -82,19 +106,19 @@ class MailFetcher
     public function parse_pipe()
     {
         #Read email
-        $tmpfilepath = tempnam(WRITEPATH.'mails', strval(mt_rand(1000,9999)));
-        $tmpfp = fopen($tmpfilepath,"w");
+        $tmpfilepath = tempnam(WRITEPATH . 'mails', strval(mt_rand(1000, 9999)));
+        $tmpfp = fopen($tmpfilepath, "w");
         $fp = fopen("php://stdin", "r");
         $fileContent = @stream_get_contents($fp);
         fwrite($tmpfp, $fileContent);
         fclose($tmpfp);
 
         #Parse email
-        $mailPath = WRITEPATH.'mails';
+        $mailPath = WRITEPATH . 'mails';
         $files = directory_map($mailPath);
-        foreach ($files as $file){
-            $pipe_file = $mailPath.DIRECTORY_SEPARATOR.$file;
-            if(is_file($pipe_file)){
+        foreach ($files as $file) {
+            $pipe_file = $mailPath . DIRECTORY_SEPARATOR . $file;
+            if (is_file($pipe_file)) {
                 $this->convert_pipe($pipe_file);
             }
         }
@@ -108,7 +132,7 @@ class MailFetcher
         $message = $mailParser->parse($handle);
         fclose($handle);
         $from_address = $message->getHeaderValue(HeaderConsts::FROM);
-        if($from_address == ''){
+        if ($from_address == '') {
             @unlink($pipeFile);
             return false;
         }
@@ -116,12 +140,12 @@ class MailFetcher
         $to = $message->getHeaderValue(HeaderConsts::TO);
         $subject = $message->getHeaderValue(HeaderConsts::SUBJECT);
         $body = $this->cleanMessage($message->getHtmlContent());
-        if($body == ''){
+        if ($body == '') {
             $body = $message->getTextContent();
         }
 
         $emails = new Emails();
-        if(!$emailData = $emails->getRow(['email' => $to])){
+        if (!$emailData = $emails->getRow(['email' => $to])) {
             @unlink($pipeFile);
             return false;
         }
@@ -131,15 +155,15 @@ class MailFetcher
         //Attachments
         $attachments = new Attachments();
         $total_attachments = $message->getAttachmentCount();
-        if($total_attachments > 0){
-            foreach ($message->getAllAttachmentParts() as $attachmentPart){
+        if ($total_attachments > 0) {
+            foreach ($message->getAllAttachmentParts() as $attachmentPart) {
                 $fileName = $attachmentPart->getFilename();
-                if($fileName == ''){
+                if ($fileName == '') {
                     continue;
                 }
-                $attachmentPath = WRITEPATH.'uploads/'.$fileName;
+                $attachmentPath = WRITEPATH . 'uploads/' . $fileName;
                 $attachmentPart->saveContent($attachmentPath);
-                $fileInfo = new File(WRITEPATH.'uploads/'.$fileName);
+                $fileInfo = new File(WRITEPATH . 'uploads/' . $fileName);
                 $size = $fileInfo->getSize();
                 $file_type = $fileInfo->getMimeType();
                 $filename = $fileInfo->getRandomName();
@@ -159,12 +183,12 @@ class MailFetcher
         @unlink($pipeFile);
     }
 
-    public function parseToTicket($clientName, $clientEmail, $subject, $body, $department_id=1)
+    public function parseToTicket($clientName, $clientEmail, $subject, $body, $department_id = 1)
     {
         $client = Services::client();
         $tickets = Services::tickets();
         $client_id = $client->getClientID($clientName, $clientEmail);
-        if(!$ticket = $tickets->getTicketFromEmail($client_id, $subject)){
+        if (!$ticket = $tickets->getTicketFromEmail($client_id, $subject)) {
             $ticket_id = $tickets->createTicket(
                 $client_id,
                 $subject,
@@ -172,13 +196,13 @@ class MailFetcher
             );
             $message_id = $tickets->addMessage($ticket_id, $body, 0, false);
             $ticket = $tickets->getTicket(['id' => $ticket_id]);
-        }else{
+        } else {
             $ticket_id = $ticket->id;
             $message_id = $tickets->addMessage($ticket_id, $body, 0, false);
             $tickets->updateTicketReply($ticket_id, $ticket->status);
         }
         $tickets->staffNotification($ticket);
-        return [$ticket_id,$message_id];
+        return [$ticket_id, $message_id];
     }
 
     public function cleanMessage($message)
