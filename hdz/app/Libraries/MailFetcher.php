@@ -60,11 +60,9 @@ class MailFetcher
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                         $fileContents = curl_exec($ch);
                         if ($fileContents !== false) {
-                            $fileExtension = pathinfo(parse_url(curl_getinfo($ch, CURLINFO_EFFECTIVE_URL), PHP_URL_PATH), PATHINFO_EXTENSION);
-                            $headers = get_headers($link, 1);
-                            $originalFilename = isset($headers['Content-Disposition']) ?
-                                trim(str_replace('attachment; filename=', '', $headers['Content-Disposition']), '"') :
-                                'unknown';
+                            $finalUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+                            $originalFilename = basename(parse_url($finalUrl, PHP_URL_PATH));
+                            $fileExtension = pathinfo($filename, PATHINFO_EXTENSION);
 
                             // Use the original filename if available, or create a new one based on the URL
                             $fileName = $originalFilename !== 'unknown' ? $originalFilename : 'downloaded_file_' . time() . '.' . $fileExtension;
