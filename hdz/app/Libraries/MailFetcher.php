@@ -55,15 +55,25 @@ class MailFetcher
                     //Attachments
                     $attachments = new Attachments();
                     if (!empty($link)) {
+                        $fileExtension = pathinfo(parse_url($link, PHP_URL_PATH), PATHINFO_EXTENSION);
                         $fileContents = file_get_contents($link);
-                        $fileName = basename($link);
-                        $filePath = realpath(rtrim($this->attachment_dir, '\/ ')) . DIRECTORY_SEPARATOR . $fileName;
-                        if (file_exists($filePath)) {
+                        if ($fileContents !== false) {
+                            $headers = get_headers($link, 1);
+                            $originalFilename = isset($headers['Content-Disposition']) ?
+                                trim(str_replace('attachment; filename=', '', $headers['Content-Disposition']), '"') :
+                                'unknown';
+
+                            // Use the original filename if available, or create a new one based on the URL
+                            $fileName = $originalFilename !== 'unknown' ? $originalFilename : 'downloaded_file_' . time() . '.' . $fileExtension;
+
+                            // Save the file with the correct extension
+                            $filePath = realpath(rtrim($this->attachment_dir, '\/ ')) . DIRECTORY_SEPARATOR . $fileName;
                             file_put_contents($filePath, $fileContents);
                             $fileInfo = new File($filePath);
                             $size = $fileInfo->getSize();
                             $file_type = $fileInfo->getMimeType();
                             $filename = $fileInfo->getRandomName();
+                            $fileInfo->move($this->attachment_dir, $filename, true);
                             $original_name = $file->name;
                             $attachments->addFromTicket(
                                 $ticket_id,
