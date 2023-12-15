@@ -63,6 +63,7 @@ class MailFetcher
                             $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
                             $originalFilename = uniqid() . $this->getExtensionFromMimeType($contentType);
                             $fileExtension = pathinfo($originalFilename, PATHINFO_EXTENSION);
+                            $fileSize = curl_getinfo($ch, CURLINFO_SIZE_DOWNLOAD);
 
                             // Use the original filename if available, or create a new one based on the URL
                             $fileName = $originalFilename !== 'unknown' ? $originalFilename : 'downloaded_file_' . time() . '.' . $fileExtension;
@@ -70,19 +71,14 @@ class MailFetcher
                             // Save the file with the correct extension
                             $filePath = realpath(rtrim($this->attachment_dir, '\/ ')) . DIRECTORY_SEPARATOR . $fileName;
                             file_put_contents($filePath, $fileContents);
-                            $fileInfo = new File($filePath);
-                            $size = $fileInfo->getSize();
-                            $file_type = $fileInfo->getMimeType();
-                            $filename = $fileInfo->getRandomName();
-                            $fileInfo->move($this->attachment_dir, $filename, true);
-                            $original_name = $file->name;
+
                             $attachments->addFromTicket(
                                 $ticket_id,
                                 $message_id,
-                                $original_name,
-                                $filename,
-                                $size,
-                                $file_type
+                                $fileName,
+                                $fileName,
+                                $fileSize,
+                                $contentType
                             );
                         }
                     }
