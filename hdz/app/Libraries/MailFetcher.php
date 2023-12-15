@@ -46,10 +46,10 @@ class MailFetcher
                 foreach ($mailsIds as $k => $v) {
                     $mail = $mailbox->getMail($mailsIds[$k]);
                     $message = ($mail->textHtml) ? $this->cleanMessage($mail->textHtml) : $mail->textPlain;
-                    preg_match('/Auftrag von:\s*([^\s]+)/', $message, $matches);
+                    preg_match('/Auftrag von:\s*([^<>\s]+)/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $matches);
                     $fromEmailAddress = isset($matches[1]) ? $matches[1] : $mail->fromAddress;
-                    preg_match('/https:\/\/flyingteachers\.wufoo\.com\/[^\s"<>]+/', $message, $matches);
-                    $link = isset($matches[1]) ? $matches[1] : '';
+                    preg_match('/https:\/\/flyingteachers\.wufoo\.com\/[^\s"<>]+/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $linkMatches);
+                    $link = isset($matches[1]) ? $linkMatches[1] : '';
                     $toTicket = $this->parseToTicket($mail->fromName, $fromEmailAddress, $mail->subject, $message, $email->department_id);
                     list($ticket_id, $message_id) = $toTicket;
                     //Attachments
