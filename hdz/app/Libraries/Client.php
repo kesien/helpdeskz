@@ -31,14 +31,14 @@ class Client
 
     public function isOnline()
     {
-        if(is_null($this->is_online)){
+        if (is_null($this->is_online)) {
             $this->is_online = false;
             $session = Services::session();
-            if(is_numeric(get_cookie('clientID')) && get_cookie('clientHash') != ''){
+            if (is_numeric(get_cookie('clientID')) && get_cookie('clientHash') != '') {
                 return $this->is_online = $this->validateSession(get_cookie('clientID'), get_cookie('clientHash'));
             }
 
-            if($session->has('clientID') && $session->has('clientHash')){
+            if ($session->has('clientID') && $session->has('clientHash')) {
                 return $this->is_online = $this->validateSession($session->get('clientID'), $session->get('clientHash'));
             }
         }
@@ -47,12 +47,12 @@ class Client
 
     private function validateSession($client_id, $client_hash)
     {
-        if(!$user_data = $this->usersModel->find($client_id)){
+        if (!$user_data = $this->usersModel->find($client_id)) {
             return $this->logout();
         }
 
         $request = Services::request();
-        if(!password_verify(md5($user_data->password.$user_data->token.$request->getUserAgent()), $client_hash)){
+        if (!password_verify(md5($user_data->password . $user_data->token . $request->getUserAgent()), $client_hash)) {
             return $this->logout();
         }
         $this->user_data = $user_data;
@@ -63,8 +63,8 @@ class Client
     {
         $session = Services::session();
         $session->destroy();
-        set_cookie('clientID','');
-        set_cookie('clientHash','');
+        set_cookie('clientID', '');
+        set_cookie('clientHash', '');
         return redirect()->withCookies()->route('home');
     }
 
@@ -82,8 +82,8 @@ class Client
     {
         $request = Services::request();
         $session = Services::session();
-        $token = random_string('md5',60);
-        $hash = password_hash(md5($password.$token.$request->getUserAgent()), PASSWORD_BCRYPT);
+        $token = random_string('md5', 60);
+        $hash = password_hash(md5($password . $token . $request->getUserAgent()), PASSWORD_BCRYPT);
         $this->usersModel->protect(false);
         $this->usersModel->update($client_id, [
             'token' => $token,
@@ -97,20 +97,20 @@ class Client
         set_cookie('clientHash', $hash, 0);
     }
 
-    public function getRow($data=array(),$select='*')
+    public function getRow($data = array(), $select = '*')
     {
         $q = $this->usersModel->select($select)
             ->where($data)
             ->get(1);
-        if($q->resultID->num_rows == 0){
+        if ($q->resultID->num_rows == 0) {
             return null;
         }
         return $q->getRow();
     }
 
-    public function update($data=array(), $client_id='')
+    public function update($data = array(), $client_id = '')
     {
-        if(!is_numeric($client_id)){
+        if (!is_numeric($client_id)) {
             $client_id = $this->getData('id');
         }
         $this->usersModel->protect(false);
@@ -118,18 +118,19 @@ class Client
         $this->usersModel->protect(true);
     }
 
-    public function getClientID($name, $email, $password=''){
-        if(!$user_data = $this->getRow(['email' => $email])){
+    public function getClientID($name, $email, $password = '')
+    {
+        if (!$user_data = $this->getRow(['email' => $email])) {
             $client_id = $this->createAccount($name, $email, $password);
-        }else{
+        } else {
             $client_id = $user_data->id;
         }
         return $client_id;
     }
 
-    public function createAccount($name, $email, $password='', $send_mail=true)
+    public function createAccount($name, $email, $password = '', $send_mail = false)
     {
-        if($password == ''){
+        if ($password == '') {
             $password = random_string('alnum', 16);
         }
         $name = ($name == '' ? $email : $name);
@@ -143,9 +144,9 @@ class Client
         $this->usersModel->protect(true);
         $client_id = $this->usersModel->getInsertID();
 
-        if($send_mail){
+        if ($send_mail) {
             $emails = new Emails();
-            $emails->sendFromTemplate('new_user',[
+            $emails->sendFromTemplate('new_user', [
                 '%client_name%' => $name,
                 '%client_email%' => $email,
                 '%client_password%' => $password
@@ -156,23 +157,23 @@ class Client
 
     public function recoverPassword($client_data)
     {
-        $new_password = random_string('alnum',16);
+        $new_password = random_string('alnum', 16);
         $emails = new Emails();
-        $emails->sendFromTemplate('lost_password',[
+        $emails->sendFromTemplate('lost_password', [
             '%client_name%' => $client_data->fullname,
             '%client_email%' => $client_data->email,
             '%client_password%' => $new_password
         ], $client_data->email);
         $this->usersModel->protect(false);
         $this->usersModel->update($client_data->id, [
-            'password' => password_hash($new_password,PASSWORD_BCRYPT)
+            'password' => password_hash($new_password, PASSWORD_BCRYPT)
         ]);
         $this->usersModel->protect(true);
     }
 
     public function manage()
     {
-        $result = $this->usersModel->orderBy('id','desc')
+        $result = $this->usersModel->orderBy('id', 'desc')
             ->paginate(25, 'default');
         return [
             'result' => $result,
@@ -190,7 +191,7 @@ class Client
         $q = $ticketModel->select('id')
             ->where('user_id', $user_id)
             ->get();
-        foreach ($q->getResult() as $item){
+        foreach ($q->getResult() as $item) {
             $tickets->deleteTicket($item->id);
         }
     }
