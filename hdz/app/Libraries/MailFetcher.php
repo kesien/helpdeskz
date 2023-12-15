@@ -48,7 +48,7 @@ class MailFetcher
                     $message = ($mail->textHtml) ? $this->cleanMessage($mail->textHtml) : $mail->textPlain;
                     preg_match('/Auftrag von:\s*([^\s]+)/', $message, $matches);
                     $fromEmailAddress = isset($matches[1]) ? $matches[1] : $mail->fromAddress;
-                    preg_match('/Attachments:\s*([^\s]+)/', $message, $matches);
+                    preg_match('/https:\/\/flyingteachers\.wufoo\.com\/[^\s"<>]+/', $message, $matches);
                     $link = isset($matches[1]) ? $matches[1] : '';
                     $toTicket = $this->parseToTicket($mail->fromName, $fromEmailAddress, $mail->subject, $message, $email->department_id);
                     list($ticket_id, $message_id) = $toTicket;
