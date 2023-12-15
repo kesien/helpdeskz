@@ -46,18 +46,21 @@ class MailFetcher
                 foreach ($mailsIds as $k => $v) {
                     $mail = $mailbox->getMail($mailsIds[$k]);
                     $message = ($mail->textHtml) ? $this->cleanMessage($mail->textHtml) : $mail->textPlain;
-                    preg_match('/Auftrag von:\s*([^<>\s]+)/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $matches);
-                    $fromEmailAddress = isset($matches[1]) ? $matches[1] : $mail->fromAddress;
+                    preg_match('/Auftrag von:(?:&nbsp;|\s)*(?:<a[^>]*?href="mailto:([^">]+)"[^>]*?>|([^\s<]+@[^\s>]+))/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $matches);
+                    $fromEmailAddress = isset($matches[1]) ? $matches[1] : (isset($matches[2]) ? $matches[2] : $mail->fromAddress);
                     preg_match('/https:\/\/flyingteachers\.wufoo\.com\/[^\s"<>]+/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $linkMatches);
-                    $link = isset($matches[1]) ? $linkMatches[1] : '';
+                    $link = isset($linkMatches[1]) ? $linkMatches[1] : '';
                     $toTicket = $this->parseToTicket($mail->fromName, $fromEmailAddress, $mail->subject, $message, $email->department_id);
                     list($ticket_id, $message_id) = $toTicket;
                     //Attachments
                     $attachments = new Attachments();
                     if (!empty($link)) {
-                        $fileExtension = pathinfo(parse_url($link, PHP_URL_PATH), PATHINFO_EXTENSION);
-                        $fileContents = file_get_contents($link);
+                        $ch = curl_init($link);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                        $fileContents = curl_exec($ch);
                         if ($fileContents !== false) {
+                            $fileExtension = pathinfo(parse_url(curl_getinfo($ch, CURLINFO_EFFECTIVE_URL), PHP_URL_PATH), PATHINFO_EXTENSION);
                             $headers = get_headers($link, 1);
                             $originalFilename = isset($headers['Content-Disposition']) ?
                                 trim(str_replace('attachment; filename=', '', $headers['Content-Disposition']), '"') :
