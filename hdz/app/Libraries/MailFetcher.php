@@ -60,9 +60,9 @@ class MailFetcher
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                         $fileContents = curl_exec($ch);
                         if ($fileContents !== false) {
-                            $finalUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
-                            $originalFilename = basename(parse_url($finalUrl, PHP_URL_PATH));
-                            $fileExtension = pathinfo($filename, PATHINFO_EXTENSION);
+                            $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+                            $originalFilename = uniqid() . $this->getExtensionFromMimeType($contentType);
+                            $fileExtension = pathinfo($originalFilename, PATHINFO_EXTENSION);
 
                             // Use the original filename if available, or create a new one based on the URL
                             $fileName = $originalFilename !== 'unknown' ? $originalFilename : 'downloaded_file_' . time() . '.' . $fileExtension;
@@ -221,6 +221,42 @@ class MailFetcher
         $config = \HTMLPurifier_Config::createDefault();
         $html_purifier = new \HTMLPurifier($config);
         return $html_purifier->purify($message);
+    }
+
+    public function getExtensionFromMimeType($contentType)
+    {
+        $mimeTypes = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'plain/text' => 'txt',
+            'image/bmp' => 'bmp',
+            'text/csv' => 'csv',
+            'application/msword' => 'doc',
+            'application/vnd.ms-word.document.macroEnabled.12' => 'docm',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+            'image/gif' => 'gif',
+            'text/htm' => 'htm',
+            'text/html' => 'html',
+            'application/pdf' => 'pdf',
+            'application/vnd.ms-powerpoint' => 'ppt',
+            'application/vnd.ms-powerpoint.presentation.macroEnabled.12' => 'pptm',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
+            'application/vnd.ms-excel' => 'xls',
+            'application/vnd.ms-excel.sheet.macroEnabled.12' => 'xlsm',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
+            'text/xml' => 'xml',
+            'application/x-zip-compressed' => 'zip',
+            'application/json' => 'json',
+            'application/vnd.rar' => 'rar',
+            'application/x-tar' => 'tar',
+
+            // Add more mime types as needed
+        ];
+
+        // Default extension if not found
+        $defaultExtension = 'dat';
+
+        return isset($mimeTypes[$contentType]) ? '.' . $mimeTypes[$contentType] : $defaultExtension;
     }
 
 }
