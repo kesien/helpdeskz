@@ -46,10 +46,10 @@ class MailFetcher
                 foreach ($mailsIds as $k => $v) {
                     $mail = $mailbox->getMail($mailsIds[$k]);
                     $message = ($mail->textHtml) ? $this->cleanMessage($mail->textHtml) : $mail->textPlain;
-                    preg_match('/Auftrag von:(?:&nbsp;|\s)*(?:<a[^>]*?href="mailto:([^">]+)"[^>]*?>|([^\s<]+@[^\s>]+))/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $matches);
-                    $fromEmailAddress = isset($matches[1]) ? $matches[1] : (isset($matches[2]) ? $matches[2] : $mail->fromAddress);
+                    preg_match('/(?:&nbsp;|\s)*(?:<a[^>]*?href="mailto:([^">]+)"[^>]*?>|([^\s<]+@[^\s>]+))/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $matches);
+                    $fromEmailAddress = (isset($matches[1]) && $matches[1] != "") ? $matches[1] : (isset($matches[2]) ? $matches[2] : $mail->fromAddress);
                     preg_match('/https:\/\/flyingteachers\.wufoo\.com\/[^\s"<>]+/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $linkMatches);
-                    $link = isset($linkMatches[1]) ? $linkMatches[1] : '';
+                    $link = (isset($linkMatches[0]) && $linkMatches[0] != "") ? $linkMatches[0] : (isset($linkMatches[1]) ? $linkMatches[1] : '');
                     $toTicket = $this->parseToTicket($mail->fromName, $fromEmailAddress, $mail->subject, $message, $email->department_id);
                     list($ticket_id, $message_id) = $toTicket;
                     //Attachments
@@ -60,11 +60,10 @@ class MailFetcher
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                         $fileContents = curl_exec($ch);
                         if ($fileContents !== false) {
-                            $fileExtension = pathinfo(parse_url(curl_getinfo($ch, CURLINFO_EFFECTIVE_URL), PHP_URL_PATH), PATHINFO_EXTENSION);
-                            $headers = get_headers($link, 1);
-                            $originalFilename = isset($headers['Content-Disposition']) ?
-                                trim(str_replace('attachment; filename=', '', $headers['Content-Disposition']), '"') :
-                                'unknown';
+                            $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+                            $originalFilename = uniqid() . $this->getExtensionFromMimeType($contentType);
+                            $fileExtension = pathinfo($originalFilename, PATHINFO_EXTENSION);
+                            $fileSize = curl_getinfo($ch, CURLINFO_SIZE_DOWNLOAD);
 
                             // Use the original filename if available, or create a new one based on the URL
                             $fileName = $originalFilename !== 'unknown' ? $originalFilename : 'downloaded_file_' . time() . '.' . $fileExtension;
@@ -72,19 +71,14 @@ class MailFetcher
                             // Save the file with the correct extension
                             $filePath = realpath(rtrim($this->attachment_dir, '\/ ')) . DIRECTORY_SEPARATOR . $fileName;
                             file_put_contents($filePath, $fileContents);
-                            $fileInfo = new File($filePath);
-                            $size = $fileInfo->getSize();
-                            $file_type = $fileInfo->getMimeType();
-                            $filename = $fileInfo->getRandomName();
-                            $fileInfo->move($this->attachment_dir, $filename, true);
-                            $original_name = $file->name;
+
                             $attachments->addFromTicket(
                                 $ticket_id,
                                 $message_id,
-                                $original_name,
-                                $filename,
-                                $size,
-                                $file_type
+                                $fileName,
+                                $fileName,
+                                $fileSize,
+                                $contentType
                             );
                         }
                     }
@@ -223,6 +217,42 @@ class MailFetcher
         $config = \HTMLPurifier_Config::createDefault();
         $html_purifier = new \HTMLPurifier($config);
         return $html_purifier->purify($message);
+    }
+
+    public function getExtensionFromMimeType($contentType)
+    {
+        $mimeTypes = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'plain/text' => 'txt',
+            'image/bmp' => 'bmp',
+            'text/csv' => 'csv',
+            'application/msword' => 'doc',
+            'application/vnd.ms-word.document.macroEnabled.12' => 'docm',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+            'image/gif' => 'gif',
+            'text/htm' => 'htm',
+            'text/html' => 'html',
+            'application/pdf' => 'pdf',
+            'application/vnd.ms-powerpoint' => 'ppt',
+            'application/vnd.ms-powerpoint.presentation.macroEnabled.12' => 'pptm',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
+            'application/vnd.ms-excel' => 'xls',
+            'application/vnd.ms-excel.sheet.macroEnabled.12' => 'xlsm',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
+            'text/xml' => 'xml',
+            'application/x-zip-compressed' => 'zip',
+            'application/json' => 'json',
+            'application/vnd.rar' => 'rar',
+            'application/x-tar' => 'tar',
+
+            // Add more mime types as needed
+        ];
+
+        // Default extension if not found
+        $defaultExtension = 'dat';
+
+        return isset($mimeTypes[$contentType]) ? '.' . $mimeTypes[$contentType] : $defaultExtension;
     }
 
 }
