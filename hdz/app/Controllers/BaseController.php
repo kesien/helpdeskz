@@ -85,6 +85,7 @@ class BaseController extends Controller
                 $categoryLinks[] = $link;
             }
         }
+        asort($categoryLinks, SORT_NUMERIC);
         return $categoryLinks;
     }
 
