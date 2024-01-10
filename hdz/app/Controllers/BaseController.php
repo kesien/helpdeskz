@@ -147,16 +147,23 @@ class BaseController extends Controller
                 preg_match('/^([\d.]+)?\s*(.*)$/', $nameA, $matchesA);
                 preg_match('/^([\d.]+)?\s*(.*)$/', $nameB, $matchesB);
 
-                // Compare using strnatcmp for natural order comparison
-                $numericComparison = strnatcmp($matchesA[1] ?? '', $matchesB[1] ?? '');
+                // Check if both links are numeric or non-numeric
+                $isNumericA = is_numeric($matchesA[1] ?? '');
+                $isNumericB = is_numeric($matchesB[1] ?? '');
 
-                // If numeric part is the same or both are non-numeric, compare alphabetically
-                $alphabeticalComparison = strcasecmp($matchesA[2], $matchesB[2]);
+                // Compare numeric links first
+                if ($isNumericA && $isNumericB) {
+                    return intval($matchesA[1]) - intval($matchesB[1]);
+                } elseif ($isNumericA) {
+                    return -1; // $a is numeric, place it first
+                } elseif ($isNumericB) {
+                    return 1; // $b is numeric, place it first
+                }
 
-                // If both are numeric or both are non-numeric, return the numeric comparison
-                // Otherwise, return the alphabetical comparison
-                return (is_numeric($matchesA[1] ?? '') && is_numeric($matchesB[1] ?? '')) ? $numericComparison : $alphabeticalComparison;
+                // If both are non-numeric, or have no numeric part, compare alphabetically
+                return strcasecmp($matchesA[2], $matchesB[2]);
             });
+
 
             $categoryName = isset($categoryNames[$categoryId]) ? $categoryNames[$categoryId] : "Uncategorized";
             $transformedCategoryLinksMap[$categoryName] = $links;
