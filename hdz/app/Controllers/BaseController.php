@@ -147,8 +147,8 @@ class BaseController extends Controller
                 preg_match('/^([\d.]+)?\s*(.*)$/', $nameA, $matchesA);
                 preg_match('/^([\d.]+)?\s*(.*)$/', $nameB, $matchesB);
 
-                // Convert the numeric part to integers for proper comparison
-                $numericComparison = intval($matchesA[1] ?? 0) - intval($matchesB[1] ?? 0);
+                // Compare using strnatcmp for natural order comparison
+                $numericComparison = strnatcmp($matchesA[1] ?? '', $matchesB[1] ?? '');
 
                 // If numeric part is the same or both are non-numeric, compare alphabetically
                 return $numericComparison === 0 ? strcasecmp($matchesA[2], $matchesB[2]) : $numericComparison;
