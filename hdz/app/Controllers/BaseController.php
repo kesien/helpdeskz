@@ -85,7 +85,9 @@ class BaseController extends Controller
                 $categoryLinks[] = $link;
             }
         }
-        asort($categoryLinks, SORT_NUMERIC);
+        usort($categoryLinks, function ($a, $b) {
+            return strcmp($a->name, $b->name);
+        });
         return $categoryLinks;
     }
 
@@ -97,6 +99,9 @@ class BaseController extends Controller
                 $categoryLinks[] = $link;
             }
         }
+        usort($categoryLinks, function ($a, $b) {
+            return strcmp($a->name, $b->name);
+        });
         return $categoryLinks;
     }
 
