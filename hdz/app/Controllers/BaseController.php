@@ -140,7 +140,7 @@ class BaseController extends Controller
         $transformedCategoryLinksMap = [];
         foreach ($categoryLinksMap as $categoryId => $links) {
             usort($links, function ($a, $b) {
-                return strcmp($a->name, $b->name);
+                return strnatcmp($a->name, $b->name);
             });
             $categoryName = isset($categoryNames[$categoryId]) ? $categoryNames[$categoryId] : "Uncategorized";
             $transformedCategoryLinksMap[$categoryName] = $links;
