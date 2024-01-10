@@ -143,7 +143,10 @@ class BaseController extends Controller
                 preg_match('/^(\d+)?\.?\s*(.*)$/', $a->name, $matchesA);
                 preg_match('/^(\d+)?\.?\s*(.*)$/', $b->name, $matchesB);
 
-                return strnatcmp($a->name, $b->name);
+                $numericComparison = ($matchesA[0] ?? 0) - ($matchesB[0] ?? 0);
+
+                // If numeric part is the same or both are non-numeric, compare alphabetically
+                return $numericComparison === 0 ? strcasecmp($matchesA[1], $matchesB[1]) : $numericComparison;
             });
             $categoryName = isset($categoryNames[$categoryId]) ? $categoryNames[$categoryId] : "Uncategorized";
             $transformedCategoryLinksMap[$categoryName] = $links;
