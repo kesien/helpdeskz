@@ -85,9 +85,6 @@ class BaseController extends Controller
                 $categoryLinks[] = $link;
             }
         }
-        usort($categoryLinks, function ($a, $b) {
-            return strcmp($a->name, $b->name);
-        });
         return $categoryLinks;
     }
 
@@ -99,9 +96,6 @@ class BaseController extends Controller
                 $categoryLinks[] = $link;
             }
         }
-        usort($categoryLinks, function ($a, $b) {
-            return strcmp($a->name, $b->name);
-        });
         return $categoryLinks;
     }
 
@@ -145,6 +139,9 @@ class BaseController extends Controller
         // Transform the category IDs into category names
         $transformedCategoryLinksMap = [];
         foreach ($categoryLinksMap as $categoryId => $links) {
+            usort($links, function ($a, $b) {
+                return strcmp($a->name, $b->name);
+            });
             $categoryName = isset($categoryNames[$categoryId]) ? $categoryNames[$categoryId] : "Uncategorized";
             $transformedCategoryLinksMap[$categoryName] = $links;
         }
