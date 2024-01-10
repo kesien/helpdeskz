@@ -151,7 +151,11 @@ class BaseController extends Controller
                 $numericComparison = strnatcmp($matchesA[1] ?? '', $matchesB[1] ?? '');
 
                 // If numeric part is the same or both are non-numeric, compare alphabetically
-                return $numericComparison === 0 ? strcasecmp($matchesA[2], $matchesB[2]) : $numericComparison;
+                $alphabeticalComparison = strcasecmp($matchesA[2], $matchesB[2]);
+
+                // If both are numeric or both are non-numeric, return the numeric comparison
+                // Otherwise, return the alphabetical comparison
+                return (is_numeric($matchesA[1] ?? '') && is_numeric($matchesB[1] ?? '')) ? $numericComparison : $alphabeticalComparison;
             });
 
             $categoryName = isset($categoryNames[$categoryId]) ? $categoryNames[$categoryId] : "Uncategorized";
