@@ -140,8 +140,8 @@ class BaseController extends Controller
         $transformedCategoryLinksMap = [];
         foreach ($categoryLinksMap as $categoryId => $links) {
             usort($links, function ($a, $b) {
-                $nameA = $a['name'];
-                $nameB = $b['name'];
+                $nameA = $a->name;
+                $nameB = $b->name;
 
                 // Extract the numeric part from the names
                 preg_match('/^(\d+)?\.?\s*(.*)$/', $nameA, $matchesA);
