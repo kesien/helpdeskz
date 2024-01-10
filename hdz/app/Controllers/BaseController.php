@@ -139,21 +139,24 @@ class BaseController extends Controller
         // Transform the category IDs into category names
         $transformedCategoryLinksMap = [];
         foreach ($categoryLinksMap as $categoryId => $links) {
-            usort($links, function ($a, $b) {
-                preg_match('/^(\d+)?\.?\s*(.*)$/', $a->name, $matchesA);
-                preg_match('/^(\d+)?\.?\s*(.*)$/', $b->name, $matchesB);
-
-                // Compare the numeric part first
-                $numericComparison = ($matchesA[1] ?? 0) - ($matchesB[1] ?? 0);
-
-                // If numeric part is the same or both are non-numeric, compare alphabetically
-                return $numericComparison === 0 ? strcasecmp($matchesA[2], $matchesB[2]) : $numericComparison;
-            });
+            usort($links, array($this, "compareNames"));
             $categoryName = isset($categoryNames[$categoryId]) ? $categoryNames[$categoryId] : "Uncategorized";
             $transformedCategoryLinksMap[$categoryName] = $links;
         }
 
         return $transformedCategoryLinksMap;
+    }
+
+    function compareNames($name1, $name2)
+    {
+        preg_match('/^(\d+)?\.?\s*(.*)$/', $name1, $matchesA);
+        preg_match('/^(\d+)?\.?\s*(.*)$/', $name2, $matchesB);
+
+        // Compare the numeric part first
+        $numericComparison = ($matchesA[1] ?? 0) - ($matchesB[1] ?? 0);
+
+        // If numeric part is the same or both are non-numeric, compare alphabetically
+        return $numericComparison === 0 ? strcasecmp($matchesA[2], $matchesB[2]) : $numericComparison;
     }
 
 }
