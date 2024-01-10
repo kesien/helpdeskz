@@ -140,7 +140,18 @@ class BaseController extends Controller
         $transformedCategoryLinksMap = [];
         foreach ($categoryLinksMap as $categoryId => $links) {
             usort($links, function ($a, $b) {
-                return strnatcmp($a->name, $b->name);
+                $nameA = $a['name'];
+                $nameB = $b['name'];
+
+                // Extract the numeric part from the names
+                preg_match('/^(\d+)?\.?\s*(.*)$/', $nameA, $matchesA);
+                preg_match('/^(\d+)?\.?\s*(.*)$/', $nameB, $matchesB);
+
+                // Compare the numeric part first
+                $numericComparison = ($matchesA[1] ?? 0) - ($matchesB[1] ?? 0);
+
+                // If numeric part is the same or both are non-numeric, compare alphabetically
+                return $numericComparison === 0 ? strcasecmp($matchesA[2], $matchesB[2]) : $numericComparison;
             });
             $categoryName = isset($categoryNames[$categoryId]) ? $categoryNames[$categoryId] : "Uncategorized";
             $transformedCategoryLinksMap[$categoryName] = $links;
