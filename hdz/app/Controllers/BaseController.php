@@ -146,7 +146,7 @@ class BaseController extends Controller
                 $numericComparison = ($matchesA[0] ?? 0) - ($matchesB[0] ?? 0);
 
                 // If numeric part is the same or both are non-numeric, compare alphabetically
-                return ($numericComparison === 0 ? strcasecmp($matchesA[1], $matchesB[1]) : $numericComparison);
+                return strcasecmp($matchesA[1], $matchesB[1]);
             });
             $categoryName = isset($categoryNames[$categoryId]) ? $categoryNames[$categoryId] : "Uncategorized";
             $transformedCategoryLinksMap[$categoryName] = $links;
