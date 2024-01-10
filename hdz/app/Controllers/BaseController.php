@@ -144,11 +144,11 @@ class BaseController extends Controller
                 $nameB = $b->name;
 
                 // Extract the numeric part from the names
-                preg_match('/^(\d+)?\.?\s*(.*)$/', $nameA, $matchesA);
-                preg_match('/^(\d+)?\.?\s*(.*)$/', $nameB, $matchesB);
+                preg_match('/^([\d.]+)?\s*(.*)$/', $nameA, $matchesA);
+                preg_match('/^([\d.]+)?\s*(.*)$/', $nameB, $matchesB);
 
                 // Compare the numeric part first
-                $numericComparison = ($matchesA[1] ?? 0) - ($matchesB[1] ?? 0);
+                $numericComparison = version_compare($matchesA[1] ?? '0', $matchesB[1] ?? '0', '<=>');
 
                 // If numeric part is the same or both are non-numeric, compare alphabetically
                 return $numericComparison === 0 ? strcasecmp($matchesA[2], $matchesB[2]) : $numericComparison;
