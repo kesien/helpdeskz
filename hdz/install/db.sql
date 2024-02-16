@@ -234,6 +234,22 @@ CREATE TABLE `{{db_prefix}}users` (
   `status` int NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `{{db_prefix}}link_categories`;
+CREATE TABLE `{{db_prefix}}link_categories` (
+  `id` int NOT NULL,
+  `name` varchar(250) NOT NULL,
+  `description` varchar(250) NOT NULL,
+  `dep_order` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `{{db_prefix}}links`;
+CREATE TABLE `{{db_prefix}}links` (
+  `id` int NOT NULL,
+  `name` varchar(250) NOT NULL,
+  `url` varchar(250) NOT NULL,
+  `link_category_id` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 ALTER TABLE `{{db_prefix}}api`
   ADD PRIMARY KEY (`id`),
   ADD KEY `token` (`token`);
@@ -249,6 +265,12 @@ ALTER TABLE `{{db_prefix}}attachments`
   ADD KEY `msg_id` (`msg_id`);
 
 ALTER TABLE `{{db_prefix}}canned_response`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `{{db_prefix}}link_categories`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `{{db_prefix}}links`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `{{db_prefix}}config`
@@ -294,6 +316,12 @@ ALTER TABLE `{{db_prefix}}users`
   ADD KEY `email` (`email`);
 
 ALTER TABLE `{{db_prefix}}api`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `{{db_prefix}}link_categories`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `{{db_prefix}}links`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `{{db_prefix}}articles`

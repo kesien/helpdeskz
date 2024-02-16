@@ -166,6 +166,8 @@ class Tickets extends BaseController
                 ]);
             }
 
+            $cc = $this->request->getPost('cc');
+
             if ($validation->withRequest($this->request)->run() == false) {
                 $error_msg = $validation->listErrors();
             } else {
@@ -178,13 +180,14 @@ class Tickets extends BaseController
                 $message = $this->request->getPost('message') . $this->staff->getData('signature');
                 $message_id = $tickets->addMessage($ticket->id, $message, $this->staff->getData('id'));
 
+
                 //File
                 if (isset($files)) {
                     $attachments->addTicketFiles($ticket->id, $message_id, $files);
                 }
                 $tickets->updateTicketReply($ticket->id, $ticket->status, true);
                 if (!defined('HDZDEMO')) {
-                    $tickets->replyTicketNotification($ticket, $message, (isset($files) ? $files : null));
+                    $tickets->replyTicketNotification($ticket, $message, $cc, (isset($files) ? $files : null));
                 }
                 $this->session->setFlashdata('ticket_update', lang('Admin.tickets.messageSent'));
                 return redirect()->to(current_url());
