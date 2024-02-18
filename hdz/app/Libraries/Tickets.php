@@ -708,9 +708,14 @@ class Tickets
         p.name as priority_name, p.color as priority_color, 
         IF(last_replier=0, "", (SELECT username FROM ' . $db->prefixTable('staff') . ' WHERE id=last_replier)) as staff_username')
             ->join('users as u', 'u.id=tickets.user_id')
-            ->join('tickets_messages as t', 't.ticket_id=tickets.id')
             ->join('departments as d', 'd.id=tickets.department_id')
             ->join('priority as p', 'p.id=tickets.priority_id')
+            ->join('(
+                SELECT ticket_id, MAX(date) AS max_date
+                FROM ' . $db->prefixTable('tickets_messages')
+                . ' GROUP BY ticket_id
+            ) AS tm', 'tm.ticket_id = tickets.id')
+            ->join('tickets_messages as t', 't.ticket_id=tickets.id AND t.date = tm.max_date')
             ->paginate($this->settings->config('tickets_page'));
         return [
             'result' => $result,
