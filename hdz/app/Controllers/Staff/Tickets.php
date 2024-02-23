@@ -16,6 +16,26 @@ use Config\Services;
 
 class Tickets extends BaseController
 {
+    public function selectDepartment()
+    {
+
+        if ($this->request->getPost('do') == 'submit') {
+            $departments = Services::departments();
+            $validation = Services::validation();
+            $validation->setRule('department', 'department', 'required|is_natural_no_zero|is_not_unique[departments.id]');
+            if ($validation->withRequest($this->request)->run() == false) {
+                $error_msg = lang('Admin.error.selectValidDepartment');
+            } elseif (!$department = $departments->getByID($this->request->getPost('department'))) {
+                $error_msg = lang('Admin.error.selectValidDepartment');
+            } else {
+                return redirect()->route('ticket_new', [$department->id, url_title($department->name)]);
+            }
+        }
+        return view('staff/ticket_new', [
+            'error_msg' => isset($error_msg) ? $error_msg : null,
+        ]);
+    }
+
     public function manage($page)
     {
         $tickets = new \App\Libraries\Tickets();
@@ -260,8 +280,12 @@ class Tickets extends BaseController
         ]);
     }
 
-    public function create()
+    public function create($department_id)
     {
+        $departments = Services::departments();
+        if (!$department = $departments->getByID($department_id)) {
+            return redirect()->route('staff_ticket_new');
+        }
         $tickets = Services::tickets();
         if ($this->request->getPost('do') == 'submit') {
             $validation = Services::validation();
@@ -299,6 +323,36 @@ class Tickets extends BaseController
                     'required' => lang('Admin.error.enterMessage'),
                 ]
             ]);
+
+            $customFieldList = array();
+            if ($customFields = $tickets->customFieldsFromDepartment($department->id)) {
+                foreach ($customFields as $customField) {
+                    $value = '';
+                    if (in_array($customField->type, ['text', 'textarea', 'password', 'email', 'date'])) {
+                        $value = $this->request->getPost('custom')[$customField->id];
+                    } elseif (in_array($customField->type, ['radio', 'select'])) {
+                        $options = explode("\n", $customField->value);
+                        $value = $options[$this->request->getPost('custom')[$customField->id]];
+                    } elseif ($customField->type == 'checkbox') {
+                        $options = explode("\n", $customField->value);
+                        $checkbox_list = array();
+                        if (is_array($this->request->getPost('custom')[$customField->id])) {
+                            foreach ($this->request->getPost('custom')[$customField->id] as $k) {
+                                $checkbox_list[] = $options[$k];
+                            }
+                            $value = implode(', ', $checkbox_list);
+                        }
+                    }
+                    $customFieldList[] = [
+                        'title' => $customField->title,
+                        'value' => $value
+                    ];
+                    if ($customField->required == '1') {
+                        $validation->setRule('custom.' . $customField->id, $customField->title, 'required');
+                    }
+                }
+            }
+
             if ($this->settings->config('ticket_attachment')) {
                 $max_size = $this->settings->config('ticket_file_size') * 1024;
                 $allowed_extensions = unserialize($this->settings->config('ticket_file_type'));
@@ -323,6 +377,9 @@ class Tickets extends BaseController
                 $name = ($this->request->getPost('fullname') == '') ? $this->request->getPost('email') : $this->request->getPost('fullname');
                 $client_id = $this->client->getClientID($name, $this->request->getPost('email'));
                 $ticket_id = $tickets->createTicket($client_id, $this->request->getPost('subject'), $this->request->getPost('department'), $this->request->getPost('priority'));
+                $tickets->updateTicket([
+                    'custom_vars' => serialize($customFieldList)
+                ], $ticket_id);
                 $message = $this->request->getPost('message') . $this->staff->getData('signature');
                 $message_id = $tickets->addMessage($ticket_id, $message, $this->staff->getData('id'));
                 $tickets->updateTicket([
@@ -346,10 +403,11 @@ class Tickets extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => isset($success_msg) ? $success_msg : null,
             'canned_response' => $tickets->getCannedList(),
-            'departments_list' => Services::departments()->getAll(),
+            'department' => $department,
             'ticket_statuses' => $tickets->statusList(),
             'ticket_priorities' => $tickets->getPriorities(),
             'kb_selector' => Services::kb()->kb_article_selector(),
+            'customFields' => $tickets->customFieldsFromDepartment($department->id),
             'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }

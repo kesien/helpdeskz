@@ -42,6 +42,7 @@ return [
         'attachmentRemoved' => 'Attachment was removed.',
         'messageSent' => 'Your message has been sent.',
         'newTicket' => 'New ticket',
+        'selectDepartment' => 'Select department',
         'submitNewTicket' => 'Submit new ticket',
         'fullName' => 'Optional. If ticket will be sent to an existing client, then you can only enter the email.',
         'departments' => 'Departments',
@@ -52,6 +53,7 @@ return [
         'editDepartment' => 'Edit department',
         'newDepartment' => 'New department',
         'departmentCreated' => 'New department has been created.',
+        'next' => "Next",
 
         'notes' => 'Notes',
         'notesRemoveConfirmation' => 'Do you really want to remove this note?',
@@ -349,6 +351,7 @@ return [
         'selectParentCategory' => 'Select a valid parent category.',
         'selectCategoryType' => 'Select category type.',
         'selectCategory' => 'Select a valid category.',
+        'selectValidDepartment' => 'Select a valid department.',
         'selectArticleType' => 'Select article type.',
         'enterContent' => 'Enter the content.',
         'enterDepartmentName' => 'Enter department name.',

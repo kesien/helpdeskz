@@ -144,7 +144,10 @@ $routes->group(Helpdesk::STAFF_URI, [
     $routes->add('tickets/view/(:num)', 'Staff\Tickets::view/$1', [
         'as' => 'staff_ticket_view'
     ]);
-    $routes->add('tickets/create', 'Staff\Tickets::create', [
+    $routes->add('tickets/create', 'Staff\Tickets::selectDepartment', [
+        'as' => 'staff_ticket_new'
+    ]);
+    $routes->add('tickets/create/(:num)-(:any)', 'Staff\Tickets::create/$1', [
         'as' => 'staff_ticket_new'
     ]);
     $routes->add('tickets/kb', 'Staff\Misc::getKB', [
