@@ -28,10 +28,10 @@ class Tickets extends BaseController
             } elseif (!$department = $departments->getByID($this->request->getPost('department'))) {
                 $error_msg = lang('Admin.error.selectValidDepartment');
             } else {
-                return redirect()->route('ticket_new', [$department->id, url_title($department->name)]);
+                return redirect()->route('staff_ticket_new_department', [$department->id, url_title($department->name)]);
             }
         }
-        return view('staff/ticket_new', [
+        return view('staff/ticket_departments', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
         ]);
     }

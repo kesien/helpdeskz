@@ -148,7 +148,7 @@ $routes->group(Helpdesk::STAFF_URI, [
         'as' => 'staff_ticket_new'
     ]);
     $routes->add('tickets/create/(:num)-(:any)', 'Staff\Tickets::create/$1', [
-        'as' => 'staff_ticket_new'
+        'as' => 'staff_ticket_new_department'
     ]);
     $routes->add('tickets/kb', 'Staff\Misc::getKB', [
         'as' => 'staff_ajax_kb'
