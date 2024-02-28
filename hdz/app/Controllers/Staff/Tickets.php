@@ -291,7 +291,6 @@ class Tickets extends BaseController
             $validation = Services::validation();
             $validation->setRules([
                 'email' => 'required|valid_email',
-                'department' => 'required|is_natural_no_zero|is_not_unique[departments.id]',
                 'priority' => 'required|is_natural_no_zero|is_not_unique[priority.id]',
                 'status' => 'required|is_natural|in_list[' . implode(',', array_keys($tickets->statusList())) . ']',
                 'subject' => 'required',
@@ -300,11 +299,6 @@ class Tickets extends BaseController
                 'email' => [
                     'required' => lang('Admin.error.enterValidEmail'),
                     'valid_email' => lang('Admin.error.enterValidEmail')
-                ],
-                'department' => [
-                    'required' => lang('Admin.error.invalidDepartment'),
-                    'is_natural_no_zero' => lang('Admin.error.invalidDepartment'),
-                    'is_not_unique' => lang('Admin.error.invalidDepartment'),
                 ],
                 'priority' => [
                     'required' => lang('Admin.error.invalidPriority'),
@@ -376,7 +370,7 @@ class Tickets extends BaseController
                 }
                 $name = ($this->request->getPost('fullname') == '') ? $this->request->getPost('email') : $this->request->getPost('fullname');
                 $client_id = $this->client->getClientID($name, $this->request->getPost('email'));
-                $ticket_id = $tickets->createTicket($client_id, $this->request->getPost('subject'), $this->request->getPost('department'), $this->request->getPost('priority'));
+                $ticket_id = $tickets->createTicket($client_id, $this->request->getPost('subject'), $department_id, $this->request->getPost('priority'));
                 $tickets->updateTicket([
                     'custom_vars' => serialize($customFieldList)
                 ], $ticket_id);

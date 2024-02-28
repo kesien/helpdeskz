@@ -152,7 +152,7 @@ class Emails
     }
 
 
-    public function sendFromTemplate($template_id, $data, $user_email, $department_id = 0, $attachments = '', $cc = '')
+    public function sendFromTemplate($template_id, $data, $user_email, $department_id = 0, $attachments = '', $cc = '', $original_message = '')
     {
         if ($department_id > 0) {
             if (!$email = $this->getByDepartment($department_id)) {

@@ -378,6 +378,7 @@ class Tickets
             '%ticket_status%' => $this->statusName($ticket->status),
             '%ticket_priority%' => $ticket->priority_name,
             '%message%' => $message,
+            '%original_message%' => $this->getFirstMessage($ticket->id)->message
         ], $ticket->email, $ticket->department_id, $files, $cc);
     }
 

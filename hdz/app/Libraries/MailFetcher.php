@@ -46,8 +46,11 @@ class MailFetcher
                 foreach ($mailsIds as $k => $v) {
                     $mail = $mailbox->getMail($mailsIds[$k]);
                     $message = ($mail->textHtml) ? $this->cleanMessage($mail->textHtml) : $mail->textPlain;
-                    preg_match('/(?:&nbsp;|\s)*(?:<a[^>]*?href="mailto:([^">]+)"[^>]*?>|([^\s<]+@[^\s>]+))/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $matches);
-                    $fromEmailAddress = (isset($matches[1]) && $matches[1] != "") ? $matches[1] : (isset($matches[2]) ? $matches[2] : $mail->fromAddress);
+                    $fromEmailAddress = $mail->fromAddress;
+                    if (str_contains($mail->fromAddress, 'no-reply@wufoo.com')) {
+                        preg_match('/(?:&nbsp;|\s)*(?:<a[^>]*?href="mailto:([^">]+)"[^>]*?>|([^\s<]+@[^\s>]+))/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $matches);
+                        $fromEmailAddress = (isset($matches[1]) && $matches[1] != "") ? $matches[1] : (isset($matches[2]) ? $matches[2] : $mail->fromAddress);
+                    }
                     preg_match('/https:\/\/flyingteachers\.wufoo\.com\/[^\s"<>]+/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $linkMatches);
                     $link = (isset($linkMatches[0]) && $linkMatches[0] != "") ? $linkMatches[0] : (isset($linkMatches[1]) ? $linkMatches[1] : '');
                     $toTicket = $this->parseToTicket($mail->fromName, $fromEmailAddress, $mail->subject, $message, $email->department_id);
