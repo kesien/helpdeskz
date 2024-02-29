@@ -197,7 +197,7 @@ echo form_input([
                     <?php if (staff_data('admin') != 2): ?>
                         <th><input type="checkbox" id="select_all" /></th>
                     <?php endif; ?>
-                    <th>
+                    <th style="width: 10%">
                         <?php echo sort_link('id', lang('Admin.tickets.id')); ?>
                     </th>
                     <th>
@@ -245,7 +245,7 @@ echo form_input([
                         <td>
                             <div class="font-weight-bold">
                                 <a href="<?php echo site_url(route_to('staff_ticket_view', $item->id)); ?>">
-                                    <?php echo resume_content($item->subject, 30); ?>
+                                    <?php echo resume_content($item->subject, 80); ?>
                                 </a>
                             </div>
                             <div class="text-muted"><i class="fa fa-user-o"></i>
