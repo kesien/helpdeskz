@@ -121,7 +121,7 @@ class Client
     public function getClientID($name, $email, $password = '')
     {
         if (!$user_data = $this->getRow(['email' => $email])) {
-            $client_id = $this->createAccount($name, $email, $password, true);
+            $client_id = $this->createAccount($name, $email, $password, false);
         } else {
             $client_id = $user_data->id;
         }
