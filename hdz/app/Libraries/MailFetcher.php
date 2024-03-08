@@ -47,7 +47,7 @@ class MailFetcher
                     $mail = $mailbox->getMail($mailsIds[$k]);
                     $message = ($mail->textHtml) ? $this->cleanMessage($mail->textHtml) : $mail->textPlain;
                     $fromEmailAddress = $mail->fromAddress;
-                    if (str_contains($mail->fromAddress, 'no-reply@wufoo.com')) {
+                    if (!strpos($mail->fromAddress, 'no-reply@wufoo.com')) {
                         preg_match('/(?:&nbsp;|\s)*(?:<a[^>]*?href="mailto:([^">]+)"[^>]*?>|([^\s<]+@[^\s>]+))/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $matches);
                         $fromEmailAddress = (isset($matches[1]) && $matches[1] != "") ? $matches[1] : (isset($matches[2]) ? $matches[2] : $mail->fromAddress);
                     }
