@@ -40,7 +40,7 @@ class MailFetcher
                     return false;
                 }
                 if (!$mailsIds) {
-                    return false;
+                    continue;
                 }
                 $mailbox->setAttachmentsDir($this->attachment_dir);
                 foreach ($mailsIds as $k => $v) {
