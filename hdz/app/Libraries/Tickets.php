@@ -120,6 +120,11 @@ class Tickets
         return $q->getRow();
     }
 
+    public function getTicketMessageById($id)
+    {
+        return $this->messagesModel->find($id);
+    }
+
     public function countTickets($data)
     {
         return $this->ticketsModel->where($data)
@@ -562,6 +567,13 @@ class Tickets
         $this->ticketsModel->protect(false)
             ->update($id, $data);
         $this->ticketsModel->protect(true);
+    }
+
+    public function updateTicketMessage($data, $id)
+    {
+        $this->messagesModel->protect(false)
+            ->update($id, $data);
+        $this->messagesModel->protect(true);
     }
 
     /*

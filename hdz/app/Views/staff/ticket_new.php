@@ -127,7 +127,7 @@ if (isset($success_msg)) {
         </div>
 
         <div class="form-group">
-            <textarea class="form-control" name="message" id="messageBox"
+            <textarea class="form-control messageBox" name="message" id="messageBox"
                 rows="20"><?php echo set_value('message'); ?></textarea>
         </div>
         <?php

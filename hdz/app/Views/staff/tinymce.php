@@ -35,7 +35,7 @@ echo script_tag('https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.0.4/tinymce.mi
 
 
     tinymce.init({
-        selector: '#messageBox',
+        selector: '.messageBox',
         pthManager: '<?php echo site_url(route_to('staff_editor_uploader'));?>',
         branding: false,
         menubar: false,

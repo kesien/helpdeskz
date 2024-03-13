@@ -148,7 +148,7 @@ $this->section('content');
                 </div>
                 <div class="form-group">
                     <label><?php echo lang('Admin.settings.maintenanceMessage');?></label>
-                    <textarea id="messageBox" class="form-control" name="maintenance_message"><?php echo set_value('maintenance_message', site_config('maintenance_message'));?></textarea>
+                    <textarea id="messageBox" class="messageBox form-control" name="maintenance_message"><?php echo set_value('maintenance_message', site_config('maintenance_message'));?></textarea>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-primary"><?php echo lang('Admin.form.save');?></button>

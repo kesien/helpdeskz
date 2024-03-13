@@ -69,7 +69,7 @@ $this->section('content');
                 </select>
             </div>
             <div class="form-group">
-                <textarea name="content" id="messageBox" class="form-control"><?php echo set_value('content') ? set_value('content') : (isset($article) ? $article->content : '');?></textarea>
+                <textarea name="content" id="messageBox" class="messageBox form-control"><?php echo set_value('content') ? set_value('content') : (isset($article) ? $article->content : '');?></textarea>
             </div>
             <div class="form-group">
                 <button class="btn btn-primary"><?php echo lang('Admin.form.submit');?></button>

@@ -250,6 +250,22 @@ class Tickets extends BaseController
                 $this->session->setFlashdata('ticket_update', lang('Admin.tickets.notesSaved'));
                 return redirect()->to(current_url());
             }
+        } elseif ($this->request->getPost('do') == 'edit_ticket_text') { 
+            $validation = Services::validation();
+            $validation->setRule('ticket_id', 'ticket_id', 'required|is_natural_no_zero');
+            if ($validation->withRequest($this->request)->run() == false) {
+                $error_msg = lang('Admin.tickets.invalidRequest');
+            } elseif ($this->request->getPost('new_text') == '') {
+                $error_msg = lang('Admin.tickets.enterText');
+            } elseif (!$ticketmessage = $tickets->getTicketMessageById($this->request->getPost('ticket_id'))) {
+                $error_msg = lang('Admin.tickets.invalidRequest');
+            } elseif ($this->staff->getData('admin') < 2 || $this->staff->getData('id') == $ticketmessage->staff_id) {
+                $tickets->updateTicketMessage(['message' => $this->request->getPost('new_text')], $ticketmessage->id);
+                $this->session->setFlashdata('ticket_update', lang('Admin.tickets.ticketUpdated'));
+                return redirect()->to(current_url());
+            } else {
+                $error_msg = lang('Admin.tickets.invalidRequest');
+            }
         }
 
         if ($this->session->has('ticket_update')) {

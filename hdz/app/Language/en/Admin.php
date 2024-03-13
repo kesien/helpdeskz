@@ -60,7 +60,9 @@ return [
         'invalidRequest' => 'Invalid request.',
         'noteRemoved' => 'Note was removed.',
         'noteUpdated' => 'Note was updated.',
+        'ticketUpdated' => 'Ticket was updated.',
         'enterNote' => 'Enter your note.',
+        'enterText' => 'Enter some text.',
         'notesSaved' => 'Your note was added.',
         'addNote' => 'Add note'
     ],

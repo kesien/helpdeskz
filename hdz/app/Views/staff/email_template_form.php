@@ -36,7 +36,7 @@ if(isset($success_msg)){
                 <input type="text" name="subject" class="form-control" value="<?php echo esc(set_value('subject', $template->subject));?>">
             </div>
             <div class="form-group">
-                <textarea name="message" id="messageBox"><?php echo set_value('message', $template->message);?></textarea>
+                <textarea name="message" class="messageBox" id="messageBox"><?php echo set_value('message', $template->message);?></textarea>
             </div>
             <div class="form-group">
                 <button class="btn btn-primary"><?php echo lang('Admin.form.save');?></button>

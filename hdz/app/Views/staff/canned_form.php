@@ -58,7 +58,7 @@ $this->section('content');
         </div>
         <div class="form-group">
             <label><?php echo lang('Admin.form.message');?></label>
-            <textarea name="message" id="messageBox" class="form-control"><?php echo set_value('message', isset($canned) ? $canned->message : '');?></textarea>
+            <textarea name="message" id="messageBox" class="messageBox form-control"><?php echo set_value('message', isset($canned) ? $canned->message : '');?></textarea>
         </div>
         <div class="form-group">
             <label><?php echo lang('Admin.form.specialTags');?></label>

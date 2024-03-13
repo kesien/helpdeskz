@@ -88,7 +88,7 @@ if(isset($success_msg)){
                         </div>
                         <div class="form-group">
                             <label><?php echo lang('Admin.form.signature');?></label>
-                            <textarea class="form-control" name="signature" id="messageBox"><?php echo staff_data('signature');?></textarea>
+                            <textarea class="form-control messageBox" name="signature" id="messageBox"><?php echo staff_data('signature');?></textarea>
                         </div>
                         <div class="form-group">
                             <button class="btn btn-primary"><?php echo lang('Admin.form.save');?></button>

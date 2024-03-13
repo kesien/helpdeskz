@@ -216,7 +216,7 @@ $this->section('content');
                     </div>
                 </div>
                 <div class="form-group">
-                    <textarea class="form-control" name="message" id="messageBox"
+                    <textarea class="form-control messageBox" name="message" id="messageBox"
                         rows="20"><?php echo set_value('message'); ?></textarea>
                 </div>
                 <?php
@@ -395,14 +395,46 @@ if (isset($message_result)) {
                         ?>
                     </div>
                     <div class="col">
+                        <?php
+                                if (staff_data('admin') == 1 || staff_data('id') == $note->staff_id) {
+                                    ?>
+                        <div class="float-right">
+                                        <button type="button" onclick="editTicketToggle('<?php echo $item->id; ?>');"
+                                            class="btn btn-link" title="Edit ticket text" data-toggle="tooltip"><i
+                                                class="fa fa-edit"></i></button>
+                                    </div>
+                                    <?php
+                                }
+                                ?>
                         <div class="mb-3">
                             <div class="text-muted"><i class="fa fa-calendar"></i>
                                 <?php echo dateFormat($item->date); ?>
                             </div>
                         </div>
+
                         <div id="msg_<?php echo $item->id; ?>" class="form-group">
                             <?php echo ($item->email == 1 ? $item->message : nl2br($item->message)); ?>
                         </div>
+
+                        <div id="inputTicketText_<?php echo $item->id; ?>" style="display: none">
+                                <?php echo form_open('', ['id' => 'editTicketForm' . $item->id], ['do' => 'edit_ticket_text', 'ticket_id' => $item->id]); ?>
+                                <div class="form-group">
+                                    <textarea class="form-control messageBox" 
+                                        name="new_text"><?php echo set_value('new_note', $item->message, false); ?></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary">
+                                        <?php echo lang('Admin.form.save'); ?>
+                                    </button>
+                                    <button type="button" onclick="editTicketToggle(<?php echo $item->id; ?>);"
+                                        class="btn btn-dark">
+                                        <?php echo lang('Admin.form.cancel'); ?>
+                                    </button>
+                                </div>
+                                <?php
+                                echo form_close();
+                                ?>
+                            </div>
                         <?php
                         if ($files = ticket_files($ticket->id, $item->id)) {
                             ?>
@@ -492,6 +524,11 @@ include __DIR__ . '/tinymce.php';
     function editNoteToggle(noteId) {
         $('#plainNote' + noteId).toggle();
         $('#inputNote' + noteId).toggle();
+    }
+
+    function editTicketToggle(ticketId) {
+        $('#msg_' + ticketId).toggle();
+        $('#inputTicketText_' + ticketId).toggle();
     }
 </script>
 <?php
