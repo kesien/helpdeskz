@@ -198,7 +198,7 @@ class MailFetcher
         $client = Services::client();
         $tickets = Services::tickets();
         $client_id = $client->getClientID($clientName, $clientEmail);
-        if (!$ticket = $tickets->getTicketFromEmail($client_id, $subject)) {
+        if (!$ticket = $tickets->getTicketFromEmail($subject)) {
             $ticket_id = $tickets->createTicket(
                 $client_id,
                 $subject,

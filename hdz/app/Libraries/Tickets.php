@@ -89,13 +89,13 @@ class Tickets
         $this->ticketsModel->protect(true);
     }
 
-    public function getTicketFromEmail($client_id, $subject)
+    public function getTicketFromEmail($subject)
     {
         if (!preg_match('/\[#[0-9]+]/', $subject, $regs)) {
             return null;
         }
         $ticket_id = str_replace(['[#', ']'], '', $regs[0]);
-        if (!$ticket = $this->getTicket(['user_id' => $client_id, 'id' => $ticket_id])) {
+        if (!$ticket = $this->getTicket(['id' => $ticket_id])) {
             return null;
         }
         return $ticket;
