@@ -353,7 +353,7 @@ class Tickets
                     '%ticket_department%' => $ticket->department_name,
                     '%ticket_status%' => lang('open'),
                     '%ticket_priority%' => $ticket->priority_name,
-                    '%original_text%'=> $this->getFirstMessage($ticket->id)->message
+                    '%original_message%'=> $this->getFirstMessage($ticket->id)->message
                 ], $item->email, $ticket->department_id);
             }
             $q->freeResult();
