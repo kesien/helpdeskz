@@ -85,7 +85,7 @@ class Messages extends ResourceController
             $attachments->addTicketFiles($ticket->id, $message_id, $files);
         }
         if($staff_id > 0){
-            $tickets->replyTicketNotification($ticket, $message, (isset($files) ? $files : null));
+            $tickets->replyTicketNotification($ticket, $message, "", (isset($files) ? $files : null));
         }else{
             $tickets->staffNotification($ticket);
         }

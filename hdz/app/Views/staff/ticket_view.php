@@ -476,14 +476,61 @@ if (isset($message_result)) {
                         </div>
                     </div>
                 </div>
-
+                
             </div>
         </div>
-
+        
         <?php
     }
-    echo $pager->links();
 }
+    echo $pager->links(); ?>
+    <div class="card mb-3">
+
+    <div class="card-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <?php
+                    echo lang('Admin.changelogs.title')
+                ?>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 15%">
+                        <?php echo lang('Admin.changelogs.date'); ?>
+                    </th>
+                    <th style="width: 10%">
+                        <?php echo lang('Admin.changelogs.user'); ?>
+                    </th>
+                    <th>
+                        <?php echo lang('Admin.changelogs.action'); ?>
+                    </th>
+                </tr>
+            </thead>
+            <?php if (!$changelogs): ?>
+                <tr>
+                    <td colspan="3">
+                        <i>
+                            <?php echo lang('Admin.changelogs.noChangelogsFound'); ?>
+                        </i>
+                    </td>
+                </tr>
+            <?php else: ?>
+                <?php foreach ($changelogs as $changelog): ?>
+                    <tr>
+                        <td class="font-weight-bold"><?php echo dateFormat($changelog->date); ?></td>
+                        <td><?php echo $changelog->staff_name; ?></td>
+                        <td><?php echo lang($changelog->action); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </table>
+    </div>
+    </div>
+    <?php
 
 $this->endSection();
 $this->section('script_block');

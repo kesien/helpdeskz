@@ -15,6 +15,7 @@ use PhpImap\Exceptions\ConnectionException;
 use PhpImap\Mailbox;
 use ZBateson\MailMimeParser\Header\HeaderConsts;
 use ZBateson\MailMimeParser\MailMimeParser;
+use App\Libraries\ChangeLogs;
 
 class MailFetcher
 {
@@ -197,6 +198,7 @@ class MailFetcher
     {
         $client = Services::client();
         $tickets = Services::tickets();
+        $changelogs = new Changelogs();
         $client_id = $client->getClientID($clientName, $clientEmail);
         if (!$ticket = $tickets->getTicketFromEmail($subject)) {
             $ticket_id = $tickets->createTicket(
@@ -204,12 +206,14 @@ class MailFetcher
                 $subject,
                 $department_id
             );
+            $changelogs->create($client_id, $ticket_id, $client->getRow(['id' => $client_id])->fullname, 'Admin.actions.ticketCreatedFromEmail');
             $message_id = $tickets->addMessage($ticket_id, $body, 0, false);
             $ticket = $tickets->getTicket(['id' => $ticket_id]);
         } else {
             $ticket_id = $ticket->id;
             $message_id = $tickets->addMessage($ticket_id, $body, 0, false);
             $tickets->updateTicketReply($ticket_id, $ticket->status);
+            $changelogs->create($client_id, $ticket_id, $client->getRow(['id' => $client_id])->fullname, 'Admin.actions.messageAddedFromEmail');
         }
         $tickets->staffNotification($ticket);
         return [$ticket_id, $message_id];

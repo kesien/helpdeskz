@@ -98,7 +98,7 @@ class Tickets extends ResourceController
             $tickets->updateTicket([
                 'last_replier' => $staff_id
             ], $ticket_id);
-            $tickets->replyTicketNotification($ticket, $message, (isset($files) ? $files : null));
+            $tickets->replyTicketNotification($ticket, $message, "", (isset($files) ? $files : null));
         }
         return $api->output(['ticket_id' => $ticket_id, 'message' => lang('Api.ticketCreated')]);
     }

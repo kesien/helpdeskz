@@ -359,7 +359,7 @@ class Tickets
         }
     }
 
-    public function replyTicketNotification($ticket, $message, $cc, $attachments = null)
+    public function replyTicketNotification($ticket, $message, $cc = "", $attachments = null)
     {
         $files = array();
         if (is_array($attachments)) {

@@ -12,6 +12,7 @@ namespace App\Controllers\Staff;
 use App\Controllers\BaseController;
 use App\Models\CannedModel;
 use Config\Services;
+use App\Libraries\ChangeLogs;
 
 
 class Tickets extends BaseController
@@ -96,6 +97,7 @@ class Tickets extends BaseController
     public function view($ticket_id)
     {
         $tickets = Services::tickets();
+        $changelogs = new ChangeLogs();
         if (!$ticket = $tickets->getTicket(['id' => $ticket_id])) {
             $this->session->setFlashdata('ticket_error', lang('Admin.error.ticketNotFound'));
             return redirect()->route('staff_tickets');
@@ -129,6 +131,7 @@ class Tickets extends BaseController
                 return redirect()->to(current_url());
             } else {
                 $attachments->deleteFile($file);
+                $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.attachmentRemoved');
                 $this->session->setFlashdata('ticket_update', lang('Admin.tickets.attachmentRemoved'));
                 return redirect()->to(current_url());
             }
@@ -160,6 +163,15 @@ class Tickets extends BaseController
             if ($validation->withRequest($this->request)->run() == false) {
                 $error_msg = $validation->listErrors();
             } else {
+                if ($this->request->getPost('department') != $ticket->department_id) {
+                    $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.departmentChanged');
+                }
+                if ($this->request->getPost('status') != $ticket->status) {
+                    $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.statusChanged');
+                }
+                if ($this->request->getPost('priority') != $ticket->priority_id) {
+                    $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.priorityChanged');
+                }
                 $tickets->updateTicket([
                     'department_id' => $this->request->getPost('department'),
                     'status' => $this->request->getPost('status'),
@@ -209,6 +221,7 @@ class Tickets extends BaseController
                 if (!defined('HDZDEMO')) {
                     $tickets->replyTicketNotification($ticket, $message, $cc, (isset($files) ? $files : null));
                 }
+                $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.replySent');
                 $this->session->setFlashdata('ticket_update', lang('Admin.tickets.messageSent'));
                 return redirect()->to(current_url());
             }
@@ -221,6 +234,7 @@ class Tickets extends BaseController
                 $error_msg = lang('Admin.tickets.invalidRequest');
             } elseif ($this->staff->getData('admin') == 1 || $this->staff->getData('id') == $note->staff_id) {
                 $tickets->deleteNote($ticket->id, $this->request->getPost('note_id'));
+                $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.noteRemoved');
                 $this->session->setFlashdata('ticket_update', lang('Admin.tickets.noteRemoved'));
                 return redirect()->to(current_url());
             } else {
@@ -237,6 +251,7 @@ class Tickets extends BaseController
                 $error_msg = lang('Admin.tickets.invalidRequest');
             } elseif ($this->staff->getData('admin') == 1 || $this->staff->getData('id') == $note->staff_id) {
                 $tickets->updateNote($this->request->getPost('new_note'), $note->id);
+                $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.noteUpdated');
                 $this->session->setFlashdata('ticket_update', lang('Admin.tickets.noteUpdated'));
                 return redirect()->to(current_url());
             } else {
@@ -247,6 +262,7 @@ class Tickets extends BaseController
                 $error_msg = lang('Admin.tickets.enterNote');
             } else {
                 $tickets->addNote($ticket->id, $this->staff->getData('id'), $this->request->getPost('noteBook'));
+                $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.noteAdded');
                 $this->session->setFlashdata('ticket_update', lang('Admin.tickets.notesSaved'));
                 return redirect()->to(current_url());
             }
@@ -262,6 +278,7 @@ class Tickets extends BaseController
             } elseif ($this->staff->getData('admin') < 2 || $this->staff->getData('id') == $ticketmessage->staff_id) {
                 $tickets->updateTicketMessage(['message' => $this->request->getPost('new_text')], $ticketmessage->id);
                 $this->session->setFlashdata('ticket_update', lang('Admin.tickets.ticketUpdated'));
+                $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.textChanged');
                 return redirect()->to(current_url());
             } else {
                 $error_msg = lang('Admin.tickets.invalidRequest');
@@ -290,6 +307,7 @@ class Tickets extends BaseController
             'ticket_priorities' => $tickets->getPriorities(),
             'kb_selector' => Services::kb()->kb_article_selector(),
             'notes' => $tickets->getNotes($ticket->id),
+            'changelogs' => $changelogs->getAll($ticket->id),
             'next_ticket' => isset($next_ticket) ? $next_ticket : null,
             'previous_ticket' => isset($prev_ticket) ? $prev_ticket : null,
             'category_links_map' => $this->getLinkCategoryMap()
@@ -299,6 +317,7 @@ class Tickets extends BaseController
     public function create($department_id)
     {
         $departments = Services::departments();
+        $changelogs = new ChangeLogs();
         if (!$department = $departments->getByID($department_id)) {
             return redirect()->route('staff_ticket_new');
         }
@@ -402,7 +421,8 @@ class Tickets extends BaseController
                 }
 
                 $ticket = $tickets->getTicket(['id' => $ticket_id]);
-                $tickets->replyTicketNotification($ticket, $message, (isset($files) ? $files : null));
+                $tickets->replyTicketNotification($ticket, $message, "", (isset($files) ? $files : null));
+                $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.ticketCreated');
                 $this->session->setFlashdata('form_success', 'Ticket has been created and client was notified.');
                 return redirect()->route('staff_ticket_view', [$ticket_id]);
             }

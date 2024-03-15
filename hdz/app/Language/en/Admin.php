@@ -31,6 +31,27 @@ return [
         'categoryRemoveConfirmation' => 'Do you really want to remove this category and its links?',
         'removeConfirmation' => 'Do you really want to remove this link?'
     ],
+    'changelogs' => [
+        'date' => 'Date',
+        'user' => 'User',
+        'action' => 'Action',
+        'noChangelogsFound' => 'No changelogs found',
+        'title' => 'Changelog'
+    ],
+    'actions' => [
+        'attachmentRemoved' => 'Attachment removed',
+        'departmentChanged' => 'Department changed',
+        'statusChanged' => 'Status changed',
+        'priorityChanged' => 'Priority changed',
+        'replySent' => 'Reply sent',
+        'noteRemoved' => 'Note removed',
+        'noteUpdated' => 'Note updated',
+        'noteAdded' => 'Note added',
+        'textChanged' => 'Text changed',
+        'ticketCreated' => 'Ticket created',
+        'ticketCreatedFromEmail' => 'Ticket created from email',
+        'messageAddedFromEmail' => 'Message added from email'
+    ],
     'tickets' => [
         'menu' => 'Tickets',
         'showingResults' => 'Showing %x% to %y% of %z%',

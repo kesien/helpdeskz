@@ -250,6 +250,16 @@ CREATE TABLE `{{db_prefix}}links` (
   `link_category_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `{{db_prefix}}changelogs`;
+CREATE TABLE `{{db_prefix}}changelogs` (
+  `id` int NOT NULL,
+  `staff_id` int NOT NULL,
+  `ticket_id` int NOT NULL,
+  `staff_name` varchar(250) NOT NULL,
+  `date` int NOT NULL DEFAULT '0',
+  `action` varchar(250) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 ALTER TABLE `{{db_prefix}}api`
   ADD PRIMARY KEY (`id`),
   ADD KEY `token` (`token`);
@@ -272,6 +282,10 @@ ALTER TABLE `{{db_prefix}}link_categories`
 
 ALTER TABLE `{{db_prefix}}links`
   ADD PRIMARY KEY (`id`);
+
+  ALTER TABLE `{{db_prefix}}changelogs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `staff_id` (`staff_id`);
 
 ALTER TABLE `{{db_prefix}}config`
   ADD PRIMARY KEY (`id`);
@@ -322,6 +336,9 @@ ALTER TABLE `{{db_prefix}}link_categories`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `{{db_prefix}}links`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `{{db_prefix}}changelogs`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `{{db_prefix}}articles`
