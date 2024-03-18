@@ -50,7 +50,8 @@ return [
         'textChanged' => 'Text changed',
         'ticketCreated' => 'Ticket created',
         'ticketCreatedFromEmail' => 'Ticket created from email',
-        'messageAddedFromEmail' => 'Message added from email'
+        'messageAddedFromEmail' => 'Message added from email',
+        'ticketCreatedFromClientPage' => 'Ticket created from client page'
     ],
     'tickets' => [
         'menu' => 'Tickets',

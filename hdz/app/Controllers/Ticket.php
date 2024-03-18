@@ -11,6 +11,7 @@ namespace App\Controllers;
 
 use App\Libraries\reCAPTCHA;
 use App\Libraries\Tickets;
+use App\Libraries\Changelogs;
 use Config\Services;
 
 class Ticket extends BaseController
@@ -44,6 +45,7 @@ class Ticket extends BaseController
         }
 
         $tickets = new Tickets();
+        $changelogs = new Changelogs();
         $validation = Services::validation();
         $reCAPTCHA = new reCAPTCHA();
         if ($this->request->getPost('do') == 'submit') {
@@ -120,6 +122,7 @@ class Ticket extends BaseController
                 }
 
                 $ticket_id = $tickets->createTicket($client_id, $this->request->getPost('subject'), $department->id);
+                $changelogs->create($client_id, $ticket_id, $this->client->getRow(['id', $client_id])->fullname, 'Admin.actions.ticketCreatedFromClientPage');
                 //Custom field
                 $tickets->updateTicket([
                     'custom_vars' => serialize($customFieldList)
