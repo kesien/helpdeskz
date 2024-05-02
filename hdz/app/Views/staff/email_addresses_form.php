@@ -158,6 +158,114 @@ if(isset($success_msg)){
 
                     </div>
                 </div>
+                <!-- Filter rules -->
+                <div class="tab-pane fade" id="filters-content" role="tabpanel" aria-labelledby="filters-tab">
+                    <div class="form-group">
+                            <label><?php echo lang('Admin.form.rules.description'); ?></label>
+                        <input type="text" name="rule_description" class="form-control"
+                            value="">
+                    </div>
+                    <div class="form-group">
+                        <label><?php echo lang('Admin.form.type'); ?></label>
+                        <select name="rule_type" class="form-group custom-select" id="rule_type">
+                            <?php
+                            $default = '0';
+                            foreach (['0' => lang('Admin.form.rules.types.from'), 
+                                      '1' => lang('Admin.form.rules.types.subject'), 
+                                      '2' => lang('Admin.form.rules.types.body'), 
+                                      '3' => lang('Admin.form.rules.types.cc'), 
+                                      '4' => lang('Admin.form.rules.types.to')] as $k => $v) {
+                                if ($default == $k) {
+                                    echo '<option value="' . $k . '" selected>' . $v . '</option>';
+                                } else {
+                                    echo '<option value="' . $k . '">' . $v . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><?php echo lang('Admin.form.rules.rule'); ?></label>
+                        <select name="rule_rule" class="form-group custom-select" id="rule_rule">
+                            <?php
+                            $default = '0';
+                            foreach (['0' => lang('Admin.form.rules.rules.contains'), '1' => lang('Admin.form.rules.rules.does-not-contain'), '2' => lang('Admin.form.rules.rules.matches'), '3' => lang('Admin.form.rules.rules.does-not-match')] as $k => $v) {
+                                if ($default == $k) {
+                                    echo '<option value="' . $k . '" selected>' . $v . '</option>';
+                                } else {
+                                    echo '<option value="' . $k . '">' . $v . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                            <label><?php echo lang('Admin.form.rules.value'); ?></label>
+                        <input type="text" name="rule_value" class="form-control"
+                            value="">
+                    </div>
+                    <div class="form-group">
+                        <label><?php echo lang('Admin.form.rules.action'); ?></label>
+                        <select name="rule_action" class="form-group custom-select" id="rule_action">
+                            <?php
+                            $default = '0';
+                            foreach (['0' => lang('Admin.form.rules.actions.send-copy'), '1' => lang('Admin.form.rules.actions.assign-to-agent'), '2' => lang('Admin.form.rules.actions.set-priority')] as $k => $v) {
+                                if ($default == $k) {
+                                    echo '<option value="' . $k . '" selected>' . $v . '</option>';
+                                } else {
+                                    echo '<option value="' . $k . '">' . $v . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group" id="rule_send_copy">
+                            <label><?php echo lang('Admin.form.rules.email'); ?></label>
+                            <input type="text" name="rule_email" class="form-control"
+                                value="">
+                    </div>
+                    <div class="form-group" id="rule_assign_to_agent">
+                        <label><?php echo lang('Admin.form.rules.assign-to-agent'); ?></label>
+                        <select name="rule_assign_to" class="form-group custom-select" id="rule_assign_to">
+                            <?php
+                            $default = '1';
+                            foreach($agents as $agent) {
+                                if ($default == $agent->id) {
+                                    echo '<option value="' . $agent->id . '" selected>' . $agent->name . '</option>';
+                                } else {
+                                    echo '<option value="' . $agent->id . '">' . $v . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group" id="rule_set_priority">
+                        <label>
+                            <?php echo lang('Admin.form.priority'); ?>
+                        </label>
+                        <select name="priority" class="form-control custom-select">
+                            <?php
+                            if (isset($ticket_priorities)) {
+                                foreach ($ticket_priorities as $item) {
+                                    if ($item->id == 1) {
+                                        echo '<option value="' . $item->id . '" selected>' . $item->name . '</option>';
+                                    } else {
+                                        echo '<option value="' . $item->id . '">' . $item->name . '</option>';
+                                    }
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <?php
+                        if (isset($rules)) {
+                            foreach ($rules as $item) {
+                                echo "<div class='form-group'>" . $item->description . "</div>";
+                            }
+                        }
+                    ?>
+                </div>
+                <!-- Filter rules end -->
             </div>
 
 
@@ -184,6 +292,10 @@ $this->section('script_block');
         $("#incoming_type").on('change', function () {
             incoming_type();
         });
+        rule_action();
+        $("#rule_action").on('change', function () {
+            rule_action();
+        })
     });
 
 </script>

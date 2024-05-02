@@ -338,3 +338,21 @@ function incoming_type() {
         $('#incoming_details').hide();
     }
 }
+function rule_action() {
+    var rule_action = $('#rule_action').val();
+    if(rule_action === '0'){
+        $('#rule_send_copy').show();
+        $('#rule_assign_to_agent').hide();
+        $('#rule_set_priority').hide();
+    }
+    if(rule_action === '1') {
+        $('#rule_send_copy').hide();
+        $('#rule_assign_to_agent').show();
+        $('#rule_set_priority').hide();
+    }
+    if(rule_action === '2') {
+        $('#rule_send_copy').hide();
+        $('#rule_assign_to_agent').hide();
+        $('#rule_set_priority').show();
+    }
+}

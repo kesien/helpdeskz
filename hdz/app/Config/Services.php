@@ -5,6 +5,7 @@ use App\Libraries\Api;
 use App\Libraries\Attachments;
 use App\Libraries\Client;
 use App\Libraries\Departments;
+use App\Libraries\Filters;
 use App\Libraries\Kb;
 use App\Libraries\Settings;
 use App\Libraries\Staff;
@@ -98,6 +99,14 @@ class Services extends \CodeIgniter\Config\Services
             return static::getSharedInstance('linkCategories');
         }
         return new LinkCategories();
+    }
+
+    public static function emailFilters($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('filters');
+        }
+        return new Filters();
     }
 
     public static function api($getShared = true)

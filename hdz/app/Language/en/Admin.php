@@ -354,7 +354,31 @@ return [
         'linkCategoryName' => 'Name',
         'linkCategoryDescription' => 'Description',
         'link' => 'Link',
-        'linkUrl' => 'Url'
+        'linkUrl' => 'Url',
+        'rules' => [
+            'description' => 'Description',
+            'rule' => 'Rule',
+            'action' => 'Action',
+            'value' => 'Value',
+            'types' => [
+                'from' => 'Address in FROM',
+                'subject' => 'Subject',
+                'body' => 'Body',
+                'cc' => 'CC',
+                'to' => 'TO'
+            ],
+            'rules' => [
+                'contains' => 'Contains',
+                'does-not-contain' => 'Does not contain',
+                'matches' => 'Matches',
+                'does-not-match' => 'Does not match'
+            ],
+            'actions' => [
+                'send-copy' => 'Send copy',
+                'assign-to-agent' => 'Assign to agent',
+                'set-priority' => 'Set priority'
+            ]
+        ]
     ],
     'error' => [
         'recordsNotFound' => 'Records not found.',
