@@ -67,7 +67,7 @@ $this->section('content');
                     </div>
                     <?php echo form_open('', [], ['do' => 'update_information']); ?>
                     <div class="row">
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <div class="form-group">
                                 <label>
                                     <?php echo lang('Admin.form.department'); ?>
@@ -87,7 +87,28 @@ $this->section('content');
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>
+                                    <?php echo lang('Admin.form.agent'); ?>
+                                </label>
+                                <select name="agent" class="form-control custom-select">
+                                    <?php
+                                    echo '<option value="0"' . ((!isset($ticket->agent_id) || $ticket->agent_id == 0) ? " selected" : "") . '>'. lang('Admin.form.none') .'</option>' ;
+                                    if (isset($agents)) {
+                                        foreach ($agents as $item) {
+                                            if ($item->id == $ticket->agent_id) {
+                                                echo '<option value="' . $item->id . '" selected>' . $item->fullname . '</option>';
+                                            } else {
+                                                echo '<option value="' . $item->id . '">' . $item->fullname . '</option>';
+                                            }
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
                             <div class="form-group">
                                 <label>
                                     <?php echo lang('Admin.form.status'); ?>
@@ -105,7 +126,7 @@ $this->section('content');
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <div class="form-group">
                                 <label>
                                     <?php echo lang('Admin.form.priority'); ?>

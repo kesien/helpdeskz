@@ -253,6 +253,11 @@ function countDepartmentAgents($department_id)
     return \Config\Services::departments()->countAgents($department_id);
 }
 
+function getDefaultAgent($department_id) {
+    $default_agent = \Config\Services::departments()->getDefaultAgentForDepartment($department_id);
+    return isset($default_agent) ? $default_agent->agent_name : lang('Admin.form.none');
+}
+
 function getDepartmentByID($department_id)
 {
     return \Config\Services::departments()->getByID($department_id);

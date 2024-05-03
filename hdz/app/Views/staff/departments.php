@@ -46,6 +46,7 @@ echo form_open('',['id'=>'manageForm'],['do'=>'remove']).
                     <th><?php echo lang('Admin.form.department');?></th>
                     <th><?php echo lang('Admin.form.type');?></th>
                     <th><?php echo lang('Admin.tickets.agentsAssigned');?></th>
+                    <th><?php echo lang('Admin.form.defaultAgent');?></th>
                     <th><?php echo lang('Admin.tickets.menu');?></th>
                     <th></th>
                 </tr>
@@ -60,6 +61,7 @@ echo form_open('',['id'=>'manageForm'],['do'=>'remove']).
                                 <?php echo ($item->private ? lang('Admin.form.private') : lang('Admin.form.public'));?>
                             </td>
                             <td><?php echo countDepartmentAgents($item->id);?></td>
+                            <td><?php echo getDefaultAgent($item->id) ;?></td>
                             <td><?php echo countDepartmentTickets($item->id);?></td>
                             <td class="text-right">
                                 <div class="btn-group">

@@ -210,6 +210,9 @@ echo form_input([
                         <?php echo sort_link('department', lang('Admin.form.department')); ?>
                     </th>
                     <th>
+                        <?php echo sort_link('agent_name', lang('Admin.form.agent')); ?>
+                    </th>
+                    <th>
                         <?php echo sort_link('priority', lang('Admin.form.priority')); ?>
                     </th>
                     <th>
@@ -267,6 +270,15 @@ echo form_input([
                             <div class="text-muted"><i class="fa fa-commenting-o"></i>
                                 <?php echo lang_replace('Admin.tickets.totalReplies', ['%number%' => $item->replies]); ?>
                             </div>
+                        </td>
+                        <td>
+                            <?php 
+                            if (isset($item->agent_name)) {
+                                echo $item->agent_name;
+                            } else {
+                                echo lang('Admin.form.none');
+                            }  
+                            ?>
                         </td>
 
                         <td style="color: <?php echo $item->priority_color; ?>">

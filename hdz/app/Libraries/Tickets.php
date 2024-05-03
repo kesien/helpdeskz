@@ -37,9 +37,11 @@ class Tickets
                 $department_id = 1;
             }
         }
+        
         if ($rules->checkRulesForDepartment($department_id)) {
             
         }
+        $default_agent = $departments->getDefaultAgentForDepartment($department_id);
         $this->ticketsModel->protect(false);
         $this->ticketsModel->insert([
             'department_id' => $department_id,
@@ -49,6 +51,7 @@ class Tickets
             'date' => time(),
             'last_update' => time(),
             'last_replier' => 0,
+            'agent_id' => isset($default_agent) ? $default_agent->agent_id : null
         ]);
         $this->ticketsModel->protect(true);
         return $this->ticketsModel->getInsertID();
@@ -116,6 +119,7 @@ class Tickets
         $q = $this->ticketsModel->select('tickets.*, d.name as department_name, p.name as priority_name, u.fullname, u.email, u.avatar')
             ->join('departments as d', 'd.id=tickets.department_id')
             ->join('priority as p', 'p.id=tickets.priority_id')
+            ->join('staff as s', 's.id=tickets.agent_id', 'left')
             ->join('users as u', 'u.id=tickets.user_id')
             ->get(1);
         if ($q->resultID->num_rows == 0) {
@@ -730,12 +734,13 @@ class Tickets
         }
 
         $db = Database::connect();
-        $result = $this->ticketsModel->select('tickets.*, t.message, u.fullname, d.name as department_name,
+        $result = $this->ticketsModel->select('tickets.*, t.message, u.fullname, d.name as department_name, s.fullname as agent_name,
         p.name as priority_name, p.color as priority_color, 
         IF(last_replier=0, "", (SELECT username FROM ' . $db->prefixTable('staff') . ' WHERE id=last_replier)) as staff_username')
             ->join('users as u', 'u.id=tickets.user_id')
             ->join('departments as d', 'd.id=tickets.department_id')
             ->join('priority as p', 'p.id=tickets.priority_id')
+            ->join('staff as s', 's.id=tickets.agent_id', 'left')
             ->join('(
                 SELECT ticket_id, MAX(date) AS max_date
                 FROM ' . $db->prefixTable('tickets_messages')

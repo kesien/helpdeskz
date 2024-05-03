@@ -142,7 +142,8 @@ class Tickets extends BaseController
             $validation->setRules([
                 'department' => 'required|is_natural_no_zero|is_not_unique[departments.id]',
                 'status' => 'required|is_natural|in_list[' . implode(',', array_keys($tickets->statusList())) . ']',
-                'priority' => 'required|is_natural_no_zero|is_not_unique[priority.id]'
+                'priority' => 'required|is_natural_no_zero|is_not_unique[priority.id]',
+                'agent' => 'required'
             ], [
                 'department' => [
                     'required' => lang('Admin.error.invalidDepartment'),
@@ -176,6 +177,7 @@ class Tickets extends BaseController
                     'department_id' => $this->request->getPost('department'),
                     'status' => $this->request->getPost('status'),
                     'priority_id' => $this->request->getPost('priority'),
+                    'agent_id' => $this->request->getPost('agent')
                 ], $ticket->id);
                 $this->session->setFlashdata('ticket_update', 'Ticket updated.');
                 return redirect()->to(current_url());
@@ -303,6 +305,7 @@ class Tickets extends BaseController
             'message_result' => $messages['result'],
             'pager' => $messages['pager'],
             'departments_list' => Services::departments()->getAll(),
+            'agents' => Services::staff()->getAgents(),
             'ticket_statuses' => $tickets->statusList(),
             'ticket_priorities' => $tickets->getPriorities(),
             'kb_selector' => Services::kb()->kb_article_selector(),

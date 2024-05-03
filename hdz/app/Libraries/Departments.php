@@ -168,6 +168,16 @@ class Departments
         return $r;
     }
 
+    public function getDefaultAgentForDepartment($department_id) {
+        $this->departmentsModel->where('departments.id', $department_id);
+        $q = $this->departmentsModel->select('departments.*, a.fullname as agent_name, a.id as agent_id')->join('staff as a', 'a.id=departments.default_agent_id')
+            ->get(1);
+        if ($q->resultID && $q->resultID->num_rows == 0) {
+            return null;
+        }
+        return $q->getRow();
+    }
+
     public function remove($id)
     {
         $ticketModel = new \App\Models\Tickets();

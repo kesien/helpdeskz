@@ -266,6 +266,7 @@ return [
     'form' => [
         'defaultAgent' => 'Default agent',
         'username' => 'Username',
+        'agent' => 'Agent',
         'password' => 'Password',
         'searchTicket' => 'Search ticket',
         'keyword' => 'Keyword',
