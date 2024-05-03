@@ -143,6 +143,7 @@ return [
         'assignedDepartments' => 'Assigned departments'
     ],
     'settings' => [
+        'settings' => 'Settings',
         'menu' => 'Setup',
         'general' => 'General settings',
         'security' => 'Security settings',
@@ -150,6 +151,7 @@ return [
         'kb' => 'KB settings',
         'emailAddresses' => 'Email addresses',
         'links' => 'Links',
+        'filters' => 'Filters',
         'emailTemplates' => 'Email templates',
         'changeLogo' => 'Change logo',
         'logoRestored' => 'Default logo was restored.',
@@ -213,6 +215,13 @@ return [
         'smtpHost' => 'SMTP Host',
         'smtpPort' => 'SMTP Port',
         'smtpEncryption' => 'SMTP Encryption',
+        'ruleType' => 'Rule type',
+        'ruleAction' => 'Rule action',
+        'ruleRule' => 'Rule',
+        'ruleValue' => 'Rule value',
+        'ruleAssignTo' => 'Assign to',
+        'ruleEmail' => 'Email',
+        'priority' => 'Priority',
         'incomingHost' => 'Incoming Host',
         'incomingPort' => 'Incoming Port',
         'incomingUsername' => 'Incoming Username',
@@ -255,6 +264,7 @@ return [
         'accountUpdated' => 'Teacher account has been updated.'
     ],
     'form' => [
+        'defaultAgent' => 'Default agent',
         'username' => 'Username',
         'password' => 'Password',
         'searchTicket' => 'Search ticket',
@@ -358,8 +368,16 @@ return [
         'rules' => [
             'description' => 'Description',
             'rule' => 'Rule',
+            'rulesTitle' => 'Rules',
             'action' => 'Action',
             'value' => 'Value',
+            'assign-to-agent' => 'Agent',
+            'email' => 'Email address',
+            'enterValidEmail' => 'Please enter a valid email',
+            'noRulesFound' => 'No rules found',
+            'outcome' => 'Outcome',
+            'removeConfirmation' => 'Do you really want to remove this filter?',
+            'ruleDeleted' => 'Filter has been removed',
             'types' => [
                 'from' => 'Address in FROM',
                 'subject' => 'Subject',

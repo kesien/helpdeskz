@@ -138,7 +138,7 @@ function kb_newest($public = 1)
     return \Config\Services::kb()->newestArticles($public);
 }
 
-function resume_content($text, $chars, $clean_html = true)
+function  resume_content($text, $chars, $clean_html = true)
 {
     if ($clean_html) {
         $text = strip_tags($text);
@@ -305,5 +305,41 @@ function str_decode($str)
         }
         return strrev(base64_decode(strrev($ascii)));
 
+    }
+}
+
+function getItemType($type) {
+    if ($type == "0") {
+        return "Admin.form.rules.types.body";
+    }
+    if ($type == "1") {
+        return "Admin.form.rules.types.subject";
+    }
+}
+
+function getItemRule($rule) {
+    if ($rule == "0") {
+        return "Admin.form.rules.rules.contains";
+    }
+    if ($rule == "1") {
+        return "Admin.form.rules.rules.does-not-contain";
+    }
+    if ($rule == "2") {
+        return "Admin.form.rules.rules.matches";
+    }
+    if ($rule == "3") {
+        return "Admin.form.rules.rules.does-not-match";
+    }
+}
+
+function getItemAction($action) {
+    if ($action == "0") {
+        return "Admin.form.rules.actions.send-copy";
+    }
+    if ($action == "1") {
+        return "Admin.form.rules.actions.assign-to-agent";
+    }
+    if ($action == "2") {
+        return "Admin.form.rules.actions.set-priority";
     }
 }

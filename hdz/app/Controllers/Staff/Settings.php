@@ -10,6 +10,7 @@ namespace App\Controllers\Staff;
 
 
 use App\Controllers\BaseController;
+use App\Libraries\EmailRules;
 use App\Libraries\Emails;
 use App\Libraries\Links;
 use Config\Services;
@@ -416,8 +417,6 @@ class Settings extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'departments' => Services::departments()->getAll(),
-            'agents' => Services::staff()->getAgents(),
-            'ticket_priorities' => Services::tickets()->getPriorities(),
             'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
@@ -429,6 +428,7 @@ class Settings extends BaseController
         }
 
         $emailsLib = new Emails();
+        $emailRulesLib = new EmailRules();
         if (!$email = $emailsLib->getByID($email_id)) {
             return redirect()->route('staff_emails');
         }
@@ -479,9 +479,6 @@ class Settings extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'departments' => Services::departments()->getAll(),
-            'agents' => Services::staff()->getAgents(),
-            'ticket_priorities' => Services::tickets()->getPriorities(),
-            'rules' => Services::emailFilters()->getAllForEmail($email_id),
             'email' => $email,
             'category_links_map' => $this->getLinkCategoryMap()
         ]);

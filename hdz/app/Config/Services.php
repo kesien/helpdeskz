@@ -5,7 +5,7 @@ use App\Libraries\Api;
 use App\Libraries\Attachments;
 use App\Libraries\Client;
 use App\Libraries\Departments;
-use App\Libraries\Filters;
+use App\Libraries\EmailRules;
 use App\Libraries\Kb;
 use App\Libraries\Settings;
 use App\Libraries\Staff;
@@ -104,9 +104,9 @@ class Services extends \CodeIgniter\Config\Services
     public static function emailFilters($getShared = true)
     {
         if ($getShared) {
-            return static::getSharedInstance('filters');
+            return static::getSharedInstance('emailRules');
         }
-        return new Filters();
+        return new EmailRules();
     }
 
     public static function api($getShared = true)

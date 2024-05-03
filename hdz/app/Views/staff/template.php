@@ -345,6 +345,7 @@
         var langLinkCategoryConfirmation = '<?php echo addcslashes(lang('Admin.links.categoryRemoveConfirmation'), "'"); ?>';
         var langLinkConfirmation = '<?php echo addcslashes(lang('Admin.links.removeConfirmation'), "'"); ?>';
         var langAgentsConfirmation = '<?php echo addcslashes(lang('Admin.agents.removeConfirmation'), "'"); ?>';
+        var langFilterConfirmation = '<?php echo addcslashes(lang('Admin.form.rules.removeConfirmation'), "'"); ?>';
         var langEmailConfirmation = '<?php echo addcslashes(lang('Admin.settings.emailDeletionConfirm'), "'"); ?>';
         var langCustomFieldConfirmation = '<?php echo addcslashes(lang('Admin.tools.customFieldConfirm'), "'"); ?>';
         var langUserConfirmation = '<?php echo addcslashes(lang('Admin.users.removeUserConfirmation'), "'"); ?>';

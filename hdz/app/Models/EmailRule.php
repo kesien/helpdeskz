@@ -9,7 +9,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Filter extends Model
+class EmailRule extends Model
 {
     protected $table = 'filters';
     protected $primaryKey = 'id';

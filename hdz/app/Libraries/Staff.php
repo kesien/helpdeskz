@@ -270,6 +270,10 @@ class Staff
         return $r;
     }
 
+    public function getAgentById($id) {
+        return $this->staffModel->find($id);
+    }
+
     public function newAgent($fullname, $username, $email, $password, $admin = 0, $departments = '', $active = 1)
     {
         $this->staffModel->protect(false);

@@ -31,10 +31,14 @@ class Tickets
     public function createTicket($client_id, $subject, $department_id = 1, $priority_id = 1)
     {
         $departments = Services::departments();
+        $rules = Services::emailFilters();
         if ($department_id != 1) {
             if (!$departments->isValid($department_id)) {
                 $department_id = 1;
             }
+        }
+        if ($rules->checkRulesForDepartment($department_id)) {
+            
         }
         $this->ticketsModel->protect(false);
         $this->ticketsModel->insert([
@@ -530,13 +534,21 @@ class Tickets
             ->get();
         $r = $q->getResult();
         $q->freeResult();
-        ;
         return $r;
     }
     public function existPriority($id)
     {
         $priorityModel = new PriorityModel();
         return ($priorityModel->where('id', $id)->countAllResults() == 0) ? false : true;
+    }
+
+    public function getPriorityByID($id)
+    {
+        $priorityModel = new PriorityModel();
+        if($priority = $priorityModel->find($id)){
+            return $priority;
+        }
+        return null;
     }
 
     /*

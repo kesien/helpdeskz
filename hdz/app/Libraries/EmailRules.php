@@ -9,19 +9,19 @@
 namespace App\Libraries;
 
 
-use App\Models\Filter;
+use App\Models\EmailRule;
 
-class Filters
+class EmailRules
 {
     protected $filterModel;
     public function __construct()
     {
-        $this->filterModel = new Filter();
+        $this->filterModel = new EmailRule();
     }
-    public function getAllForEmail($emailId)
+    public function getAllForDepartment($departmentId)
     {
         $q = $this->filterModel
-            ->where(['email_id' => $emailId])
+            ->where(['department_id' => $departmentId])
             ->orderBy('id', 'desc')
             ->get();
         if ($q->resultID->num_rows == 0) {
@@ -54,31 +54,24 @@ class Filters
         $this->filterModel->delete($id);
     }
 
-    public function create($email_id, $type, $value, $outcome, $condition, $description = null)
+    public function create($department_id, $type, $value, $action, $outcome, $rule_outcome_id, $condition)
     {
         $this->filterModel->protect(false);
         $this->filterModel->insert([
-            'email_id' => esc($email_id),
+            'department_id' => esc($department_id),
             'type' => esc($type),
-            'condition' => esc($condition),
-            'value' => esc($value),
+            'rule_condition' => esc($condition),
+            'rule_value' => esc($value),
+            'rule_action' => esc($action),
+            'outcome_id' => esc($rule_outcome_id),
             'outcome' => esc($outcome),
-            'description' => esc($description)
         ]);
         $this->filterModel->protect(true);
         return $this->filterModel->getInsertID();
     }
 
-    public function update($id, $type, $condition, $value, $outcome, $description = null)
-    {
-        $this->filterModel->protect(false);
-        $this->filterModel->update($id, [
-            'type' => esc($type),
-            'condition' => esc($condition),
-            'value' => esc($value),
-            'outcome' => esc($outcome),
-            'description' => $description
-        ]);
-        $this->filterModel->protect(true);
+    public function checkRulesForDepartment($department_id) {
+        $rules = $this->getAllForDepartment($department_id);
+        return isset($rules) ? true : false;
     }
 }

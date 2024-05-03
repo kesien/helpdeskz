@@ -154,6 +154,20 @@ class Departments
             ->countAllResults();
     }
 
+    public function getAllAgentsForDepartment($department_id) {
+        $staffModel = new \App\Models\Staff();
+        $q = $staffModel
+            ->like('department', '"'.$department_id.'"')
+            ->get();
+
+        if($q->resultID->num_rows == 0){
+            return null;
+        }
+        $r = $q->getResult();
+        $q->freeResult();
+        return $r;
+    }
+
     public function remove($id)
     {
         $ticketModel = new \App\Models\Tickets();
@@ -199,13 +213,14 @@ class Departments
         return $this->departmentsModel->getInsertID();
     }
 
-    public function update($id, $name, $private, $position)
+    public function update($id, $name, $private, $position, $default_agent = null)
     {
         $this->departmentsModel->protect(false);
         $this->departmentsModel->update($id, [
             'name' => esc($name),
             'private' => $private,
-            'dep_order' => $position
+            'dep_order' => $position,
+            'default_agent_id' => $default_agent
         ]);
         $this->departmentsModel->protect(true);
     }
