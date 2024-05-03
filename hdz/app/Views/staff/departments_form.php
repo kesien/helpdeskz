@@ -221,7 +221,7 @@ echo form_open('', ['id' => 'deleteForm'], ['do' => 'removeFilter']) .
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
-                                <?php if (!$rules): ?>
+                                <?php if (!isset($rules)): ?>
                                     <tr>
                                         <td colspan="5">
                                             <i>
