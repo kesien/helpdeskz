@@ -46,6 +46,25 @@ $this->section('content');
                     </label>
                     <input type="text" value="<?php echo $department->name;?>" class="form-control" readonly>
                 </div>
+                <div class="form-group">
+                    <label>
+                        <?php echo lang('Client.form.agents');?>
+                    </label>
+                    <select class="form-control" name="agent">
+                        <?php
+                        if (isset($agents)) {
+                            if (empty($agents)) echo '<option value="0" selected>' . lang('Admin.form.none') . '</option>';
+                            foreach ($agents as $agent) {
+                                if ($department->default_agent_id == $agent->id) {
+                                    echo '<option value="' . $agent->id . '" selected>' . $agent->fullname . '</option>';
+                                } else {
+                                    echo '<option value="' . $agent->id . '">' . $agent->fullname . '</option>';
+                                }
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
                 <?php
                 if(isset($customFields)){
                     foreach ($customFields as $customField){

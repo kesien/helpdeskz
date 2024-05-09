@@ -27,6 +27,7 @@ return [
         'title' => 'Submit a support request',
         'menu' => 'Submit ticket',
         'selectDepartment' => 'If you can\'t find a solution to your problem, you can submit a ticket by selecting the appropriate department below.',
+        'selectAgent' => 'Please select an agent for your ticket.',
         'generalInformation' => 'General information',
         'requestReceived' => 'Your request has been received',
         'requestReceivedDescription' => 'We have received your request and our team will get back to you shortly. You can log in to the helpdesk to review the status of your request, or check your email for further updates.',
@@ -84,6 +85,7 @@ return [
         'closed' => 'Closed',
         'user' => 'User',
         'departments' => 'Departments',
+        'agents' => 'Agent',
         'next' => 'Next'
     ],
     'error' => [
@@ -99,6 +101,7 @@ return [
         'enterSubject' => 'Enter the subject.',
         'enterYourMessage' => 'Enter your message',
         'selectValidDepartment' => 'Select a valid department.',
+        'selectValidAgent' => 'Select a valid agent.',
         'invalidCaptcha' => 'ERROR: Invalid captcha verification.',
         'emailNotFound' => 'Email was not found.',
         'invalidEmailPassword' => 'Invalid email address or password.',

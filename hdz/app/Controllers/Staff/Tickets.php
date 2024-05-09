@@ -10,6 +10,7 @@ namespace App\Controllers\Staff;
 
 
 use App\Controllers\BaseController;
+use App\Helpers\FilterHelper;
 use App\Models\CannedModel;
 use Config\Services;
 use App\Libraries\ChangeLogs;
@@ -324,6 +325,7 @@ class Tickets extends BaseController
     {
         $departments = Services::departments();
         $changelogs = new ChangeLogs();
+        $filter_helper = new FilterHelper();
         if (!$department = $departments->getByID($department_id)) {
             return redirect()->route('staff_ticket_new');
         }
@@ -430,6 +432,7 @@ class Tickets extends BaseController
                 $tickets->replyTicketNotification($ticket, $message, "", (isset($files) ? $files : null));
                 $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.ticketCreated');
                 $this->session->setFlashdata('form_success', 'Ticket has been created and client was notified.');
+                $filter_helper->playFilterRulesForDepartment($department_id, $ticket, $this->request->getPost('message'), $this->request->getPost('subject'), $this->request->getPost('message'));
                 return redirect()->route('staff_ticket_view', [$ticket_id]);
             }
         }

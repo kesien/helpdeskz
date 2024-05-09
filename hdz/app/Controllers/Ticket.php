@@ -9,6 +9,7 @@
 namespace App\Controllers;
 
 
+use App\Helpers\FilterHelper;
 use App\Libraries\reCAPTCHA;
 use App\Libraries\Tickets;
 use App\Libraries\Changelogs;
@@ -37,13 +38,14 @@ class Ticket extends BaseController
             'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
+
     public function create($department_id)
     {
         $departments = Services::departments();
         if (!$department = $departments->getByID($department_id)) {
             return redirect()->route('submit_ticket');
         }
-
+        $agents = $departments->getAllAgentsForDepartment($department_id);
         $tickets = new Tickets();
         $changelogs = new Changelogs();
         $validation = Services::validation();
@@ -61,6 +63,9 @@ class Ticket extends BaseController
             }
             $validation->setRule('subject', 'subject', 'required', [
                 'required' => lang('Client.error.enterSubject')
+            ]);
+            $validation->setRule('agent', 'agent', 'required', [
+                'required' => lang('Client.error.selectValidAgent')
             ]);
             $validation->setRule('message', 'message', 'required', [
                 'required' => lang('Client.error.enterYourMessage')
@@ -121,7 +126,7 @@ class Ticket extends BaseController
                     $client_id = $this->client->getClientID($this->request->getPost('fullname'), $this->request->getPost('email'));
                 }
 
-                $ticket_id = $tickets->createTicket($client_id, $this->request->getPost('subject'), $department->id);
+                $ticket_id = $tickets->createTicket($client_id, $this->request->getPost('subject'), $department->id, $this->request->getPost('agent'));
                 $changelogs->create($client_id, $ticket_id, $this->client->getRow(['id', $client_id])->fullname, 'Admin.actions.ticketCreatedFromClientPage');
                 //Custom field
                 $tickets->updateTicket([
@@ -140,6 +145,8 @@ class Ticket extends BaseController
                 $tickets->newTicketNotification($ticket);
                 $tickets->staffNotification($ticket);
                 $ticket_preview = sha1($ticket->id);
+                $filter_helper = new FilterHelper();
+                $filter_helper->playFilterRulesForDepartment($department->id, $ticket, nl2br(esc($this->request->getPost('message'))), $ticket->subject, nl2br(esc($this->request->getPost('message'))));
                 $this->session->set('ticket_preview', $ticket_preview);
                 return redirect()->route('ticket_preview', [$ticket->id, $ticket_preview]);
             }
@@ -148,6 +155,7 @@ class Ticket extends BaseController
         return view('client/ticket_form', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'department' => $department,
+            'agents' => $agents,
             'validation' => $validation,
             'captcha' => $reCAPTCHA->display(),
             'customFields' => $tickets->customFieldsFromDepartment($department->id),
