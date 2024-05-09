@@ -72,7 +72,7 @@ $this->section('content');
                                 <label>
                                     <?php echo lang('Admin.form.department'); ?>
                                 </label>
-                                <select name="department" class="form-control custom-select">
+                                <select name="department" class="form-control custom-select" id="ticket_department">
                                     <?php
                                     if (isset($departments_list)) {
                                         foreach ($departments_list as $item) {
@@ -92,9 +92,9 @@ $this->section('content');
                                 <label>
                                     <?php echo lang('Admin.form.agent'); ?>
                                 </label>
-                                <select name="agent" class="form-control custom-select">
+                                <select name="agent" id="agent_select" class="form-control custom-select">
                                     <?php
-                                    echo '<option value="0"' . ((!isset($ticket->agent_id) || $ticket->agent_id == 0) ? " selected" : "") . '>'. lang('Admin.form.none') .'</option>' ;
+                                    echo '<option value="0"' . ((!isset($ticket->agent_id) || $ticket->agent_id == 0) ? " selected" : "") . ' disabled>'. lang('Admin.form.none') .'</option>' ;
                                     if (isset($agents)) {
                                         foreach ($agents as $item) {
                                             if ($item->id == $ticket->agent_id) {
@@ -106,6 +106,7 @@ $this->section('content');
                                     }
                                     ?>
                                 </select>
+                                <small class="text-muted" id="agent_select_hint"><?php echo lang('Admin.form.noAgents') ?></small>
                             </div>
                         </div>
                         <div class="col-lg-3">
@@ -417,7 +418,7 @@ if (isset($message_result)) {
                     </div>
                     <div class="col">
                         <?php
-                                if (staff_data('admin') == 1 || staff_data('id') == $note->staff_id) {
+                                if (staff_data('admin') == 1 || staff_data('id') == $item->staff_id) {
                                     ?>
                         <div class="float-right">
                                         <button type="button" onclick="editTicketToggle('<?php echo $item->id; ?>');"
@@ -597,6 +598,55 @@ include __DIR__ . '/tinymce.php';
     function editTicketToggle(ticketId) {
         $('#msg_' + ticketId).toggle();
         $('#inputTicketText_' + ticketId).toggle();
+    }
+
+    <?php
+        $agent_info = array_map(function($a) {
+            return new class($a->id, $a->fullname, unserialize($a->department)) {
+                public $id;
+                public $fullname;
+                public $departments;
+
+                public function __construct($id, $fullname, $department) {
+                    $this->id = $id;
+                    $this->fullname = $fullname;
+                    $this->departments = $department ? $department : array();
+                }
+            };
+        }, $agents);
+    ?>
+    let agents = <?php echo json_encode($agent_info); ?>;
+    let groupedByDepartment = {};
+    agents.forEach(agent => {
+        agent.departments.forEach(department => {
+            if (!groupedByDepartment[department]) {
+                groupedByDepartment[department] = [];
+            }
+            groupedByDepartment[department].push(agent);
+        })
+    });
+    departmentSelectionChanged();
+    $("#ticket_department").on('change', departmentSelectionChanged)
+    function departmentSelectionChanged() {
+        $("#agent_select_hint").hide();
+        $("#agent_select").empty();
+        let option = $('<option></option>').attr("value", 0).text("<?php echo lang('Admin.form.none'); ?>");
+        $("#agent_select").append(option);
+        if (Object.hasOwn(groupedByDepartment, [$("#ticket_department").val()])) {
+            for (let department in groupedByDepartment) {
+                if (department == $("#ticket_department").val()) {
+                    groupedByDepartment[department].forEach(a => {
+                        let option = $('<option></option>').attr("value", a.id).text(a.fullname);
+                         $("#agent_select").append(option);
+                         if (a.id == <?php echo $ticket->agent_id ?>) {
+                            $("#agent_select").val(a.id);
+                         }
+                    })
+                }
+            }
+        } else {
+            $("#agent_select_hint").show();
+        }
     }
 </script>
 <?php

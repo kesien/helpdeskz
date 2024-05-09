@@ -161,7 +161,7 @@ class Departments
             ->get();
 
         if($q->resultID->num_rows == 0){
-            return null;
+            return [];
         }
         $r = $q->getResult();
         $q->freeResult();

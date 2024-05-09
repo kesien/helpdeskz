@@ -28,19 +28,15 @@ class Tickets
         $this->ticketsModel = new \App\Models\Tickets();
         $this->messagesModel = new TicketsMessage();
     }
-    public function createTicket($client_id, $subject, $department_id = 1, $priority_id = 1)
+    public function createTicket($client_id, $subject, $department_id = 1, $priority_id = 1, $agent_id = 0)
     {
         $departments = Services::departments();
-        $rules = Services::emailFilters();
         if ($department_id != 1) {
             if (!$departments->isValid($department_id)) {
                 $department_id = 1;
             }
         }
         
-        if ($rules->checkRulesForDepartment($department_id)) {
-            
-        }
         $default_agent = $departments->getDefaultAgentForDepartment($department_id);
         $this->ticketsModel->protect(false);
         $this->ticketsModel->insert([
@@ -51,7 +47,7 @@ class Tickets
             'date' => time(),
             'last_update' => time(),
             'last_replier' => 0,
-            'agent_id' => isset($default_agent) ? $default_agent->agent_id : null
+            'agent_id' => $agent_id != 0 ? $agent_id : (isset($default_agent) ? $default_agent->agent_id : null)
         ]);
         $this->ticketsModel->protect(true);
         return $this->ticketsModel->getInsertID();
@@ -349,22 +345,41 @@ class Tickets
     {
         $emails = new Emails();
         $staffModel = new \App\Models\Staff();
-        //Send Mail to staff
-        $q = $staffModel->like('department', '"' . $ticket->department_id . '"')
-            ->get();
-        if ($q->resultID->num_rows > 0) {
-            foreach ($q->getResult() as $item) {
-                $emails->sendFromTemplate('staff_ticketnotification', [
-                    '%staff_name%' => $item->fullname,
+        $agentId = $ticket->agent_id;
+        if (!isset($agentId) || $agentId == 0) {
+            $departments = Services::departments();
+            $agentId = $departments->getDefaultAgentForDepartment($ticket->department_id);
+        }
+
+        $agent = isset($agentId) ? $staffModel->find($agentId) : null;
+        if ($agent) {
+            $emails->sendFromTemplate('staff_ticketnotification', [
+                    '%staff_name%' => $agent->fullname,
                     '%ticket_id%' => $ticket->id,
                     '%ticket_subject%' => $ticket->subject,
                     '%ticket_department%' => $ticket->department_name,
                     '%ticket_status%' => lang('open'),
                     '%ticket_priority%' => $ticket->priority_name,
                     '%original_message%'=> $this->getFirstMessage($ticket->id)->message
-                ], $item->email, $ticket->department_id);
+            ], $agent->email, $ticket->department_id);
+        } else {
+            //No agent found send notification for everyone in department
+            $q = $staffModel->find('department', '"' . $ticket->department_id . '"')
+                ->get();
+            if ($q->resultID->num_rows > 0) {
+                foreach ($q->getResult() as $item) {
+                    $emails->sendFromTemplate('staff_ticketnotification', [
+                        '%staff_name%' => $item->fullname,
+                        '%ticket_id%' => $ticket->id,
+                        '%ticket_subject%' => $ticket->subject,
+                        '%ticket_department%' => $ticket->department_name,
+                        '%ticket_status%' => lang('open'),
+                        '%ticket_priority%' => $ticket->priority_name,
+                        '%original_message%'=> $this->getFirstMessage($ticket->id)->message
+                    ], $item->email, $ticket->department_id);
+                }
+                $q->freeResult();
             }
-            $q->freeResult();
         }
     }
 
@@ -711,8 +726,10 @@ class Tickets
             if (!is_null($staff_departments)) {
                 $this->ticketsModel->groupStart();
                 foreach ($staff_departments as $item) {
-                    $this->ticketsModel->orWhere('tickets.department_id', $item->id);
-                }
+                    $this->ticketsModel
+                        ->orWhere('tickets.department_id', $item->id);
+                    }
+                $this->ticketsModel->orWhere('tickets.agent_id', $staff->getData('id'));
                 $this->ticketsModel->groupEnd();
             }
         }

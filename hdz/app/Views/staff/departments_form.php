@@ -79,6 +79,7 @@ echo form_open('', ['id' => 'deleteForm'], ['do' => 'removeFilter']) .
                             }
                             ?>
                         </select>
+                        <?php if (empty($agents_for_department)) echo "<small class='text-muted'>" . lang('Admin.form.addAgents') . "</small>"; ?>
                     </div>
                     <?php endif; ?>
                     <?php if(!isset($department) || (isset($department) && count($list_departments) > 1)):?>

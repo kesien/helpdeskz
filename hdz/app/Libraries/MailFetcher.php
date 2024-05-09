@@ -35,8 +35,10 @@ class MailFetcher
                     $email->imap_password // Password for the before configured username
                 );
                 try {
+                    log_message('info', 'Trying to connect to ' . $email->imap_host . ' with ' . $email->imap_username . '.');
                     $mailsIds = $mailbox->searchMailbox('ALL');
                 } catch (ConnectionException $ex) {
+                    log_message('error', 'Connection to ' . $email->imap_host . ' with ' . $email->imap_username . ' failed.');
                     log_message('error', 'IMAP connection failed: ' . $ex);
                     return false;
                 }
@@ -46,6 +48,14 @@ class MailFetcher
                 $mailbox->setAttachmentsDir($this->attachment_dir);
                 foreach ($mailsIds as $k => $v) {
                     $mail = $mailbox->getMail($mailsIds[$k]);
+                    if (strpos(strtolower($mail->subject), 'undelivered mail returned to sender') !== false) {
+                        log_message('info', 'Ignoring bouncing email');
+                        continue;
+                    }
+                    if (strpos(strtolower($mail->subject), 'out of office') !== false || strpos(strtolower($mail->subject), 'abwesenheit') !== false) {
+                        log_message('info', 'Ignoring out of office email');
+                        continue;
+                    }
                     $message = ($mail->textHtml) ? $this->cleanMessage($mail->textHtml) : $mail->textPlain;
                     $fromEmailAddress = $mail->fromAddress;
                     if (strpos($mail->fromAddress, 'no-reply@wufoo.com') !== false) {
@@ -198,6 +208,8 @@ class MailFetcher
     {
         $client = Services::client();
         $tickets = Services::tickets();
+        $rules = new EmailRules();
+        $department_rules = $rules->getAllForDepartment($department_id);
         $changelogs = new Changelogs();
         $client_id = $client->getClientID($clientName, $clientEmail);
         if (!$ticket = $tickets->getTicketFromEmail($subject)) {
@@ -216,7 +228,63 @@ class MailFetcher
             $changelogs->create($client_id, $ticket_id, $client->getRow(['id' => $client_id])->fullname, 'Admin.actions.messageAddedFromEmail');
         }
         $tickets->staffNotification($ticket);
+        $message = $tickets->getFirstMessage($ticket_id);
+        if (!empty($department_rules)) {
+            foreach ($department_rules as $rule) {
+                $this->checkRule($ticket, $message, $subject, $body, $rule);
+            }
+        }
         return [$ticket_id, $message_id];
+    }
+
+    private function checkRule($ticket, $message, $subject, $body, $rule) {
+        $rule_result = false;
+        if ($rule->type == 0)  {
+            $rule_result = $this->checkRuleCondition($subject, $rule->rule_value, $rule->rule_condition);
+        }
+        if ($rule->type == 1) {
+            $rule_result = $this->checkRuleCondition($body, $rule->rule_value, $rule->rule_condition);
+        }
+        if ($rule_result) {
+            $this->takeRuleAction($rule->rule_action, $rule->outcome_id, $rule->outcome, $ticket, $message);
+        }
+    }
+
+    private function checkRuleCondition($text, $value, $rule_condition) {
+        switch ($rule_condition) {
+            case 0:
+                return strpos($text, $value) !== false;
+            case 1:
+                return strpos($text, $value) === false;
+            case 2:
+                return strtolower($text) == strtolower($value);
+            case 3:
+                return strtolower($text) != strtolower($value);
+        }
+    }
+
+    private function takeRuleAction($action, $outcome_id, $outcome, $ticket, $message) {
+        $tickets = Services::tickets();
+        switch ($action) {
+            case 0:
+                $emails = new Emails();
+                $emails->sendFromTemplate('send_copy_to', [
+                    '%email%' => $outcome,
+                    '%ticket_id%' => $ticket->id,
+                    '%ticket_subject%' => $ticket->subject,
+                    '%ticket_department%' => $ticket->department_name,
+                    '%ticket_status%' => lang('open'),
+                    '%ticket_priority%' => $ticket->priority_name,
+                    '%original_message%'=> $message->message
+                ], $outcome, $ticket->department_id);
+                break;
+            case 1:
+                $tickets->updateTicket(['agent_id' => $outcome_id], $ticket->id);
+                break;
+            case 2:
+                $tickets->updateTicket(['priority_id' => $outcome_id], $ticket->id);
+                break;
+        }
     }
 
     public function cleanMessage($message)

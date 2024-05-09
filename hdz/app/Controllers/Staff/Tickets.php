@@ -167,6 +167,9 @@ class Tickets extends BaseController
                 if ($this->request->getPost('department') != $ticket->department_id) {
                     $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.departmentChanged');
                 }
+                if ($this->request->getPost('agent') != $ticket->agent_id) {
+                    $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.agentChanged');
+                }
                 if ($this->request->getPost('status') != $ticket->status) {
                     $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.statusChanged');
                 }
@@ -177,7 +180,7 @@ class Tickets extends BaseController
                     'department_id' => $this->request->getPost('department'),
                     'status' => $this->request->getPost('status'),
                     'priority_id' => $this->request->getPost('priority'),
-                    'agent_id' => $this->request->getPost('agent')
+                    'agent_id' => $this->request->getPost('agent'),
                 ], $ticket->id);
                 $this->session->setFlashdata('ticket_update', 'Ticket updated.');
                 return redirect()->to(current_url());
@@ -408,7 +411,7 @@ class Tickets extends BaseController
                 }
                 $name = ($this->request->getPost('fullname') == '') ? $this->request->getPost('email') : $this->request->getPost('fullname');
                 $client_id = $this->client->getClientID($name, $this->request->getPost('email'));
-                $ticket_id = $tickets->createTicket($client_id, $this->request->getPost('subject'), $department_id, $this->request->getPost('priority'));
+                $ticket_id = $tickets->createTicket($client_id, $this->request->getPost('subject'), $department_id, $this->request->getPost('priority'), $this->request->getPost('agent'));
                 $tickets->updateTicket([
                     'custom_vars' => serialize($customFieldList)
                 ], $ticket_id);
@@ -437,6 +440,7 @@ class Tickets extends BaseController
             'success_msg' => isset($success_msg) ? $success_msg : null,
             'canned_response' => $tickets->getCannedList(),
             'department' => $department,
+            'agents' => $departments->getAllAgentsForDepartment($department_id),
             'ticket_statuses' => $tickets->statusList(),
             'ticket_priorities' => $tickets->getPriorities(),
             'kb_selector' => Services::kb()->kb_article_selector(),

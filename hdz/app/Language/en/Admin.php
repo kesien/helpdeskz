@@ -41,6 +41,7 @@ return [
     'actions' => [
         'attachmentRemoved' => 'Attachment removed',
         'departmentChanged' => 'Department changed',
+        'agentChanged' => 'Agent changed',
         'statusChanged' => 'Status changed',
         'priorityChanged' => 'Priority changed',
         'replySent' => 'Reply sent',
@@ -266,6 +267,8 @@ return [
     'form' => [
         'defaultAgent' => 'Default agent',
         'username' => 'Username',
+        'addAgents' => 'Please add agents to this department first',
+        'noAgents' => 'There are no agents for this department',
         'agent' => 'Agent',
         'password' => 'Password',
         'searchTicket' => 'Search ticket',

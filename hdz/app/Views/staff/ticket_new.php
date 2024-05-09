@@ -60,7 +60,7 @@ if (isset($success_msg)) {
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label>
                         <?php echo lang('Admin.form.department'); ?>
@@ -68,7 +68,29 @@ if (isset($success_msg)) {
                     <input type="text" value="<?php echo $department->name; ?>" class="form-control" readonly>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>
+                        <?php echo lang('Admin.form.agent'); ?>
+                    </label>
+                    <select name="agent" class="form-control">
+                        <?php
+                        if (isset($agents)) {
+                            if (empty($agents)) echo '<option value="0" selected>' . lang('Admin.form.none') . '</option>';
+                            foreach ($agents as $agent) {
+                                if ($department->default_agent_id == $agent->id) {
+                                    echo '<option value="' . $agent->id . '" selected>' . $agent->fullname . '</option>';
+                                } else {
+                                    echo '<option value="' . $agent->id . '">' . $agent->fullname . '</option>';
+                                }
+                            }
+                        }
+                        ?>
+                    </select>
+                    <?php if (empty($agents)) echo '<small class="text-muted">' . lang('Admin.form.noAgents') . '</small>' ?>
+                </div>
+            </div>
+            <div class="col-md-3">
                 <div class="form-group">
                     <label>
                         <?php echo lang('Admin.form.priority'); ?>
@@ -88,7 +110,7 @@ if (isset($success_msg)) {
                     </select>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label>
                         <?php echo lang('Admin.form.status'); ?>

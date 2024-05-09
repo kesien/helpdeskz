@@ -35,9 +35,6 @@ if(isset($success_msg)){
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" id="incoming-tab" data-toggle="tab" href="#incoming-content" role="tab" aria-controls="contact" aria-selected="false"><?php echo lang('Admin.settings.incoming');?></a>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="filters-tab" data-toggle="tab" href="#filters-content" role="tab" aria-controls="contact" aria-selected="false"><?php echo lang('Admin.settings.filters');?></a>
-                </li>
             </ul>
         </div>
         <div class="card-body">
