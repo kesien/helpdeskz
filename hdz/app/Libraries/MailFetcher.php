@@ -20,6 +20,8 @@ use App\Libraries\ChangeLogs;
 
 class MailFetcher
 {
+    const SUBJECT_TO_IGNORE = array("undelivered mail returned to sender", "out of office", "abwesend", "abwesenheit", "delivery status notification");
+    const WUFOO_EMAIL = "no-reply@wufoo.com";
     private $attachment_dir;
     public function __construct()
     {
@@ -49,17 +51,13 @@ class MailFetcher
                 $mailbox->setAttachmentsDir($this->attachment_dir);
                 foreach ($mailsIds as $k => $v) {
                     $mail = $mailbox->getMail($mailsIds[$k]);
-                    if (strpos(strtolower($mail->subject), 'undelivered mail returned to sender') !== false) {
-                        log_message('info', 'Ignoring bouncing email');
-                        continue;
-                    }
-                    if (strpos(strtolower($mail->subject), 'out of office') !== false || strpos(strtolower($mail->subject), 'abwesenheit') !== false) {
-                        log_message('info', 'Ignoring out of office email');
+                    if (strpos(json_encode(self::SUBJECT_TO_IGNORE), strtolower($mail->subject)) !== false) {
+                        log_message('info', 'Ignoring bouncing and out of office emails');
                         continue;
                     }
                     $message = ($mail->textHtml) ? $this->cleanMessage($mail->textHtml) : $mail->textPlain;
                     $fromEmailAddress = $mail->fromAddress;
-                    if (strpos($mail->fromAddress, 'no-reply@wufoo.com') !== false) {
+                    if (strpos(self::WUFOO_EMAIL, $mail->fromAddress) !== false) {
                         preg_match('/(?:&nbsp;|\s)*(?:<a[^>]*?href="mailto:([^">]+)"[^>]*?>|([^\s<]+@[^\s>]+))/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $matches);
                         $fromEmailAddress = (isset($matches[1]) && $matches[1] != "") ? $matches[1] : (isset($matches[2]) ? $matches[2] : $mail->fromAddress);
                     }
