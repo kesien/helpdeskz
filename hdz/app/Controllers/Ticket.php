@@ -126,8 +126,8 @@ class Ticket extends BaseController
                     $client_id = $this->client->getClientID($this->request->getPost('fullname'), $this->request->getPost('email'));
                 }
 
-                $ticket_id = $tickets->createTicket($client_id, $this->request->getPost('subject'), $department->id, $this->request->getPost('agent'));
-                $changelogs->create($client_id, $ticket_id, $this->client->getRow(['id', $client_id])->fullname, 'Admin.actions.ticketCreatedFromClientPage');
+                $ticket_id = $tickets->createTicket($client_id, $this->request->getPost('subject'), $department->id, 1, $this->request->getPost('agent'));
+                $changelogs->create($client_id, $ticket_id, $this->client->getRow(['id' => $client_id])->fullname, 'Admin.actions.ticketCreatedFromClientPage');
                 //Custom field
                 $tickets->updateTicket([
                     'custom_vars' => serialize($customFieldList)
