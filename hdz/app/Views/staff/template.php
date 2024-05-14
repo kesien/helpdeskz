@@ -28,8 +28,8 @@
 
 <body class="h-100">
 
-    <div class="container-fluid h-100">
-        <div class="row h-100">
+    <div class="container-fluid">
+        <div class="row">
             <!-- Main Sidebar -->
             <aside class="main-sidebar col-12 col-md-3 col-lg-2 px-0">
                 <div class="main-navbar">
@@ -248,7 +248,7 @@
                 </div>
             </aside>
             <!-- End Main Sidebar -->
-            <main class="main-content h-100 d-flex flex-column col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
+            <main class="main-content d-flex flex-column col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
                 <div class="main-navbar sticky-top bg-white">
                     <!-- Main Navbar -->
                     <nav class="navbar align-items-stretch navbar-light flex-md-nowrap p-0">
@@ -321,7 +321,7 @@
                     $this->renderSection('content');
                     ?>
                 </div>
-                <footer class="main-footer d-flex mt-auto p-2 px-3 bg-white border-top" style="position: sticky; bottom: 0; z-index: 1020;">
+                <footer class="main-footer d-flex mt-3 p-2 px-3 bg-white border-top" style="position: sticky; bottom: 0; z-index: 1020;">
                     <span class="copyright ml-auto my-auto mr-2">Copyright © 2015 -
                         <?php echo date('Y'); ?>
                         <a href="https://helpdeskz.com" rel="nofollow">HelpDeskZ v
