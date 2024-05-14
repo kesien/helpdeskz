@@ -261,7 +261,7 @@ echo form_open('', ['id' => 'deleteForm'], ['do' => 'removeFilter']) .
 $this->endSection();
 $this->section('script_block');
 ?>
-<script type="text/javascript">
+<script>
     $(function () {
         rule_action();
         $("#rule_action").on('change', function () {
