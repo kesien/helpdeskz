@@ -315,10 +315,10 @@ function str_decode($str)
 
 function getItemType($type) {
     if ($type == "0") {
-        return "Admin.form.rules.types.body";
+        return "Admin.form.rules.types.subject";
     }
     if ($type == "1") {
-        return "Admin.form.rules.types.subject";
+        return "Admin.form.rules.types.body";
     }
 }
 

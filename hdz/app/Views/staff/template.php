@@ -316,12 +316,12 @@
                     </nav>
                 </div>
                 <!-- / .main-navbar -->
-                <div class="main-content-container container-fluid px-4">
+                <div class="main-content-container h-100 d-flex flex-column container-fluid px-4">
                     <?php
                     $this->renderSection('content');
                     ?>
                 </div>
-                <footer class="main-footer d-flex mt-3 p-2 px-3 bg-white border-top">
+                <footer class="main-footer d-flex mt-auto p-2 px-3 bg-white border-top">
                     <span class="copyright ml-auto my-auto mr-2">Copyright © 2015 -
                         <?php echo date('Y'); ?>
                         <a href="https://helpdeskz.com" rel="nofollow">HelpDeskZ v
