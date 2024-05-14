@@ -257,6 +257,7 @@ echo form_open('', ['id' => 'deleteForm'], ['do' => 'removeFilter']) .
             ?>
         </div>
     </div>
+    </div>
 <?php
 $this->endSection();
 $this->section('script_block');
