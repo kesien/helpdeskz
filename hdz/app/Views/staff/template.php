@@ -248,7 +248,7 @@
                 </div>
             </aside>
             <!-- End Main Sidebar -->
-            <main class="main-content d-flex flex-column col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
+            <main class="main-content col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
                 <div class="main-navbar sticky-top bg-white">
                     <!-- Main Navbar -->
                     <nav class="navbar align-items-stretch navbar-light flex-md-nowrap p-0">
