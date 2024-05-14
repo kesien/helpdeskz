@@ -94,7 +94,7 @@ class Tickets
 
     public function getTicketFromEmail($subject)
     {
-        if (!preg_match('/\[#[0-9]+]/', $subject, $regs)) {
+        if (!preg_match('/\[#[0-9]+\](?![^\s\]]|$)/', $subject, $regs)) {
             return null;
         }
         $ticket_id = str_replace(['[#', ']'], '', $regs[0]);
