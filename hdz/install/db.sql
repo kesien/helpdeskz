@@ -93,7 +93,8 @@ CREATE TABLE `{{db_prefix}}departments` (
   `id` int NOT NULL,
   `dep_order` int NOT NULL DEFAULT '0',
   `name` varchar(255) NOT NULL,
-  `private` int NOT NULL DEFAULT '0'
+  `private` int NOT NULL DEFAULT '0',
+  `default_agent_id` int NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `{{db_prefix}}emails`;
@@ -195,7 +196,8 @@ CREATE TABLE `{{db_prefix}}tickets` (
   `status` smallint NOT NULL DEFAULT '1',
   `replies` int NOT NULL DEFAULT '0',
   `last_replier` tinyint(1) DEFAULT '0',
-  `custom_vars` mediumtext
+  `custom_vars` mediumtext,
+  `agent_id` int NULL DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `{{db_prefix}}tickets_messages`;
@@ -269,7 +271,7 @@ CREATE TABLE `{{db_prefix}}filters` (
   `rule_condition` int NOT NULL,
   `rule_action` int NOT NULL,
   `outcome` varchar(250) NOT NULL,
-  `outcome_id` int NOT NULL,
+  `outcome_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `{{db_prefix}}api`
