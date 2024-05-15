@@ -11,6 +11,7 @@ namespace App\Controllers\Staff;
 
 use App\Controllers\BaseController;
 use App\Helpers\FilterHelper;
+use App\Libraries\Emails;
 use App\Models\CannedModel;
 use Config\Services;
 use App\Libraries\ChangeLogs;
@@ -170,6 +171,17 @@ class Tickets extends BaseController
                 }
                 if ($this->request->getPost('agent') != $ticket->agent_id) {
                     $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.agentChanged');
+                    $emails = new Emails();
+                    $newAgent = $this->staff->getAgentById($this->request->getPost('agent'));
+                    $emails->sendFromTemplate('staff_ticketnotification', [
+                        '%staff_name%' => $newAgent->fullname,
+                        '%ticket_id%' => $ticket->id,
+                        '%ticket_subject%' => $ticket->subject,
+                        '%ticket_department%' => $ticket->department_name,
+                        '%ticket_status%' => lang('open'),
+                        '%ticket_priority%' => $ticket->priority_name,
+                        '%original_message%'=> $tickets->getFirstMessage($ticket->id)->message
+                    ], $newAgent->email, $ticket->department_id);
                 }
                 if ($this->request->getPost('status') != $ticket->status) {
                     $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.statusChanged');

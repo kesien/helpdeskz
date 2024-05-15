@@ -638,7 +638,7 @@ include __DIR__ . '/tinymce.php';
                     groupedByDepartment[department].forEach(a => {
                         let option = $('<option></option>').attr("value", a.id).text(a.fullname);
                          $("#agent_select").append(option);
-                         if (a.id == <?php echo $ticket->agent_id ?>) {
+                         if (a.id == <?php echo (isset($ticket->agent_id) ? $ticket->agent_id : 0) ?>) {
                             $("#agent_select").val(a.id);
                          }
                     })

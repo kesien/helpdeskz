@@ -12,7 +12,7 @@ namespace App\Controllers;
 use App\Helpers\FilterHelper;
 use App\Libraries\reCAPTCHA;
 use App\Libraries\Tickets;
-use App\Libraries\Changelogs;
+use App\Libraries\ChangeLogs;
 use Config\Services;
 
 class Ticket extends BaseController

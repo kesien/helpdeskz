@@ -43,7 +43,7 @@ if (isset($success_msg)) {
                     <label>
                         <?php echo lang('Admin.form.email'); ?>
                     </label>
-                    <input type="email" name="email" class="form-control" value="<?php echo set_value('email'); ?>"
+                    <input type="email" name="email" class="form-control" value="<?php echo staff_data('email'); ?>"
                         required>
                 </div>
             </div>
@@ -53,7 +53,7 @@ if (isset($success_msg)) {
                         <?php echo lang('Admin.form.fullName'); ?>
                     </label>
                     <input type="text" name="fullname" class="form-control"
-                        value="<?php echo set_value('fullname'); ?>">
+                        value="<?php echo staff_data('fullname'); ?>">
                     <small class="text-muted form-text">
                         <?php echo lang('Admin.tickets.fullName'); ?>
                     </small>
