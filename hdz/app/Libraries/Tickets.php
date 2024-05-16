@@ -364,7 +364,7 @@ class Tickets
             ], $agent->email, $ticket->department_id);
         } else {
             //No agent found send notification for everyone in department
-            $q = $staffModel->find('department', '"' . $ticket->department_id . '"')
+            $q = $staffModel->like('department', '"' . $ticket->department_id . '"')
                 ->get();
             if ($q->resultID->num_rows > 0) {
                 foreach ($q->getResult() as $item) {
