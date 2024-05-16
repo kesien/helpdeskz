@@ -352,7 +352,7 @@ class Tickets
         }
 
         $agent = isset($agentId) ? $staffModel->find($agentId) : null;
-        if ($agent) {
+        if (isset($agent)) {
             $emails->sendFromTemplate('staff_ticketnotification', [
                     '%staff_name%' => $agent->fullname,
                     '%ticket_id%' => $ticket->id,
