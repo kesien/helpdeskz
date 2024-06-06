@@ -53,6 +53,7 @@ class MailFetcher
                     $mail = $mailbox->getMail($mailsIds[$k]);
                     if (strpos(json_encode(self::SUBJECT_TO_IGNORE), strtolower($mail->subject)) !== false) {
                         log_message('info', 'Ignoring bouncing and out of office emails');
+                        $mailbox->deleteMail($mail->id);
                         continue;
                     }
                     $message = ($mail->textHtml) ? $this->cleanMessage($mail->textHtml) : $mail->textPlain;
@@ -210,6 +211,7 @@ class MailFetcher
         $changelogs = new Changelogs();
         $filter_helper = new FilterHelper();
         $client_id = $client->getClientID($clientName, $clientEmail);
+        $body = $this->removeTicketDetailsIfAny($body);
         if (!$ticket = $tickets->getTicketFromEmail($subject)) {
             $ticket_id = $tickets->createTicket(
                 $client_id,
@@ -219,15 +221,16 @@ class MailFetcher
             $changelogs->create($client_id, $ticket_id, $client->getRow(['id' => $client_id])->fullname, 'Admin.actions.ticketCreatedFromEmail');
             $message_id = $tickets->addMessage($ticket_id, $body, 0, false);
             $ticket = $tickets->getTicket(['id' => $ticket_id]);
+            $tickets->staffNotification($ticket);
+            $message = $tickets->getFirstMessage($ticket_id);
+            $filter_helper->playFilterRulesForDepartment($department_id, $ticket, $message->message, $subject, $body);
         } else {
             $ticket_id = $ticket->id;
             $message_id = $tickets->addMessage($ticket_id, $body, 0, false);
             $tickets->updateTicketReply($ticket_id, $ticket->status);
             $changelogs->create($client_id, $ticket_id, $client->getRow(['id' => $client_id])->fullname, 'Admin.actions.messageAddedFromEmail');
+            $tickets->messageAddedToTicket($ticket, $body, $client->getRow(['id' => $client_id])->fullname);
         }
-        $tickets->staffNotification($ticket);
-        $message = $tickets->getFirstMessage($ticket_id);
-        $filter_helper->playFilterRulesForDepartment($department_id, $ticket, $message->message, $subject, $body);
         return [$ticket_id, $message_id];
     }
 
@@ -238,6 +241,14 @@ class MailFetcher
         $config = \HTMLPurifier_Config::createDefault();
         $html_purifier = new \HTMLPurifier($config);
         return $html_purifier->purify($message);
+    }
+
+    private function removeTicketDetailsIfAny($body) {
+        $pattern_1 = '/Ticket[-\s]Details[\s\S]*$/m';
+        $pattern_2 = '/-{10,}[\s\S]*$/m';
+        $cleaned_text = preg_replace($pattern_2, '', $body);
+        $cleaned_text = preg_replace($pattern_1, '', $cleaned_text);
+        return $cleaned_text;
     }
 
     public function getExtensionFromMimeType($contentType)

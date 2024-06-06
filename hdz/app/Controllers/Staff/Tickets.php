@@ -238,6 +238,9 @@ class Tickets extends BaseController
                 $tickets->updateTicketReply($ticket->id, $ticket->status, true);
                 if (!defined('HDZDEMO')) {
                     $tickets->replyTicketNotification($ticket, $message, $cc, (isset($files) ? $files : null));
+                    if (isset($ticket->agent_id) && $this->staff->getData('id') != $ticket->agent_id) {
+                        $tickets->messageAddedToTicket($ticket, $message, $this->staff->getData('fullname'));
+                    }
                 }
                 $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.replySent');
                 $this->session->setFlashdata('ticket_update', lang('Admin.tickets.messageSent'));
@@ -441,7 +444,7 @@ class Tickets extends BaseController
                 }
 
                 $ticket = $tickets->getTicket(['id' => $ticket_id]);
-                $tickets->replyTicketNotification($ticket, $message, "", (isset($files) ? $files : null));
+                $tickets->staffNotification($ticket);
                 $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.ticketCreated');
                 $this->session->setFlashdata('form_success', 'Ticket has been created and client was notified.');
                 $filter_helper->playFilterRulesForDepartment($department_id, $ticket, $this->request->getPost('message'), $this->request->getPost('subject'), $this->request->getPost('message'));

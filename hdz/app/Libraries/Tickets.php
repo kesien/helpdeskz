@@ -343,15 +343,9 @@ class Tickets
 
     public function staffNotification($ticket)
     {
-        $emails = new Emails();
         $staffModel = new \App\Models\Staff();
-        $agentId = $ticket->agent_id;
-        if (!isset($agentId) || $agentId == 0) {
-            $departments = Services::departments();
-            $agentId = $departments->getDefaultAgentForDepartment($ticket->department_id);
-        }
-
-        $agent = isset($agentId) ? $staffModel->find($agentId) : null;
+        $emails = new Emails();
+        $agent = $this->getDefaultAgent($ticket, $staffModel);
         if (isset($agent)) {
             $emails->sendFromTemplate('staff_ticketnotification', [
                     '%staff_name%' => $agent->fullname,
@@ -381,6 +375,54 @@ class Tickets
                 $q->freeResult();
             }
         }
+    }
+
+    public function messageAddedToTicket($ticket, $message, $staff_name)
+    {
+        $staffModel = new \App\Models\Staff();
+        $emails = new Emails();
+        $agent = $this->getDefaultAgent($ticket, $staffModel);
+        if (isset($agent)) {
+            $emails->sendFromTemplate('message_added_to_ticket_notification', [
+                    '%message%' => $message,
+                    '%staff_name%' => $staff_name,
+                    '%ticket_id%' => $ticket->id,
+                    '%ticket_subject%' => $ticket->subject,
+                    '%ticket_department%' => $ticket->department_name,
+                    '%ticket_status%' => lang('open'),
+                    '%ticket_priority%' => $ticket->priority_name,
+                    '%original_message%'=> $this->getFirstMessage($ticket->id)->message
+            ], $agent->email, $ticket->department_id);
+        } else {
+            //No agent found send notification for everyone in department
+            $q = $staffModel->like('department', '"' . $ticket->department_id . '"')
+                ->get();
+            if ($q->resultID->num_rows > 0) {
+                foreach ($q->getResult() as $item) {
+                    $emails->sendFromTemplate('message_added_to_ticket_notification', [
+                        '%message%' => $message,
+                        '%staff_name%' => $staff_name,
+                        '%ticket_id%' => $ticket->id,
+                        '%ticket_subject%' => $ticket->subject,
+                        '%ticket_department%' => $ticket->department_name,
+                        '%ticket_status%' => lang('open'),
+                        '%ticket_priority%' => $ticket->priority_name,
+                        '%original_message%'=> $this->getFirstMessage($ticket->id)->message
+                    ], $item->email, $ticket->department_id);
+                }
+                $q->freeResult();
+            }
+        }
+    }
+
+    private function getDefaultAgent($ticket, $staffModel) {
+        $agentId = $ticket->agent_id;
+        if (!isset($agentId) || $agentId == 0) {
+            $departments = Services::departments();
+            $agentId = $departments->getDefaultAgentForDepartment($ticket->department_id);
+        }
+
+        return isset($agentId) ? $staffModel->find($agentId) : null;
     }
 
     public function replyTicketNotification($ticket, $message, $cc = "", $attachments = null)
