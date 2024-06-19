@@ -64,7 +64,7 @@ class MailFetcher
                     }
                     preg_match('/https:\/\/flyingteachers\.wufoo\.com\/[^\s"<>]+/', ($mail->textHtml) ? $mail->textHtml : $mail->textPlain, $linkMatches);
                     $link = (isset($linkMatches[0]) && $linkMatches[0] != "") ? $linkMatches[0] : (isset($linkMatches[1]) ? $linkMatches[1] : '');
-                    $toTicket = $this->parseToTicket($mail->fromName, $fromEmailAddress, $mail->subject, $message, $email->department_id);
+                    $toTicket = $this->parseToTicket($mail->fromName, $fromEmailAddress, $mail->subject, $message, $email->department_id, $mail->to);
                     list($ticket_id, $message_id) = $toTicket;
                     //Attachments
                     $attachments = new Attachments();
@@ -204,10 +204,29 @@ class MailFetcher
         @unlink($pipeFile);
     }
 
-    public function parseToTicket($clientName, $clientEmail, $subject, $body, $department_id = 1)
+    public function parseToTicket($clientName, $clientEmail, $subject, $body, $department_id = 1, $to = [])
     {
         $client = Services::client();
         $tickets = Services::tickets();
+        $departments = Services::departments();
+        $agent_id = 0;
+        $found = false;
+        if (!empty($to)) {
+            $all_agents_for_department = $departments->getAllAgentsForDepartment($department_id);
+            foreach ($to as $email) {
+                foreach ($all_agents_for_department as $agent) {
+                    if ($agent->email == $email) {
+                        $agent_id = $agent->id;
+                        $found = true;
+                        break;
+                    }
+                }
+
+                if ($found) {
+                    break;
+                }
+            }
+        }
         $changelogs = new Changelogs();
         $filter_helper = new FilterHelper();
         $client_id = $client->getClientID($clientName, $clientEmail);
@@ -216,7 +235,8 @@ class MailFetcher
             $ticket_id = $tickets->createTicket(
                 $client_id,
                 $subject,
-                $department_id
+                $department_id,
+                $agent_id
             );
             $changelogs->create($client_id, $ticket_id, $client->getRow(['id' => $client_id])->fullname, 'Admin.actions.ticketCreatedFromEmail');
             $message_id = $tickets->addMessage($ticket_id, $body, 0, false);
