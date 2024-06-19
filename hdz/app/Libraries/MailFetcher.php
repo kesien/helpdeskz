@@ -213,9 +213,9 @@ class MailFetcher
         $found = false;
         if (!empty($to)) {
             $all_agents_for_department = $departments->getAllAgentsForDepartment($department_id);
-            foreach ($to as $email) {
+            foreach ($to as $k => $v) {
                 foreach ($all_agents_for_department as $agent) {
-                    if ($agent->email == $email) {
+                    if ($agent->email == $k) {
                         $agent_id = $agent->id;
                         $found = true;
                         break;
@@ -236,6 +236,7 @@ class MailFetcher
                 $client_id,
                 $subject,
                 $department_id,
+                1,
                 $agent_id
             );
             $changelogs->create($client_id, $ticket_id, $client->getRow(['id' => $client_id])->fullname, 'Admin.actions.ticketCreatedFromEmail');
