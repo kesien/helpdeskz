@@ -690,6 +690,7 @@ class Tickets
         $request = Services::request();
         $staff_departments = $staff->getDepartments();
         $search_department = false;
+        $agents = $staff->getAgents();
 
         switch ($page) {
             case 'search':
@@ -699,6 +700,14 @@ class Tickets
                         $this->ticketsModel->where('tickets.department_id', $staff_departments[$key]->id);
                     }
                     $search_department = true;
+                }
+
+                if ($request->getGet('agent')) {
+                    $key = array_search($request->getGet('agent'), array_column($agents, 'id'));
+                    if (is_numeric($key)) {
+                        $this->ticketsModel->where('tickets.agent_id', $agents[$key]->id);
+                    }
+                    $search_agent = true;
                 }
 
                 if ($request->getGet('keyword') != '') {

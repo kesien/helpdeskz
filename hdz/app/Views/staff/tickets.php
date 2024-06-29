@@ -117,6 +117,27 @@ $request = \CodeIgniter\Services::request();
             <div class="col-md-4">
                 <div class="form-group">
                     <label>
+                        <?php echo lang('Admin.form.agent'); ?>
+                    </label>
+                    <select name="agent" class="form-control custom-select">
+                        <option value="">-------------------</option>
+                        <?php
+                        if ($agent_list = $agents) {
+                            foreach ($agent_list as $item) {
+                                if ($request->getGet('agent') == $item->id) {
+                                    echo '<option value="' . $item->id . '" selected>' . $item->fullname . '</option>';
+                                } else {
+                                    echo '<option value="' . $item->id . '">' . $item->fullname . '</option>';
+                                }
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>
                         <?php echo lang('Admin.form.status'); ?>
                     </label>
                     <select name="status" class="form-control custom-select">
