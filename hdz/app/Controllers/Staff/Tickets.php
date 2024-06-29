@@ -84,7 +84,6 @@ class Tickets extends BaseController
             $error_msg = $this->session->getFlashdata('ticket_error');
         }
         $result = $tickets->staffTickets($page);
-        log_message('error', json_encode($this->staff->getAgents()));
         return view('staff/tickets', [
             'departments' => $this->staff->getDepartments(),
             'agents' => $this->staff->getAgents(),
