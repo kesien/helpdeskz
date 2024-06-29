@@ -86,7 +86,7 @@ class Tickets extends BaseController
         $result = $tickets->staffTickets($page);
         return view('staff/tickets', [
             'departments' => $this->staff->getDepartments(),
-            'agents' => $this->staff->getAgents(),
+            'agents' => $this->staff->getAgents('fullname'),
             'statuses' => $tickets->statusList(),
             'tickets_result' => $result['result'],
             'priorities' => $tickets->getPriorities(),

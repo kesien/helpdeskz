@@ -260,9 +260,9 @@ class Staff
      * Agents
      * -------------------------------------
      */
-    public function getAgents()
+    public function getAgents($orderBy = 'id')
     {
-        $q = $this->staffModel->orderBy('id', 'asc')
+        $q = $this->staffModel->orderBy($orderBy, 'asc')
             ->get();
         $r = $q->getResult();
         $q->freeResult();
