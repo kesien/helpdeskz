@@ -122,7 +122,7 @@ $request = \CodeIgniter\Services::request();
                     <select name="agent" class="form-control custom-select">
                         <option value="">-------------------</option>
                         <?php
-                        log_message('error', json_encode($agent));
+                        log_message('error', json_encode($agents));
                         if ($agent_list = $agents) {
                             foreach ($agent_list as $item) {
                                 if ($request->getGet('agent') == $item->id) {
