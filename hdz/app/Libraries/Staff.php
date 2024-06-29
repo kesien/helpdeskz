@@ -266,7 +266,6 @@ class Staff
             ->get();
         $r = $q->getResult();
         $q->freeResult();
-        ;
         return $r;
     }
 
