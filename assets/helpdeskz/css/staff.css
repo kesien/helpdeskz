@@ -11,3 +11,8 @@
     color: #E5E5E5;
     font-size: 40px;
 }
+
+.message-div p {
+    margin-bottom: 5px !important;
+    margin-block-end: 0 !important;
+}

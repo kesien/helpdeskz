@@ -434,8 +434,8 @@ if (isset($message_result)) {
                             </div>
                         </div>
 
-                        <div id="msg_<?php echo $item->id; ?>" class="form-group">
-                            <?php echo ($item->email == 1 ? $item->message : nl2br($item->message)); ?>
+                        <div id="msg_<?php echo $item->id; ?>" class="form-group message-div">
+                            <?php echo $item->message //echo ($item->email == 1 ? $item->message : nl2br($item->message)); ?>
                         </div>
 
                         <div id="inputTicketText_<?php echo $item->id; ?>" style="display: none">

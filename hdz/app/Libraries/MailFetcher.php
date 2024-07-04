@@ -231,6 +231,7 @@ class MailFetcher
         $filter_helper = new FilterHelper();
         $client_id = $client->getClientID($clientName, $clientEmail);
         $body = $this->removeTicketDetailsIfAny($body);
+        $body = $this->cleanLineBreaks($body);
         if (!$ticket = $tickets->getTicketFromEmail($subject)) {
             $ticket_id = $tickets->createTicket(
                 $client_id,
@@ -262,6 +263,13 @@ class MailFetcher
         $config = \HTMLPurifier_Config::createDefault();
         $html_purifier = new \HTMLPurifier($config);
         return $html_purifier->purify($message);
+    }
+
+    private function cleanLineBreaks($body)
+    {
+        $pattern = '/(<br\s*\/?>\s*){2,}/i';
+        $replacement = '<br>';
+        return preg_replace($pattern, $replacement, $body);
     }
 
     private function removeTicketDetailsIfAny($body) {
