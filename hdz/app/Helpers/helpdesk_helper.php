@@ -326,9 +326,11 @@ function tidy_repair_html($html) {
     if (class_exists('tidy')) {
         $tidy = new tidy();
         $config = array(
-            'clean' => true,
             'output-xhtml' => true,
             'show-body-only' => true,
+            'wrap' => 0,
+            'clean' => false,
+            'drop-proprietary-attributes' => false
         );
         return $tidy->repairString($html, $config, 'utf8');
     } else {
