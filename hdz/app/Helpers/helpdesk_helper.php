@@ -322,6 +322,20 @@ function getItemType($type) {
     }
 }
 
+function tidy_repair_html($html) {
+    if (class_exists('tidy')) {
+        $tidy = new tidy();
+        $config = array(
+            'clean' => true,
+            'output-xhtml' => true,
+            'show-body-only' => true,
+        );
+        return $tidy->repairString($html, $config, 'utf8');
+    } else {
+        return $html;
+    }
+}
+
 function getItemRule($rule) {
     if ($rule == "0") {
         return "Admin.form.rules.rules.contains";
