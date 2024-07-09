@@ -155,7 +155,7 @@ $this->section('content');
                             echo '<div class="row">';
                             foreach ($custom_vars as $item) {
                                 ?>
-                                <div class="col-md-6 col-lg-4">
+                                <div class="col-md-6 col-lg-3">
                                     <div class="form-group">
                                         <label>
                                             <?php echo $item['title']; ?>
