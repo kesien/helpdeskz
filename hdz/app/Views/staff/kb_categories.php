@@ -38,7 +38,7 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                     <?php echo lang('Admin.form.manage'); ?>
                 </h6>
             </div>
-            <?php if (staff_data('admin') != 2): ?>
+            <?php if (staff_data('admin') == 1): ?>
                 <div class="col-sm-7">
                     <a href="<?php echo site_url(route_to('staff_kb_new_category')); ?>"
                         class="btn btn-primary btn-sm float-right"><i class="fa fa-plus"></i>
@@ -82,7 +82,7 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                         <td>
                             <?php echo ($category->public ? lang('Admin.form.public') : lang('Admin.form.private')); ?>
                         </td>
-                        <?php if (staff_data('admin') != 2): ?>
+                        <?php if (kb_has_edit($category->id)): ?>
                             <td class="text-right">
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -112,11 +112,13 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                                     </div>
                                 </div>
                                 <?php
-                                if ($move_button = kb_cat_move_link($category->id, $category->parent)) {
+                                if ($move_button = kb_cat_move_link($category->id, $category->parent) && staff_data('admin') == 1) {
                                     echo '<div class="btn-group float-left ml-2">' . $move_button . '</div>';
                                 }
                                 ?>
                             </td>
+                            <?php else: ?>
+                                <td></td>
                         <?php endif; ?>
                     </tr>
                     <?php

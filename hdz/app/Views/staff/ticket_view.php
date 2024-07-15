@@ -28,6 +28,7 @@ $this->section('content');
     }
     ?>
 </div>
+<?php if (is_active_in_dep(staff_data('id'), $ticket->department_id)): ?>
 <div class="card mb-3">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs border-bottom" id="myTab" role="tablist">
@@ -52,6 +53,7 @@ $this->section('content');
             </li>
         </ul>
     </div>
+    
     <div class="card-body">
         <div class="tab-content mb-3" id="myTabContent">
             <?php if (staff_data('admin') != 2): ?>
@@ -358,8 +360,7 @@ $this->section('content');
         </div>
     </div>
 </div>
-
-
+<?php endif; ?>
 
 
 <?php
@@ -483,12 +484,14 @@ if (isset($message_result)) {
                             <?php
                         }
                         ?>
+                        <?php if(is_active_in_dep(staff_data('id'), $ticket->department_id)): ?>
                         <div class="form-group mt-5">
                             <button class="btn btn-dark btn-sm" type="button"
                                 onclick="quoteMessage(<?php echo $item->id; ?>);"><i class="fa fa-quote-left"></i>
                                 <?php echo lang('Admin.form.quote'); ?>
                             </button>
                         </div>
+                        <?php endif; ?>
                         <div class="border-top mt-3 pt-4 text-right">
                             <?php
                             if ($item->ip != '') {

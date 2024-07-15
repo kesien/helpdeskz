@@ -94,9 +94,7 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                 <th>
                     <?php echo lang('Admin.form.views'); ?>
                 </th>
-                <?php if (kb_has_edit($category)): ?>
-                    <th></th>
-                <?php endif; ?>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -151,6 +149,8 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                                     </div>
                                 </div>
                             </td>
+                        <?php else: ?>
+                            <td></td>
                         <?php endif; ?>
                     </tr>
                     <?php

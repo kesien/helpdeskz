@@ -143,22 +143,27 @@ function kb_has_edit($category_id)
     $staff_id = staff_data('id');
     $is_admin = staff_data('admin') == 1;
     if ($is_admin) return true;
+    $category = \Config\Services::kb()->getCategory($category_id);
+    $agents_assigned = isset($category->agents_assigned) ? unserialize($category->agents_assigned) : array();
+    if (in_array($staff_id, $agents_assigned)) return true;
     $parents = \Config\Services::kb()->getParents($category_id);
     if (isset($parents)) {
         foreach($parents as $parent) {
-            $category = \Config\Services::kb()->getCategory($parent);
-            $agents_assigned = isset($category->agents_assigned) ? unserialize($category->agents_assigned) : array();
+            $agents_assigned = isset($parent->agents_assigned) ? unserialize($parent->agents_assigned) : array();
             if (in_array($staff_id, $agents_assigned)) return true;
         }
-    } else {
-        $category = \Config\Services::kb()->getCategory($category_id);
-        $agents_assigned = isset($category->agents_assigned) ? unserialize($category->agents_assigned) : array();
-        if (in_array($staff_id, $agents_assigned)) return true;
     }
     return false;
 }
 
-function  resume_content($text, $chars, $clean_html = true)
+function is_active_in_dep($staff_id, $department) 
+{
+    $state = staff_data('state');
+    $agent_state = isset($state) ? unserialize($state) : array();
+    return array_key_exists($department, $agent_state) && $agent_state[$department] == "1";
+}
+
+function resume_content($text, $chars, $clean_html = true)
 {
     if ($clean_html) {
         $text = strip_tags($text);
