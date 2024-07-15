@@ -94,7 +94,7 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                 <th>
                     <?php echo lang('Admin.form.views'); ?>
                 </th>
-                <?php if (staff_data('admin') != 2): ?>
+                <?php if (kb_has_edit($category)): ?>
                     <th></th>
                 <?php endif; ?>
             </tr>
@@ -131,7 +131,7 @@ echo form_open('', ['id' => 'manageForm'], ['do' => 'remove']) .
                         <td>
                             <?php echo $item->views; ?>
                         </td>
-                        <?php if (staff_data('admin') != 2): ?>
+                        <?php if (kb_has_edit($item->category_id)): ?>
                             <td class="text-right">
                                 <div class="dropdown ">
                                     <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton"

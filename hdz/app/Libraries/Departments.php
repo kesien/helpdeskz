@@ -168,6 +168,27 @@ class Departments
         return $r;
     }
 
+    public function getAllActiveAgentsForDepartment($department_id) {
+        $staffModel = new \App\Models\Staff();
+        $q = $staffModel
+            ->like('department', '"'.$department_id.'"')
+            ->get();
+
+        if($q->resultID->num_rows == 0){
+            return [];
+        }
+        $r = $q->getResult();
+        $q->freeResult();
+        $result = array();
+        foreach ($r as $agent) {
+            $states = isset($agent->state) ? unserialize($agent->state) : array();
+            if (array_key_exists($department_id, $states) && $states[$department_id] == "1") {
+                array_push($result, $agent);
+            }
+        }
+        return $result;
+    }
+
     public function getDefaultAgentForDepartment($department_id) {
         $this->departmentsModel->where('departments.id', $department_id);
         $q = $this->departmentsModel->select('departments.*, a.fullname as agent_name, a.id as agent_id')->join('staff as a', 'a.id=departments.default_agent_id')
@@ -232,6 +253,15 @@ class Departments
             'dep_order' => $position,
             'default_agent_id' => $default_agent
         ]);
+        if (isset($default_agent)) {
+            $staff = Services::staff();
+            $agent = $staff->getAgentById($default_agent);
+            $states = isset($agent->state) ? unserialize($agent->state) : array();
+            if (!array_key_exists($id, $states) || $states[$id] != "1") {
+                $states[$id] = "1";
+            }
+            $staff->updateAgent($agent->id, $agent->fullname, $agent->username, $agent->email, '', $agent->admin, unserialize($agent->department), $agent->active, $states);
+        }
         $this->departmentsModel->protect(true);
     }
 }

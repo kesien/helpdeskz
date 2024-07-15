@@ -115,13 +115,17 @@ class Kb
         return $list;
     }
 
-    public function getChildren($parent=0, $public=true, $level=1, $prepend='')
+    public function getChildren($parent=0, $public=true, $level=1, $prepend='', $checkStaff = false)
     {
+        $staff = Services::staff();
         if($public){
             $this->categoryModel->where('public', 1);
         }
-        $q = $this->categoryModel->where('parent', $parent)
-            ->orderBy('position', $parent)
+        $q = $this->categoryModel->where('parent', $parent);
+        if ($checkStaff && $staff->getData('admin') != 1) {
+            $q = $this->categoryModel->like('agents_assigned', '"'.$staff->getData('id').'"');
+        }
+        $q = $this->categoryModel->orderBy('position', $parent)
             ->get();
         if($q->resultID->num_rows == 0){
             return null;
@@ -155,8 +159,9 @@ class Kb
         return $r;
     }
 
-    public function insertCategory($name, $parent=0, $public=1)
+    public function insertCategory($name, $parent=0, $public=1, $agents_assigned = '')
     {
+        $agents_assigned = is_array($agents_assigned) ? $agents_assigned : array();
         $q = $this->categoryModel->select('position')
             ->where('parent', $parent)
             ->orderBy('position', 'desc')
@@ -172,7 +177,8 @@ class Kb
             'name' => esc($name),
             'position' => $position,
             'parent' => $parent,
-            'public' => $public
+            'public' => $public,
+            'agents_assigned' => serialize($agents_assigned)
         ]);
         $this->categoryModel->protect(true);
         return $this->categoryModel->getInsertID();
@@ -462,7 +468,7 @@ class Kb
         if($category_id > 0){
             $this->articlesModel->where('articles.category', $category_id);
         }
-        $result = $this->articlesModel->select('articles.*, c.name as category_name, (SELECT fullname FROM '.$db->prefixTable('staff').' WHERE id=staff_id) as author')
+        $result = $this->articlesModel->select('articles.*, c.id as category_id, c.name as category_name, (SELECT fullname FROM '.$db->prefixTable('staff').' WHERE id=staff_id) as author')
             ->orderBy('articles.last_update','desc')
             ->orderBy('articles.date','desc')
             ->join('kb_category as c','c.id=articles.category')

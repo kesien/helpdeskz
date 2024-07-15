@@ -215,8 +215,10 @@ class MailFetcher
             $all_agents_for_department = $departments->getAllAgentsForDepartment($department_id);
             foreach ($to as $k => $v) {
                 foreach ($all_agents_for_department as $agent) {
+                    $agent_states = isset($agent->state) ? unserialize($agent->state) : array();
+                    $is_agent_active = (array_key_exists($department_id, $agent_states) && $agent_states[$department_id] == "1") ? true : false;
                     if ($agent->email == $k) {
-                        $agent_id = $agent->id;
+                        $agent_id = $is_agent_active ? $agent->id : 0;
                         $found = true;
                         break;
                     }

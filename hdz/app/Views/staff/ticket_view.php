@@ -601,28 +601,48 @@ include __DIR__ . '/tinymce.php';
     }
 
     <?php
-        $agent_info = array_map(function($a) {
-            return new class($a->id, $a->fullname, unserialize($a->department)) {
-                public $id;
-                public $fullname;
-                public $departments;
+    $agent_info = array_map(function($a) {
+    $state = isset($a->state) ? unserialize($a->state) : array();
+    return new class($a->id, $a->fullname, unserialize($a->department), $state) {
+        public $id;
+        public $fullname;
+        public $departments;
+        public $states;
 
-                public function __construct($id, $fullname, $department) {
-                    $this->id = $id;
-                    $this->fullname = $fullname;
-                    $this->departments = $department ? $department : array();
-                }
-            };
-        }, $agents);
+        public function __construct($id, $fullname, $department, $state) {
+            $this->id = $id;
+            $this->fullname = $fullname;
+            $this->states = $state;
+            $this->departments = $department ? array_map(function($d) {
+                return new class($d, $this->states) {
+                    public $id;
+                    public $isActive;
+
+                    public function __construct($id, $states) {
+                        $this->id = $id;
+                        $this->isActive = $this->checkActive($states);
+                    }
+
+                    public function checkActive($states) {
+                        return (array_key_exists($this->id, $states) && $states[$this->id] == "1");
+                    }
+                };
+            }, $department) : array();
+        }
+    };
+}, $agents);
     ?>
     let agents = <?php echo json_encode($agent_info); ?>;
+    console.log(agents);
     let groupedByDepartment = {};
     agents.forEach(agent => {
         agent.departments.forEach(department => {
-            if (!groupedByDepartment[department]) {
-                groupedByDepartment[department] = [];
+            if (!groupedByDepartment[department.id]) {
+                groupedByDepartment[department.id] = [];
             }
-            groupedByDepartment[department].push(agent);
+            if (department.isActive) {
+                groupedByDepartment[department.id].push(agent);
+            }
         })
     });
     departmentSelectionChanged();
@@ -632,7 +652,7 @@ include __DIR__ . '/tinymce.php';
         $("#agent_select").empty();
         let option = $('<option></option>').attr("value", 0).text("<?php echo lang('Admin.form.none'); ?>");
         $("#agent_select").append(option);
-        if (Object.hasOwn(groupedByDepartment, [$("#ticket_department").val()])) {
+        if (Object.hasOwn(groupedByDepartment, [$("#ticket_department").val()]) && groupedByDepartment[$("#ticket_department").val()].length) {
             for (let department in groupedByDepartment) {
                 if (department == $("#ticket_department").val()) {
                     groupedByDepartment[department].forEach(a => {

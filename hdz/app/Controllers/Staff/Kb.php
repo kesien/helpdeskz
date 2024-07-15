@@ -71,7 +71,7 @@ class Kb extends BaseController
             } elseif (defined('HDZDEMO')) {
                 $error_msg = 'This is not possible in demo version.';
             } else {
-                $kb->insertCategory($this->request->getPost('name'), $this->request->getPost('parent'), $this->request->getPost('public'));
+                $kb->insertCategory($this->request->getPost('name'), $this->request->getPost('parent'), $this->request->getPost('public'), $this->request->getPost('agent'));
                 $this->session->setFlashdata('form_success', lang('Admin.kb.categoryCreated'));
                 return redirect()->to(current_url());
             }
@@ -80,6 +80,7 @@ class Kb extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'kb_list' => $kb->getChildren(0, false, 0, ' - - - '),
+            'agents' => Services::staff()->getAgents(),
             'parent' => (is_numeric($this->request->getGet('parent')) ? $this->request->getGet('parent') : 0),
             'category_links_map' => $this->getLinkCategoryMap()
         ]);
@@ -167,10 +168,13 @@ class Kb extends BaseController
             } elseif (defined('HDZDEMO')) {
                 $error_msg = 'This is not possible in demo version.';
             } else {
+                $agents = $this->request->getPost('agent');
+                $agents_assigned = isset($agents) ? serialize($agents) : null;
                 $kb->updateCategory([
                     'name' => esc($this->request->getPost('name')),
                     'parent' => $this->request->getPost('parent'),
-                    'public' => $this->request->getPost('public')
+                    'public' => $this->request->getPost('public'),
+                    'agents_assigned' => $agents_assigned
                 ], $category->id);
                 $this->session->setFlashdata('form_success', lang('Admin.kb.categoryUpdated'));
                 return redirect()->to(current_url());
@@ -181,6 +185,7 @@ class Kb extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'category' => $category,
+            'agents' => Services::staff()->getAgents(),
             'kb_list' => $kb->getChildren(0, false, 0, ' - - - '),
             'category_links_map' => $this->getLinkCategoryMap()
         ]);
@@ -257,7 +262,7 @@ class Kb extends BaseController
         return view('staff/kb_articles_form', [
             'error_msg' => (isset($error_msg) ? $error_msg : null),
             'success_msg' => ($this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null),
-            'kb_list' => $kb->getChildren(0, false, 0, ' - - - '),
+            'kb_list' => $kb->getChildren(0, false, 0, ' - - - ', true),
             'category_id' => (is_numeric($this->request->getGet('category_id')) ? $this->request->getGet('category_id') : 0),
             'category_links_map' => $this->getLinkCategoryMap()
         ]);
@@ -312,7 +317,7 @@ class Kb extends BaseController
         return view('staff/kb_articles_form', [
             'error_msg' => (isset($error_msg) ? $error_msg : null),
             'success_msg' => ($this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null),
-            'kb_list' => $kb->getChildren(0, false, 0, ' - - - '),
+            'kb_list' => $kb->getChildren(0, false, 0, ' - - - ', true),
             'article' => $article,
             'category_links_map' => $this->getLinkCategoryMap()
         ]);

@@ -374,3 +374,13 @@ function rule_action() {
     $("#rule_set_priority").show();
   }
 }
+
+function toggleSelect(depId) {
+  var checked = $("#dep_" + depId).is(":checked");
+  var select = $("#" + depId + "_state");
+  if (!checked) {
+    select.attr("disabled", "disabled");
+  } else {
+    select.removeAttr("disabled");
+  }
+}

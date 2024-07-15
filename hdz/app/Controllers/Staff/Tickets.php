@@ -459,7 +459,7 @@ class Tickets extends BaseController
             'success_msg' => isset($success_msg) ? $success_msg : null,
             'canned_response' => $tickets->getCannedList(),
             'department' => $department,
-            'agents' => $departments->getAllAgentsForDepartment($department_id),
+            'agents' => $departments->getAllActiveAgentsForDepartment($department_id),
             'ticket_statuses' => $tickets->statusList(),
             'ticket_priorities' => $tickets->getPriorities(),
             'kb_selector' => Services::kb()->kb_article_selector(),

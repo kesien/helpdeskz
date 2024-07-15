@@ -39,6 +39,7 @@ class Agents extends BaseController
 
     public function edit($agent_id)
     {
+        $departments = Services::departments()->getAll();
         if ($this->staff->getData('admin') != 1) {
             return redirect()->route('staff_dashboard');
         }
@@ -82,6 +83,12 @@ class Agents extends BaseController
                 'in_list' => lang('Admin.error.invalidStatus')
             ]);
 
+            $selected_departments = $this->request->getPost('department');
+            foreach ($departments as $department) {
+                if (in_array($department->id, $selected_departments)) {
+                    $states[$department->id] = $this->request->getPost($department->id . '_state');
+                }
+            }
             if ($validation->withRequest($this->request)->run() == false) {
                 $error_msg = $validation->listErrors();
             } elseif (defined('HDZDEMO')) {
@@ -94,8 +101,9 @@ class Agents extends BaseController
                     $this->request->getPost('email'),
                     $this->request->getPost('password'),
                     $this->request->getPost('admin'),
-                    $this->request->getPost('department'),
-                    $this->request->getPost('active')
+                    $selected_departments,
+                    $this->request->getPost('active'),
+                    $states
                 );
                 $this->session->setFlashdata('form_success', lang('Admin.agents.informationUpdated'));
                 return redirect()->to(current_url());
@@ -105,7 +113,7 @@ class Agents extends BaseController
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
             'agent' => $agent,
-            'departments' => Services::departments()->getAll(),
+            'departments' => $departments,
             'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }

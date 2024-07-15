@@ -112,6 +112,7 @@ return [
         'menu' => 'Knowledge Base',
         'articles' => 'Articles',
         'categories' => 'Categories',
+        'assignedAgents' => 'Assigned agents',
         'newCategory' => 'New category',
         'category' => 'Category',
         'editCategory' => 'Edit category',
@@ -141,7 +142,9 @@ return [
         'informationUpdated' => 'Agent information has been updated.',
         'removeConfirmation' => 'Do you really want to remove this agent?',
         'agentCreated' => 'New agent has been created.',
-        'assignedDepartments' => 'Assigned departments'
+        'assignedDepartments' => 'Assigned departments',
+        'active' => 'Active',
+        'passive' => 'Passive'
     ],
     'settings' => [
         'settings' => 'Settings',

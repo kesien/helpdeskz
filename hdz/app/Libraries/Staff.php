@@ -291,10 +291,11 @@ class Staff
         return $this->staffModel->getInsertID();
     }
 
-    public function updateAgent($id, $fullname, $username, $email, $password, $admin = 0, $departments = '', $active = 1)
+    public function updateAgent($id, $fullname, $username, $email, $password, $admin = 0, $departments = '', $active = 1, $states = '')
     {
         $this->staffModel->protect(false);
         $departments = is_array($departments) ? $departments : array();
+        $states = is_array($states) ? $states : array();
         if ($password != '') {
             $this->staffModel->set('password', password_hash($password, PASSWORD_BCRYPT));
         }
@@ -304,6 +305,7 @@ class Staff
             'email' => $email,
             'admin' => $admin,
             'department' => serialize($departments),
+            'state' => serialize($states),
             'active' => $active
         ])->update($id);
         $this->staffModel->protect(false);

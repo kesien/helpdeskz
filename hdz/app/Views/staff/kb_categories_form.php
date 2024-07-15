@@ -69,6 +69,27 @@ $this->section('content');
                 </select>
             </div>
             <div class="form-group">
+            <label>
+                <?php echo lang('Admin.kb.assignedAgents'); ?>
+            </label>
+            <?php
+            $assigned = isset($category->agents_assigned) ? unserialize($category->agents_assigned) : array();
+            if (isset($agents)) {
+                foreach ($agents as $agent) {
+                    ?>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="agent_<?php echo $agent->id; ?>" name="agent[]"
+                                value="<?php echo $agent->id; ?>" <?php echo in_array($agent->id, $assigned) ? 'checked' : ''; ?>>
+                            <label class="form-check-label" for="agent_<?php echo $agent->id; ?>">
+                                <?php echo $agent->fullname; ?>
+                            </label>
+                        </div>
+                    <?php
+                }
+            }
+            ?>
+            </div>
+            <div class="form-group">
                 <button class="btn btn-primary"><?php echo lang('Admin.form.submit');?></button>
                 <a href="<?php echo site_url(route_to('staff_kb_categories'));?>" class="btn btn-secondary"><?php echo lang('Admin.form.goBack');?></a>
             </div>

@@ -138,6 +138,26 @@ function kb_newest($public = 1)
     return \Config\Services::kb()->newestArticles($public);
 }
 
+function kb_has_edit($category_id) 
+{
+    $staff_id = staff_data('id');
+    $is_admin = staff_data('admin') == 1;
+    if ($is_admin) return true;
+    $parents = \Config\Services::kb()->getParents($category_id);
+    if (isset($parents)) {
+        foreach($parents as $parent) {
+            $category = \Config\Services::kb()->getCategory($parent);
+            $agents_assigned = isset($category->agents_assigned) ? unserialize($category->agents_assigned) : array();
+            if (in_array($staff_id, $agents_assigned)) return true;
+        }
+    } else {
+        $category = \Config\Services::kb()->getCategory($category_id);
+        $agents_assigned = isset($category->agents_assigned) ? unserialize($category->agents_assigned) : array();
+        if (in_array($staff_id, $agents_assigned)) return true;
+    }
+    return false;
+}
+
 function  resume_content($text, $chars, $clean_html = true)
 {
     if ($clean_html) {

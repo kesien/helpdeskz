@@ -357,11 +357,15 @@ class Tickets
                     '%original_message%'=> $this->getFirstMessage($ticket->id)->message
             ], $agent->email, $ticket->department_id);
         } else {
-            //No agent found send notification for everyone in department
+            //No agent found send notification for everyone in department except passive agents
             $q = $staffModel->like('department', '"' . $ticket->department_id . '"')
                 ->get();
             if ($q->resultID->num_rows > 0) {
                 foreach ($q->getResult() as $item) {
+                    $states = isset($item->state) ? unserialize($item->state) : array();
+                    if (!array_key_exists($ticket->department_id, $states) || $states[$ticket->department_id] != "1") {
+                        continue;
+                    }
                     $emails->sendFromTemplate('staff_ticketnotification', [
                         '%staff_name%' => $item->fullname,
                         '%ticket_id%' => $ticket->id,
@@ -399,6 +403,10 @@ class Tickets
                 ->get();
             if ($q->resultID->num_rows > 0) {
                 foreach ($q->getResult() as $item) {
+                    $states = isset($item->state) ? unserialize($item->state) : array();
+                    if (!array_key_exists($ticket->department_id, $states) || $states[$ticket->department_id] != "1") {
+                        continue;
+                    }
                     $emails->sendFromTemplate('message_added_to_ticket_notification', [
                         '%message%' => $message,
                         '%staff_name%' => $staff_name,

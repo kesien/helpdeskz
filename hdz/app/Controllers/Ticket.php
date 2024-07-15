@@ -45,7 +45,7 @@ class Ticket extends BaseController
         if (!$department = $departments->getByID($department_id)) {
             return redirect()->route('submit_ticket');
         }
-        $agents = $departments->getAllAgentsForDepartment($department_id);
+        $agents = $departments->getAllActiveAgentsForDepartment($department_id);
         $tickets = new Tickets();
         $changelogs = new Changelogs();
         $validation = Services::validation();

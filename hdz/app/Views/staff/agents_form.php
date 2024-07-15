@@ -88,15 +88,24 @@ if (isset($success_msg)) {
             </label>
             <?php
             $assigned = isset($agent) ? unserialize($agent->department) : array();
+            $state = (isset($agent) && isset($agent->state)) ? unserialize($agent->state) : array();
             if (isset($departments)) {
                 foreach ($departments as $item) {
                     ?>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="dep_<?php echo $item->id; ?>" name="department[]"
-                            value="<?php echo $item->id; ?>" <?php echo in_array($item->id, $assigned) ? 'checked' : ''; ?>>
-                        <label class="form-check-label" for="dep_<?php echo $item->id; ?>">
-                            <?php echo $item->name; ?>
-                        </label>
+                    <div class="d-flex mt-2">
+                        <div class="form-check col-3">
+                            <input type="checkbox" class="form-check-input" onchange="toggleSelect(<?php echo $item->id; ?>)" id="dep_<?php echo $item->id; ?>" name="department[]"
+                                value="<?php echo $item->id; ?>" <?php echo in_array($item->id, $assigned) ? 'checked' : ''; ?>>
+                            <label class="form-check-label" for="dep_<?php echo $item->id; ?>">
+                                <?php echo $item->name; ?>
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <select class="form-control custom-select" id="<?php echo $item->id . "_state"; ?>" name="<?php echo $item->id . "_state"; ?>" <?php echo !in_array($item->id, $assigned) ? 'disabled' : ''; ?>>
+                                 <option value="0" <?php echo (array_key_exists($item->id, $state) && $state[$item->id] == "0") ? 'selected' : ''; ?>><?php echo lang('Admin.agents.passive'); ?></option>
+                                 <option value="1" <?php echo (array_key_exists($item->id, $state) && $state[$item->id] == "1") ? 'selected' : ''; ?>><?php echo lang('Admin.agents.active'); ?></option>
+                            </select>
+                        </div>
                     </div>
                     <?php
                 }
