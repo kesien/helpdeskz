@@ -245,7 +245,7 @@ class Tickets extends BaseController
                 }
                 $changelogs->create($this->staff->getData('id'), $ticket->id, $this->staff->getData('fullname'), 'Admin.actions.replySent');
                 $this->session->setFlashdata('ticket_update', lang('Admin.tickets.messageSent'));
-                return redirect()->to(current_url());
+                return redirect()->to(previous_url());
             }
         } elseif ($this->request->getPost('do') == 'delete_note') {
             $validation = Services::validation();
