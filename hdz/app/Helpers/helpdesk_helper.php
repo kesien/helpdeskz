@@ -158,6 +158,7 @@ function kb_has_edit($category_id)
 
 function is_active_in_dep($staff_id, $department) 
 {
+    if (staff_data('admin') == 1) return true;
     $state = staff_data('state');
     $agent_state = isset($state) ? unserialize($state) : array();
     return array_key_exists($department, $agent_state) && $agent_state[$department] == "1";
