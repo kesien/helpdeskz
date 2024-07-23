@@ -138,6 +138,7 @@ CREATE TABLE `{{db_prefix}}kb_category` (
   `position` int NOT NULL,
   `parent` int NOT NULL DEFAULT '0',
   `public` int NOT NULL DEFAULT '1'
+  `agents_assigned` mediumtext DEFAULT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `{{db_prefix}}login_attempt`;
@@ -176,6 +177,7 @@ CREATE TABLE `{{db_prefix}}staff` (
   `login` int NOT NULL DEFAULT '0',
   `last_login` int NOT NULL DEFAULT '0',
   `department` mediumtext,
+  `state` mediumtext DEFAULT NULL,
   `timezone` varchar(255) DEFAULT NULL,
   `signature` longtext,
   `avatar` varchar(200) DEFAULT NULL,
