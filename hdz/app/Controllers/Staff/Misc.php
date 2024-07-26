@@ -55,7 +55,7 @@ class Misc extends BaseController
 
             $csrf_name = csrf_token();
             $csrf_value = csrf_hash();
-            $result = ['token_name' => $csrf_name, 'token_value' => $csrf_value];
+            $result = ['token_name' => $csrf_name, 'token_value' => $csrf_value, 'file'];
             return json_encode($result);
         }
 
@@ -63,12 +63,20 @@ class Misc extends BaseController
         $allowed_extensions = '.' . $uploadEditor->allowedFiles();
         $allowed_extensions = str_replace(',', ',.', $allowed_extensions);
         return view('staff/tinymce_image_manager', [
-            'total_images' => $uploadEditor->totalImages(),
-            'thumb_files' => $uploadEditor->getImages(),
-            'pagination' => $uploadEditor->pager(),
             'allowed_extensions' => $allowed_extensions,
             'max_upload_size' => max_file_size(),
+            'total_images' => $uploadEditor->totalImages(),
+            'pagination' => $uploadEditor->pager(),
             'category_links_map' => $this->getLinkCategoryMap()
         ]);
+    }
+
+    public function staffEditor()
+    {
+        $uploadEditor = new UploadEditor();
+        $data['thumb_files'] = $uploadEditor->getImages();
+        $data['total_images'] = $uploadEditor->totalImages();
+        
+        return view('staff/image_gallery_partial', $data);
     }
 }

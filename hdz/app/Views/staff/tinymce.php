@@ -1,7 +1,7 @@
 <?php
 
-echo script_tag('https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.0.4/tinymce.min.js').
-    script_tag('https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.0.4/plugins/spellchecker/plugin.min.js');
+echo script_tag('https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.9/tinymce.min.js').
+    script_tag('https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.9/plugins/spellchecker/plugin.min.js');
 ?>
 <script>
     function HDZImageManager(callback, value, meta) {
@@ -26,6 +26,8 @@ echo script_tag('https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.0.4/tinymce.mi
             onMessage: function (api, data) {
                 if (data.mceAction === 'customAction') {
                     callback(data.url);
+                    console.log(api);
+                    console.log(callback);
                     api.close();
                 }
             }

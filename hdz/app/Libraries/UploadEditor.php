@@ -42,6 +42,11 @@ class UploadEditor
         return $thumb_files;
     }
 
+    public function getImage($imageName) {
+        $file = glob($this->uploadPath."\/thumbs\/". $imageName, GLOB_BRACE);
+        return $file;
+    }
+
     public function totalImages()
     {
         return $this->total_images;

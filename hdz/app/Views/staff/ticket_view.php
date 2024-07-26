@@ -184,7 +184,7 @@ $this->section('content');
                 echo 'show active';
             } ?>" id="replyBox" role="tabpanel" aria-labelledby="reply-tab">
                 <?php
-                echo form_open_multipart('', [], ['do' => 'reply']);
+                echo form_open_multipart('', [], ['do' => 'reply', 'id' => 'replyForm']);
                 ?>
                 <div class="form-group row">
                     <label class="col-form-label col-lg-2">
@@ -276,7 +276,7 @@ $this->section('content');
                 }
                 ?>
                 <div class="form-group">
-                    <button class="btn btn-primary"><i class="fa fa-paper-plane"></i>
+                    <button class="btn btn-primary" id="replySubmit"><i class="fa fa-paper-plane"></i>
                         <?php echo lang('Admin.form.submit'); ?>
                     </button>
                 </div>
@@ -565,6 +565,10 @@ include __DIR__ . '/tinymce.php';
     $(document).ready(function () {
         bsCustomFileInput.init();
     });
+    $(document).on("click","#replySubmit",function(e){
+        e.preventDefault();
+        $('#replySubmit').parents('form:first').submit();
+    });
     <?php
     if (isset($canned_response)) {
         echo 'var canned_response = ' . json_encode($canned_response) . ';';
@@ -604,39 +608,39 @@ include __DIR__ . '/tinymce.php';
     }
 
     <?php
-    $agent_info = array_map(function($a) {
-    $state = isset($a->state) ? unserialize($a->state) : array();
-    return new class($a->id, $a->fullname, unserialize($a->department), $state) {
-        public $id;
-        public $fullname;
-        public $departments;
-        public $states;
+    $agent_info = array_map(
+        function($a) {
+            $state = isset($a->state) ? unserialize($a->state) : array();
+            return new class($a->id, $a->fullname, unserialize($a->department), $state) {
+                public $id;
+                public $fullname;
+                public $departments;
+                public $states;
 
-        public function __construct($id, $fullname, $department, $state) {
-            $this->id = $id;
-            $this->fullname = $fullname;
-            $this->states = $state;
-            $this->departments = $department ? array_map(function($d) {
-                return new class($d, $this->states) {
-                    public $id;
-                    public $isActive;
+                public function __construct($id, $fullname, $department, $state) {
+                    $this->id = $id;
+                    $this->fullname = $fullname;
+                    $this->states = $state;
+                    $this->departments = $department ? array_map(function($d) {
+                        return new class($d, $this->states) {
+                            public $id;
+                            public $isActive;
 
-                    public function __construct($id, $states) {
-                        $this->id = $id;
-                        $this->isActive = $this->checkActive($states);
-                    }
+                            public function __construct($id, $states) {
+                                $this->id = $id;
+                                $this->isActive = $this->checkActive($states);
+                            }
 
-                    public function checkActive($states) {
-                        return (array_key_exists($this->id, $states) && $states[$this->id] == "1");
-                    }
-                };
-            }, $department) : array();
-        }
-    };
-}, $agents);
+                            public function checkActive($states) {
+                                return (array_key_exists($this->id, $states) && $states[$this->id] == "1");
+                            }
+                        };
+                    }, $department) : array();
+                }
+            };
+        }, $agents);
     ?>
     let agents = <?php echo json_encode($agent_info); ?>;
-    console.log(agents);
     let groupedByDepartment = {};
     agents.forEach(agent => {
         agent.departments.forEach(department => {

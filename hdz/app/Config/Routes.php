@@ -156,6 +156,9 @@ $routes->group(Helpdesk::STAFF_URI, [
     $routes->add('upload/editor', 'Staff\Misc::uploadEditor', [
         'as' => 'staff_editor_uploader',
     ]);
+    $routes->add('upload/editor_partial', 'Staff\Misc::staffEditor', [
+        'as' => 'staff_partial_editor_uploader',
+    ]);
     $routes->add('canned-responses', 'Staff\Tickets::cannedResponses', [
         'as' => 'staff_canned',
     ]);

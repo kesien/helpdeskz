@@ -17,8 +17,61 @@
         link_tag('assets/components/tinymce-img-uploader/css/styles.css').
         link_tag('assets/components/font-awesome/css/font-awesome.min.css');
     ?>
+    <style>
+        #loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 25px;
+            height: 100%;
+            width: 100%;
+            z-index: 10000;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #loading p {
+            margin: 0;
+        }
+        #loading i {
+            margin-right: 10px;
+            animation: rotate 2s infinite;
+        }
+        @keyframes blink {
+            0% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 <body>
+<div id="loading">
+    <div class="loading-wrap">
+        <i class="fa fa-spinner"></i>
+        <p>Loading ...</p>
+    </div>
+</div>
 <div class="_mt15 _mr15 _ml15">
     <!-- BUTTONS -->
     <div class="row">
@@ -39,51 +92,7 @@
     <div class="row">
         <div class="_mb25">
             <div class="_mb10 _mt10"><?php echo lang('Admin.form.total');?> <span id="Total"><?php echo $total_images ?></span></div>
-            <div id="images" class="images">
-                <?php
-                #---------------------------------------------------
-                # IMAGES IN DIR WITH PAGINATION
-                #---------------------------------------------------
-                $counter 	= 0;
-                foreach ($thumb_files as $file) {
-                    $counter ++;
-                    $filePath = str_replace(array('../','thumbs/'),'',$file);
-                    if(!file_exists($filePath)){
-                        continue;
-                    }
-                    $fileName = basename($filePath);
-                    $LargeImageURL = str_replace(FCPATH, base_url().'/', $filePath);
-
-                    # check if file exists
-                    list($width, $height, $type, $attr) = getimagesize($filePath);
-
-                    $img_url = str_replace(FCPATH, base_url().'/', $file);
-                    ?>
-                    <div id="IMG<?php echo $counter;?>" class="wrap">
-                        <?php
-                        echo img($img_url, false, [
-                            'class' => 'img-thumbnail',
-                            'id' => 'btnInsertFile',
-                            'title' => $fileName,
-                            'alt' => $fileName,
-                            'data-url' => $LargeImageURL,
-                            'data-width' => $width,
-                            'data-height' => $height
-                        ]);
-                        ?>
-                        <div class="info">
-                            <div class="buttons">
-                                <a id="btnDelete" class="tooltip" title="<?php echo lang('Admin.form.delete');?>" data-id="IMG<?php echo $counter;?>" data-file="<?php echo $fileName;?>"><span><i class="fa fa-trash-o"></i></span></a>
-                                <a class="tooltip" title="<?php echo lang('Admin.form.download');?>" href="<?php echo $LargeImageURL;?>" download><i class="fa fa-download"></i></a>
-                                <a rel="lightbox" class="tooltip" href="<?php echo $LargeImageURL;?>" title="<?php echo $fileName;?>" data-title="<?php echo $fileName;?>"><i class="fa fa-eye"></i></a>
-                            </div>
-                            <div class="name" title="<?php echo $fileName;?>"><?php echo resume_content($fileName,13,'..');?></div>
-                        </div>
-                    </div>
-                <?php
-                }
-                ?>
-            </div>
+            <div id="partial_container"></div>
         </div>
 
     </div>
@@ -92,14 +101,19 @@
     ?>
 
 </div>
-
+<?php
+echo script_tag('assets/components/tinymce-img-uploader/js/lightbox.js').
+    script_tag('assets/components/tinymce-img-uploader/js/featherlight.js').
+    script_tag('assets/components/tinymce-img-uploader/js/dropzone.js');
+?>
 <script type="text/javascript">
-    $(document).ready(function() {
+    Dropzone.autoDiscover = false;
+    updateImageList().then(() => {
         $('#uploadToken').attr('name', $('#tokenInput').attr('name'));
         $('#uploadToken').val($('#tokenInput').val());
         var fl = null;
         $.featherlight.autoBind = false;
-        Dropzone.autoDiscover = false;
+
         //--------------------------------------
         // DELETE
         //--------------------------------------
@@ -135,7 +149,6 @@
 
         });
 
-
         //--------------------------------------
         // toggle uploader
         //--------------------------------------
@@ -160,7 +173,7 @@
                 window.parent.postMessage({
                     mceAction: 'customAction',
                     url: url
-                }, '*');
+                });
             }else{
                 // insert image in Editor
                 if (typeof(parent.tinymce) !== "undefined") {
@@ -199,20 +212,32 @@
 
         // check all files uploaded
 
-        myDropzone.on("queuecomplete", function(file, res) {
+        myDropzone.on("success", async function(file, res) {
             if (myDropzone.files[0].status == Dropzone.SUCCESS ) {
-                location.reload();
+                await updateImageList();
+                const total = (+$('#Total').text())+1;
+                $('#Total').text(total);
+                myDropzone.removeAllFiles();
             }
         });
-
-
     });
-
+        
+    async function updateImageList() {
+        try {
+            const resp = await fetch('<?php echo site_url(route_to('staff_partial_editor_uploader')); ?>');
+            if (!resp.ok) {
+                throw new Error(`Response status: ${response.status}`);
+                $('#loading').hide();
+            }
+            const data = await resp.text();
+            $('#partial_container').html(data);
+            $('#loading').hide();
+        } catch (error) {
+            $('#loading').hide();
+            console.error(error.message);
+        }
+    }
 </script>
-<?php
-echo script_tag('assets/components/tinymce-img-uploader/js/lightbox.js').
-    script_tag('assets/components/tinymce-img-uploader/js/featherlight.js').
-    script_tag('assets/components/tinymce-img-uploader/js/dropzone.js');
-?>
+
 </body>
 </html>
