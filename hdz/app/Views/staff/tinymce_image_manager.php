@@ -175,6 +175,7 @@ echo script_tag('assets/components/tinymce-img-uploader/js/lightbox.js').
                 // insert image in Editor
                 if (typeof(parent.tinymce) !== "undefined") {
                     parent.tinymce.activeEditor.insertContent('<img src="'+ url +'" width="'+$(this).data('width')+'"  height="'+$(this).data('height')+'">');
+                    $('[name=csrf_test_name]', parent.document).val($('#tokenInput').val());
                     parent.tinymce.activeEditor.windowManager.close();
                 }
             }
