@@ -54,14 +54,28 @@ if(isset($success_msg)){
                 </div>
             </div>
 
-
+            <div class="form-group">
+                <label><?php echo lang('Admin.settings.lockOutStatus'); ?></label>
+                <select name="lockout" class="form-control custom-select" id="lockout">
+                    <?php
+                    $default = set_value('lockout', site_config('login_attempt') == 0 ? 0 : 1);
+                    foreach ([0 => 'Disable', 1 => 'Enable'] as $k => $v) {
+                        if ($default == $k) {
+                            echo '<option value="' . $k . '" selected>' . $v . '</option>';
+                        } else {
+                            echo '<option value="' . $k . '">' . $v . '</option>';
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
             <div class="form-group">
                 <label><?php echo lang('Admin.settings.maxLoginAttempts');?></label>
-                <input type="number" step="1" min="1" name="login_attempt" class="form-control" value="<?php echo set_value('login_attempt', site_config('login_attempt'));?>">
+                <input type="number" step="1" min="1" name="login_attempt" id="login_attempt" class="form-control" value="<?php echo set_value('login_attempt', site_config('login_attempt'));?>">
             </div>
             <div class="form-group">
                 <label><?php echo lang('Admin.settings.minutesIpLocking');?></label>
-                <input type="number" step="1" min="1" name="login_attempt_minutes" class="form-control" value="<?php echo set_value('login_attempt_minutes', site_config('login_attempt_minutes'));?>">
+                <input type="number" step="1" min="1" name="login_attempt_minutes" id="login_attempt_minutes" class="form-control" value="<?php echo set_value('login_attempt_minutes', site_config('login_attempt_minutes'));?>">
             </div>
             <div class="form-group">
                 <button class="btn btn-primary"><?php echo lang('Admin.form.save');?></button>
@@ -78,8 +92,12 @@ $this->section('script_block');
 <script>
     $(function (){
         recaptcha_status();
+        lockout_status();
         $('#recaptcha').on('change', function(){
             recaptcha_status();
+        });
+        $('#lockout').on('change', function(){
+            lockout_status();
         });
     })
     function recaptcha_status()
@@ -88,6 +106,18 @@ $this->section('script_block');
             $('#recaptcha_details').show();
         }else{
             $('#recaptcha_details').hide();
+        }
+    }
+    function lockout_status()
+    {
+        const login_attempt = $('#login_attempt');
+        const login_attempt_minutes = $('#login_attempt_minutes');
+        if($('#lockout').val() === '1'){
+            login_attempt.removeAttr("disabled");
+            login_attempt_minutes.removeAttr("disabled");
+        }else{
+            login_attempt.attr("disabled", "disabled");
+            login_attempt_minutes.attr("disabled", "disabled");
         }
     }
 </script>

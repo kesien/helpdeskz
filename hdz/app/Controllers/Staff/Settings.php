@@ -136,6 +136,10 @@ class Settings extends BaseController
                 'required' => lang('Admin.error.selectCaptchaStatus'),
                 'in_list' => lang('Admin.error.selectCaptchaStatus'),
             ]);
+            $validation->setRule('lockout', 'IP lockout status', 'required|in_list[0,1]', [
+                'required' => lang('Admin.error.selectLockout'),
+                'in_list' => lang('Admin.error.selectLockout'),
+            ]);
             if ($this->request->getPost('recaptcha') == 1) {
                 $validation->setRule('recaptcha_sitekey', 'reCAPTCHA site key', 'required', [
                     'required' => lang('Admin.error.enterSiteKey'),
@@ -144,9 +148,8 @@ class Settings extends BaseController
                     'required' => lang('Admin.error.enterPrivateKey'),
                 ]);
             }
-            $validation->setRule('login_attempt', 'Maximum number of login attempts', 'required|is_natural_no_zero', [
-                'required' => lang('Admin.error.enterMaxAttempts'),
-                'is_natural_no_zero' => lang('Admin.error.enterMaxAttempts')
+            $validation->setRule('login_attempt', 'Maximum number of login attempts', 'required', [
+                'required' => lang('Admin.error.enterMaxAttempts')
             ]);
             $validation->setRule('login_attempt_minutes', 'Minutes of IP locking', 'required|is_natural_no_zero', [
                 'required' => lang('Admin.error.enterMinutesIpLocking'),
@@ -162,7 +165,7 @@ class Settings extends BaseController
                     'recaptcha' => $this->request->getPost('recaptcha'),
                     'recaptcha_sitekey' => esc($this->request->getPost('recaptcha_sitekey')),
                     'recaptcha_privatekey' => esc($this->request->getPost('recaptcha_privatekey')),
-                    'login_attempt' => $this->request->getPost('login_attempt'),
+                    'login_attempt' => $this->request->getPost('lockout') == 0 ? 0 : $this->request->getPost('login_attempt'),
                     'login_attempt_minutes' => $this->request->getPost('login_attempt_minutes'),
                 ]);
                 $this->session->setFlashdata('form_success', lang('Admin.settings.updated'));
