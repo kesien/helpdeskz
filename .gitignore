@@ -1,0 +1,8 @@
+.idea
+.vscode
+hdz/app/Config/Helpdesk.new.php
+hdz/app/Config/Helpdesk.php
+hdz/app/Config/Logger.php
+hdz/vendor
+hdz/writable
+upload
