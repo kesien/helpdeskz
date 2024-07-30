@@ -78,12 +78,11 @@
         <a class="action" id="btnToggleUploader"><?php echo lang('Admin.form.uploadImage');?></a>
     </div>
     <!-- UPLOADER -->
-    <?php echo csrf_field('tokenInput');?>
     <div class="row">
         <div id="uploader" class="_hide">
             <form action="<?php echo site_url(route_to('staff_editor_uploader'));?>" class="dropzone">
+                <?php echo csrf_field('tokenInput');?>
                 <input type="hidden" name="do" value="upload">
-                <input type="hidden" id="uploadToken" name="c" value="c">
             </form>
         </div>
     </div>
@@ -131,11 +130,8 @@ echo script_tag('assets/components/tinymce-img-uploader/js/lightbox.js').
                 dataType: 'json',
                 cache: false,
                 success: function(msg){
-                    $('#tokenInput').attr('name', msg.token_name);
-                    $('#tokenInput').val(msg.token_value);
-                    $('#uploadToken').attr('name', msg.token_name);
-                    $('#uploadToken').val(msg.token_value);
                     $('#Total').text(Total);
+                    $('#tokenInput').val(msg.token_value);
                     CONTAINER.fadeOut('25', function() {$(this).remove();});
                     CONTAINER.animate({
                         height: 1,          // Avoiding sliding to 0px (flash on IE)
@@ -172,7 +168,8 @@ echo script_tag('assets/components/tinymce-img-uploader/js/lightbox.js').
             if (ImageDialog == 0) {						// 0 = image dialog present because insert/edit text found
                 window.parent.postMessage({
                     mceAction: 'customAction',
-                    url: url
+                    url: url,
+                    token: $('#tokenInput').val()
                 });
             }else{
                 // insert image in Editor
@@ -200,10 +197,7 @@ echo script_tag('assets/components/tinymce-img-uploader/js/lightbox.js').
                 this.on("success", function (file) {
                     if(file.xhr.response !== 'undefined'){
                         xhrResponse = JSON.parse(file.xhr.response)
-                        $('#tokenInput').attr('name', xhrResponse.token_name);
                         $('#tokenInput').val(xhrResponse.token_value);
-                        $('#uploadToken').attr('name', xhrResponse.token_name);
-                        $('#uploadToken').val(xhrResponse.token_value);
                     }
                 });
             }

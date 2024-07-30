@@ -26,15 +26,12 @@ echo script_tag('https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.9/tinymce.m
             onMessage: function (api, data) {
                 if (data.mceAction === 'customAction') {
                     callback(data.url);
-                    console.log(api);
-                    console.log(callback);
+                    $('[name=csrf_test_name]', window.parent.document).val(data.token);
                     api.close();
                 }
-            }
-
+            },
         });
     }
-
 
     tinymce.init({
         selector: '.messageBox',
@@ -52,6 +49,6 @@ echo script_tag('https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.9/tinymce.m
         toolbar: 'formatselect | bold italic strikethrough forecolor backcolor permanentpen formatpainter | link image | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent | removeformat | addcomment blockquote code',
         file_picker_callback: function (callback, value, meta) {
             HDZImageManager(callback, value, meta);
-        },
+        }
     });
 </script>
