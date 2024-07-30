@@ -148,28 +148,36 @@ class Settings extends BaseController
                     'required' => lang('Admin.error.enterPrivateKey'),
                 ]);
             }
-            $validation->setRule('login_attempt', 'Maximum number of login attempts', 'required', [
-                'required' => lang('Admin.error.enterMaxAttempts')
-            ]);
-            $validation->setRule('login_attempt_minutes', 'Minutes of IP locking', 'required|is_natural_no_zero', [
-                'required' => lang('Admin.error.enterMinutesIpLocking'),
-                'is_natural_no_zero' => lang('Admin.error.enterMinutesIpLocking')
-            ]);
 
             if ($validation->withRequest($this->request)->run() == false) {
                 $error_msg = $validation->listErrors();
             } elseif (defined('HDZDEMO')) {
                 $error_msg = 'This is not possible in demo version.';
             } else {
-                $this->settings->save([
-                    'recaptcha' => $this->request->getPost('recaptcha'),
-                    'recaptcha_sitekey' => esc($this->request->getPost('recaptcha_sitekey')),
-                    'recaptcha_privatekey' => esc($this->request->getPost('recaptcha_privatekey')),
-                    'login_attempt' => $this->request->getPost('lockout') == 0 ? 0 : $this->request->getPost('login_attempt'),
-                    'login_attempt_minutes' => $this->request->getPost('login_attempt_minutes'),
-                ]);
-                $this->session->setFlashdata('form_success', lang('Admin.settings.updated'));
-                return redirect()->to(current_url());
+                $lockout = $this->request->getPost('lockout');
+                if ($lockout == 1) {
+                    $validation->setRule('login_attempt', 'Maximum number of login attempts', 'required|is_natural_no_zero', [
+                        'required' => lang('Admin.error.enterMaxAttempts'),
+                        'is_natural_no_zero' => ('Admin.error.enterMaxAttempts')
+                    ]);
+                    $validation->setRule('login_attempt_minutes', 'Minutes of IP locking', 'required|is_natural_no_zero', [
+                        'required' => lang('Admin.error.enterMinutesIpLocking'),
+                        'is_natural_no_zero' => lang('Admin.error.enterMinutesIpLocking')
+                    ]);
+                    if ($validation->withRequest($this->request)->run() == false) {
+                        $error_msg = $validation->listErrors();
+                    }
+                } else {
+                    $this->settings->save([
+                        'recaptcha' => $this->request->getPost('recaptcha'),
+                        'recaptcha_sitekey' => esc($this->request->getPost('recaptcha_sitekey')),
+                        'recaptcha_privatekey' => esc($this->request->getPost('recaptcha_privatekey')),
+                        'login_attempt' => $lockout == 0 ? 0 : $this->request->getPost('login_attempt'),
+                        'login_attempt_minutes' => $this->request->getPost('login_attempt_minutes'),
+                    ]);
+                    $this->session->setFlashdata('form_success', lang('Admin.settings.updated'));
+                    return redirect()->to(current_url());
+                }
             }
         }
 

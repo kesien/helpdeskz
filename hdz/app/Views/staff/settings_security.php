@@ -113,11 +113,11 @@ $this->section('script_block');
         const login_attempt = $('#login_attempt');
         const login_attempt_minutes = $('#login_attempt_minutes');
         if($('#lockout').val() === '1'){
-            login_attempt.removeAttr("disabled");
-            login_attempt_minutes.removeAttr("disabled");
+            login_attempt.removeAttr("readonly");
+            login_attempt_minutes.removeAttr("readonly");
         }else{
-            login_attempt.attr("disabled", "disabled");
-            login_attempt_minutes.attr("disabled", "disabled");
+            login_attempt.attr("readonly", "readonly");
+            login_attempt_minutes.attr("readonly", "readonly");
         }
     }
 </script>
