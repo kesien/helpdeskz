@@ -137,8 +137,8 @@ CREATE TABLE `{{db_prefix}}kb_category` (
   `name` varchar(200) NOT NULL,
   `position` int NOT NULL,
   `parent` int NOT NULL DEFAULT '0',
-  `public` int NOT NULL DEFAULT '1'
-  `agents_assigned` mediumtext DEFAULT NULL,
+  `public` int NOT NULL DEFAULT '1',
+  `agents_assigned` mediumtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `{{db_prefix}}login_attempt`;

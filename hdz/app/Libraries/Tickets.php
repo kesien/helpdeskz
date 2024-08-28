@@ -395,7 +395,7 @@ class Tickets
                     '%ticket_department%' => $ticket->department_name,
                     '%ticket_status%' => lang('open'),
                     '%ticket_priority%' => $ticket->priority_name,
-                    '%original_message%'=> $this->getFirstMessage($ticket->id)->message
+                    '%original_message%'=> $this->getMessageHistory($ticket)
             ], $agent->email, $ticket->department_id);
         } else {
             //No agent found send notification for everyone in department
@@ -415,12 +415,32 @@ class Tickets
                         '%ticket_department%' => $ticket->department_name,
                         '%ticket_status%' => lang('open'),
                         '%ticket_priority%' => $ticket->priority_name,
-                        '%original_message%'=> $this->getFirstMessage($ticket->id)->message
+                        '%original_message%'=> $this->getMessageHistory($ticket)
                     ], $item->email, $ticket->department_id);
                 }
                 $q->freeResult();
             }
         }
+    }
+
+    private function getMessageHistory($ticket) {
+        $staffService = Services::staff();
+        $messages = $this->getMessages($ticket->id);
+        $result = "<blockquote>";
+        foreach ($messages['result'] as $message) {
+            $staff = $staffService->getRow(['id' => $message->staff_id]);
+            if (!$staff && $message->customer == 1) {
+                $result .= "<br>";
+                $result .= "<div>" . $ticket->fullname . "&lt;" . $ticket->email . "&gt; " . dateFormat($message->date) . ":</div>" ;
+                $result .= "<div>" . $message->message . "</div>";                
+            } else {
+                $result .= "<br>";
+                $result .= "<div>" . $staff->fullname . "&lt;" . $staff->email . "&gt; " . dateFormat($message->date) . ":</div>" ;
+                $result .= "<div>" . $message->message . "</div>";
+            }
+        }
+        $result .= "<blockquote>";
+        return $result;
     }
 
     private function getDefaultAgent($ticket, $staffModel) {
