@@ -276,7 +276,7 @@ class MailFetcher
 
     private function removeTicketDetailsIfAny($body) {
         $pattern_1 = '/Ticket[-\s]Details[\s\S]*$/m';
-        $pattern_2 = '/-{10,}[\s\S]*$/m';
+        $pattern_2 = '/-{11,}[\s\S]*$/m';
         $cleaned_text = preg_replace($pattern_2, '', $body);
         $cleaned_text = preg_replace($pattern_1, '', $cleaned_text);
         return $cleaned_text;
