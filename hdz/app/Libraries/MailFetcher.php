@@ -51,7 +51,8 @@ class MailFetcher
                 $mailbox->setAttachmentsDir($this->attachment_dir);
                 foreach ($mailsIds as $k => $v) {
                     $mail = $mailbox->getMail($mailsIds[$k]);
-                    if (strpos(json_encode(self::SUBJECT_TO_IGNORE), strtolower($mail->subject)) !== false) {
+                    $subject = strtolower(trim($mail->subject ?? ''));
+                    if ($subject !== '' && in_array($subject, array_map('strtolower', self::SUBJECT_TO_IGNORE))) {
                         log_message('info', 'Ignoring bouncing and out of office emails');
                         $mailbox->deleteMail($mail->id);
                         continue;
