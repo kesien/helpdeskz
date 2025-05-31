@@ -128,6 +128,11 @@ function kb_articles($category_id, $public = true)
     return \Config\Services::kb()->getArticles($category_id, $public);
 }
 
+function is_article_read($article_id) 
+{
+    return \Config\Services::kb()->isArticleRead($article_id);
+}
+
 function kb_popular($public = 1)
 {
     return \Config\Services::kb()->popularArticles($public);

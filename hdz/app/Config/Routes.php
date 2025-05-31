@@ -41,6 +41,10 @@ $routes->add('category/(:num)-(:any)', 'Kb::category/$1', [
     'as' => 'category',
     'filter' => 'userAuth:user'
 ]);
+$routes->add('ft-msg/top', 'Kb::latestInCategory', [
+    'as' => 'top',
+    'filter' => 'userAuth:user'
+]);
 $routes->add('article/(:num)-(:any)', 'Kb::article/$1', [
     'as' => 'article',
     'filter' => 'userAuth:user'

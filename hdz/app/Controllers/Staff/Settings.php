@@ -254,6 +254,7 @@ class Settings extends BaseController
 
     public function kb()
     {
+        $kb = Services::kb();
         if ($this->staff->getData('admin') != 1) {
             return redirect()->route('staff_dashboard');
         }
@@ -276,6 +277,7 @@ class Settings extends BaseController
                     'kb_maxchar' => $this->request->getPost('kb_maxchar'),
                     'kb_popular' => $this->request->getPost('kb_popular'),
                     'kb_latest' => $this->request->getPost('kb_latest'),
+                    'kb_selected_category' => $this->request->getPost('category_id')
                 ]);
                 $this->session->setFlashdata('form_success', lang('Admin.settings.updated'));
                 return redirect()->to(current_url());
@@ -284,6 +286,7 @@ class Settings extends BaseController
         return view('staff/settings_kb', [
             'error_msg' => isset($error_msg) ? $error_msg : null,
             'success_msg' => $this->session->has('form_success') ? $this->session->getFlashdata('form_success') : null,
+            'kb_list' => $kb->getChildren(0, false, 0, ' - - - '),
             'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }

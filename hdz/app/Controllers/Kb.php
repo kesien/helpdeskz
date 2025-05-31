@@ -40,6 +40,24 @@ class Kb extends BaseController
         ]);
     }
 
+    public function latestInCategory()
+    {
+        $kb = Services::kb();
+        $categoryId = $this->settings->config('kb_selected_category');
+        $articles = $kb->getArticles($categoryId);
+        if ($articles) {
+            $article = $articles[0];
+        }
+
+        if ($articles) {
+            $article = $articles[0];
+            $category = $kb->getCategory($article->category);
+            return view('client/article_plain', compact('article', 'category'));
+        }
+
+        throw PageNotFoundException::forPageNotFound();
+    }
+
     public function article($article_id)
     {
         $kb = Services::kb();

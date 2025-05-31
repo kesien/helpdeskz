@@ -47,6 +47,29 @@ if(isset($success_msg)){
                 <input type="number" step="1" min="1" name="kb_latest" class="form-control" value="<?php echo set_value('kb_latest', site_config('kb_latest'));?>">
             </div>
             <div class="form-group">
+                <label><?php echo lang('Admin.kb.landingPage');?></label>
+                <select name="category_id" class="form-control custom-select">
+                    <?php
+                    $selected = site_config('kb_selected_category');
+                    $default = isset($selected) ? $selected : null;
+                    echo '<option value=""' . (empty($default) ? ' selected' : '') . '>&nbsp;</option>';
+                    if(isset($kb_list)){
+                        $parent = 0;
+                        foreach ($kb_list as $item){
+                            if(isset($category) && $category->id == $item->id){
+                                continue;
+                            }
+                            if($default == $item->id){
+                                echo '<option value="'.$item->id.'" selected>'.$item->name.'</option>';
+                            }else{
+                                echo '<option value="'.$item->id.'">'.$item->name.'</option>';
+                            }
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="form-group">
                 <button class="btn btn-primary"><?php echo lang('Admin.form.save');?></button>
             </div>
             <?php

@@ -118,6 +118,11 @@ $page_controller = isset($page_controller) ? $page_controller : '';
                                     <?php echo resume_content($item->content, site_config('kb_maxchar')); ?>
                                 </div>
                             </div>
+                            <?php if (!is_article_read($item->id)): ?>
+                                <span class="badge badge-success position-absolute" style="top: 10px; right: 10px;">
+                                    <?php echo lang('Client.kb.read'); ?>
+                                </span>
+                            <?php endif; ?>
                             <div class="clearfix"></div>
                         </div>
                     <?php endforeach; ?>

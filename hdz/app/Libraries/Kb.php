@@ -11,8 +11,9 @@ namespace App\Libraries;
 
 use App\Models\Articles;
 use App\Models\Categories;
-use Config\Database;
+use App\Models\ArticleReads;
 use Config\Services;
+use Config\Database;
 
 class Kb
 {
@@ -20,11 +21,13 @@ class Kb
     private $db;
     private $categoryModel;
     private $articlesModel;
+    private $articleReads;
     public function __construct()
     {
         $this->db = Database::connect();
         $this->categoryModel = new Categories();
         $this->articlesModel = new Articles();
+        $this->articleReads = new ArticleReads();
         $this->allowed_cats = $this->publicCatList();
     }
     /*
@@ -382,9 +385,46 @@ class Kb
             $this->articlesModel->where('public', 1);
         }
         if($article = $this->articlesModel->find($article_id)){
+            if ($article) {
+                $client = Services::client();
+                $staff = Services::staff();
+                $client_id = $client->getData('id');
+                if (!$client_id) {
+                    $client_id = $staff->getData('id');
+                }
+                if ($client_id) {
+                    $already_read = $this->articleReads
+                        ->where(['client_id' => $client_id, 'article_id' => $article->id])
+                        ->countAllResults();
+
+                    if ($already_read == 0) {
+                        $this->articleReads->protect(false);
+                        $this->articleReads->insert([
+                            'client_id' => $client_id,
+                            'article_id' => $article->id,
+                            'read_at' => date('Y-m-d H:i:s')
+                        ]);
+                        $this->articleReads->protect(true);
+                    }
+                }
+            }
             return $article;
         }
         return null;
+    }
+
+    public function isArticleRead($article_id) 
+    {
+        $client = Services::client();
+        $staff = Services::staff();
+        $client_id = $client->getData('id');
+        if (!$client_id) {
+            $client_id = $staff->getData('id');
+        }
+        $is_read = $this->articleReads
+            ->where(['client_id' => $client_id, 'article_id' => $article_id])
+            ->countAllResults();
+        return $is_read;
     }
 
     public function addView($article_id)

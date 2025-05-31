@@ -10,6 +10,14 @@ CREATE TABLE `{{db_prefix}}api` (
   `active` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `{{db_prefix}}article_reads`;
+CREATE TABLE `{{db_prefix}}article_reads` (
+    `id` INT NOT NULL,
+    `client_id` INT NOT NULL,
+    `article_id` INT NOT NULL,
+    `read_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;;
+
 DROP TABLE IF EXISTS `{{db_prefix}}articles`;
 CREATE TABLE `{{db_prefix}}articles` (
   `id` int NOT NULL,
@@ -280,6 +288,10 @@ ALTER TABLE `{{db_prefix}}api`
   ADD PRIMARY KEY (`id`),
   ADD KEY `token` (`token`);
 
+ALTER TABLE `{{db_prefix}}article_reads`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_client_article` (`client_id`, `article_id`);
+
 ALTER TABLE `{{db_prefix}}articles`
   ADD PRIMARY KEY (`id`),
   ADD KEY `category` (`category`);
@@ -349,6 +361,9 @@ ALTER TABLE `{{db_prefix}}users`
   ADD KEY `email` (`email`);
 
 ALTER TABLE `{{db_prefix}}api`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `{{db_prefix}}article_reads`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `{{db_prefix}}link_categories`

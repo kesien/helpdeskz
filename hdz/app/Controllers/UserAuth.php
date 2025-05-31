@@ -39,7 +39,12 @@ class UserAuth extends BaseController
                     $error_msg = lang('Client.error.invalidEmailPassword');
                 } else {
                     $this->client->login($client_data->id, $client_data->password);
-                    return redirect()->route('view_tickets');
+                    $selected_category = $this->settings->config('kb_selected_category');
+                    if ($selected_category) {
+                        return redirect()->route('category', [$selected_category]);
+                    } else {
+                        return redirect()->route('view_tickets');
+                    }
                 }
             }
 

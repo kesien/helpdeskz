@@ -127,7 +127,8 @@ return [
         'article' => 'Article',
         'author' => 'Author',
         'editArticle' => 'Edit article',
-        'removeArticleConfirmation' => 'Do you really want to remove this article?'
+        'removeArticleConfirmation' => 'Do you really want to remove this article?',
+        'landingPage' => 'Landing page'
     ],
     'agents' => [
         'menu' => 'Agents',

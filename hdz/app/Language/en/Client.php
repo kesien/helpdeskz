@@ -14,6 +14,7 @@ return [
         'postedOn' => 'Posted on %date%',
         'searchResults' => 'Search results',
         'searchResultsFor' => 'Search results for %keyword%',
+        'read' => "New article"
     ],
     'login' => [
         'menu' => 'Login',
