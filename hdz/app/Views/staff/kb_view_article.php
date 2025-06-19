@@ -45,6 +45,9 @@ $this->section('content');
             </div>
         <?php endforeach; ?>
     <?php endif; ?>
+    <?php if ($show_button): ?>
+        <a href="<?php echo site_url(route_to('staff_dashboard'));?>" class="btn btn-primary"><?php echo lang('Admin.form.goToTickets');?></a>
+    <?php endif; ?>
 </div>
 <?php
 $this->endSection();

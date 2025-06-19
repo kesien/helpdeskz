@@ -178,7 +178,8 @@ $routes->group(Helpdesk::STAFF_URI, [
     $routes->add('kb/categories/view/(:num)', 'Staff\Kb::viewCategory/$1', [
         'as' => 'staff_kb_view_category'
     ]);
-    $routes->add('kb/articles/view/(:num)', 'Staff\Kb::viewArticle/$1', [
+    $routes->add('kb/articles/view/(:num)', 'Staff\Kb::viewArticle/$1');
+    $routes->add('kb/articles/view/(:num)/(:any)', 'Staff\Kb::viewArticle/$1/$2', [
         'as' => 'staff_kb_view_article'
     ]);
     $routes->add('kb/articles/view/(:num)', 'Staff\Kb::download/$1/$2', [

@@ -56,6 +56,17 @@ class Auth extends BaseController
             } else {
                 if ($data->two_factor == '') {
                     $this->staff->login($data, ($this->request->getPost('remember') ? true : false));
+                    $selected_category = $this->settings->config('kb_selected_category');
+                    if ($selected_category) {
+                        $kb = Services::kb();
+                        $articles = $kb->getArticles($selected_category);
+                        if ($articles) {
+                            $article = $articles[0];
+                        }
+                        if ($article) {
+                            return redirect()->route('staff_kb_view_article', [$article->id, "1"]);
+                        }
+                    } 
                     return redirect()->route('staff_dashboard')->withCookies();
                 } else {
                     $twoFactor = new TwoFactor();

@@ -305,6 +305,7 @@ return [
         'createdOn' => 'Created on %date%',
         'updatedOn' => 'Updated on %date%',
         'save' => 'Save',
+        'goToTickets' => 'Go to tickets',
         'to' => 'To',
         'cc' => 'CC',
         'quickInsert' => 'Quick insert',

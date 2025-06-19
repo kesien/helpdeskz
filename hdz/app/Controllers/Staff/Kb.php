@@ -102,7 +102,7 @@ class Kb extends BaseController
         ]);
     }
 
-    public function viewArticle($article_id)
+    public function viewArticle($article_id, $show_button = "0")
     {
         $kb = Services::kb();
         if (!$article = $kb->getArticle($article_id)) {
@@ -133,6 +133,7 @@ class Kb extends BaseController
         return view('staff/kb_view_article', [
             'article' => $article,
             'category' => $category,
+            'show_button' => $show_button != "0",
             'category_links_map' => $this->getLinkCategoryMap()
         ]);
     }
