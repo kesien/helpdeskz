@@ -215,7 +215,7 @@ echo form_input([
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
-                    <?php if (staff_data('admin') != 2): ?>
+                    <?php if (staff_data('admin') == 1): ?>
                         <th><input type="checkbox" id="select_all" /></th>
                     <?php endif; ?>
                     <th style="width: 10%">
@@ -252,7 +252,7 @@ echo form_input([
             <?php else: ?>
                 <?php foreach ($tickets_result as $item): ?>
                     <tr <?php echo isOverdue($item->last_update, $item->status) ? 'class="table-danger"' : ''; ?>>
-                        <?php if (staff_data('admin') != 2): ?>
+                        <?php if (staff_data('admin') == 1): ?>
                             <td width="15">
                                 <input type="checkbox" name="ticket_id[]" value="<?php echo $item->id; ?>"
                                     class="select_item form-check">
